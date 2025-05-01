@@ -1,0 +1,198 @@
+import Link from 'next/link';
+import React from 'react';
+import ClientSideNav from './ClientSideNav';
+
+// ドロワーメニューコンポーネント
+export default function DrawerMenu() {
+  return (
+    <div className="drawer-side z-30">
+      <label
+        htmlFor="beer-drawer"
+        aria-label="メニューを閉じる"
+        className="drawer-overlay"
+      ></label>
+
+      {/* ビールジョッキ型メニュー */}
+      <div className="w-80 min-h-full beer-mug-drawer bg-gradient-to-b from-amber-50 to-amber-200">
+        {/* ビールジョッキのハンドル */}
+        <div className="beer-mug-handle"></div>
+
+        {/* ビールの泡部分 */}
+        <div className="beer-mug-foam">
+          {/* 泡のバブルアイコン */}
+          <div
+            className="bubble-icon"
+            style={{ top: '8px', left: '15%' }}
+          ></div>
+          <div
+            className="bubble-icon"
+            style={{ top: '5px', left: '35%' }}
+          ></div>
+          <div
+            className="bubble-icon"
+            style={{ top: '10px', left: '55%' }}
+          ></div>
+          <div
+            className="bubble-icon"
+            style={{ top: '6px', left: '75%' }}
+          ></div>
+        </div>
+
+        {/* メニューコンテンツ */}
+        <div className="beer-mug-content">
+          {/* モバイルメニューのタイトル */}
+          <div className="flex items-center justify-between pb-4 mb-4 border-b border-amber-200">
+            <span className="flex items-center font-bold text-xl text-amber-900">
+              <div className="avatar mr-2">
+                <div className="w-8 rounded-full ring ring-primary ring-offset-1 ring-offset-base-100">
+                  <div className="bg-amber-300 text-amber-900 flex items-center justify-center h-full">
+                    <span className="text-sm">🍻</span>
+                  </div>
+                </div>
+              </div>
+              Let&apos;s Beer
+            </span>
+            <label
+              htmlFor="beer-drawer"
+              className="btn btn-sm btn-circle btn-ghost text-amber-800"
+            >
+              ✕
+            </label>
+          </div>
+
+          {/* ログイン・会員登録リンク（メニュー内に配置） */}
+          <div className="mb-6 pb-4 border-b border-amber-200">
+            <ClientSideNav />
+          </div>
+
+          {/* モバイルメニュー項目 */}
+          <ul className="space-y-1">
+            <li>
+              <Link href="/" className="beer-menu-item">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                </svg>
+                ホーム
+              </Link>
+            </li>
+            <li>
+              <Link href="/guides" className="beer-menu-item">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c-1.255 0-2.443.29-3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
+                </svg>
+                ビールガイド
+              </Link>
+            </li>
+            <li>
+              <Link href="/beers" className="beer-menu-item">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M5 5a3 3 0 015-2.236A3 3 0 0114.83 6H16a2 2 0 110 4h-5V9a1 1 0 10-2 0v1H4a2 2 0 110-4h1.17C5.06 5.687 5 5.35 5 5zm4 1V5a1 1 0 10-1 1h1zm3 0a1 1 0 10-1-1v1h1z"
+                    clipRule="evenodd"
+                  />
+                  <path d="M9 11H3v5a2 2 0 002 2h4v-7zM11 18h4a2 2 0 002-2v-5h-6v7z" />
+                </svg>
+                ビール図鑑
+              </Link>
+            </li>
+            <li>
+              <Link href="/breweries" className="beer-menu-item">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                ブルワリー
+              </Link>
+            </li>
+            <li>
+              <Link href="/reviews" className="beer-menu-item">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+                レビュー
+              </Link>
+            </li>
+            <li>
+              <Link href="/community" className="beer-menu-item">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+                </svg>
+                コミュニティ
+              </Link>
+            </li>
+            <li>
+              <Link href="/about" className="beer-menu-item">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                サイトについて
+              </Link>
+            </li>
+          </ul>
+
+          {/* 泡のアニメーション */}
+          <div className="absolute inset-x-0 top-24 h-full overflow-hidden pointer-events-none">
+            {[...Array(8)].map((_, i) => (
+              <div
+                key={i}
+                className="bubble"
+                style={
+                  {
+                    '--size': `${Math.random() * 1.5 + 0.5}rem`,
+                    '--distance': `${Math.random() * 3 + 1}rem`,
+                    '--position': `${Math.random() * 100}%`,
+                    '--time': `${Math.random() * 2 + 4}s`,
+                    '--delay': `${Math.random() * 3}s`,
+                  } as React.CSSProperties
+                }
+              ></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

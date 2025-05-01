@@ -75,14 +75,20 @@ export default function Navigation() {
         <div className="navbar-end">
           {/* PC表示時のログイン・会員登録ボタン */}
           <div className="hidden lg:flex gap-2">
-            <Link href="/login" className="btn btn-sm bg-white text-[#7c2d12] border-[#7c2d12] hover:bg-gray-100">
+            <Link
+              href="/login"
+              className="btn btn-sm bg-white text-[#7c2d12] border-[#7c2d12] hover:bg-gray-100"
+            >
               ログイン
             </Link>
-            <Link href="/register" className="btn btn-sm bg-[#7c2d12] text-white hover:bg-amber-800 border-none">
+            <Link
+              href="/register"
+              className="btn btn-sm bg-[#7c2d12] text-white hover:bg-amber-800 border-none"
+            >
               新規登録
             </Link>
           </div>
-          
+
           {/* ハンバーガーメニューのトリガー（モバイル時のみ表示） */}
           <label
             htmlFor="beer-drawer"

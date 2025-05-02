@@ -15,17 +15,17 @@ export default function ClientSideNav() {
             {user.avatarUrl ? (
               <img
                 src={user.avatarUrl}
-                alt={user.displayName}
+                alt="ユーザーアイコン"
                 className="w-10 h-10 rounded-full mr-3"
               />
             ) : (
               <div className="w-10 h-10 rounded-full bg-amber-600 flex items-center justify-center mr-3 text-white">
-                {user.displayName.charAt(0)}
+                {user.email?.charAt(0) || user.uid.charAt(0) || 'ユ'}
               </div>
             )}
             <div>
               <span className="font-medium text-amber-900">
-                {user.displayName}
+                {user.email?.split('@')[0] || `ユーザー${user.uid.slice(0, 4)}`}
               </span>
               <p className="text-xs text-amber-700">ログイン中</p>
             </div>

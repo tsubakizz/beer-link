@@ -1,6 +1,12 @@
 'use client';
 
-import Link from 'next/link';
+import React from 'react';
+import HeroSection from '../../src/app/components/HeroSection';
+import GuideCategorySection from '../../src/app/components/guides/GuideCategorySection';
+import BeginnerSection from '../../src/app/components/guides/BeginnerSection';
+import FAQSection from '../../src/app/components/guides/FAQSection';
+import BeerFinderCTA from '../../src/app/components/guides/BeerFinderCTA';
+import BubbleDecoration from '../../src/app/components/BubbleDecoration';
 
 // ガイド項目のデータ
 const guideItems = [
@@ -10,7 +16,8 @@ const guideItems = [
     description:
       'IPA、スタウト、ヴァイツェンなど様々なビールスタイルの特徴や味わいを解説します。',
     icon: '🍺',
-    color: 'bg-amber-100',
+    color: 'from-amber-200 to-amber-100',
+    iconBg: 'bg-amber-200',
     link: '/guides/styles',
   },
   {
@@ -19,7 +26,8 @@ const guideItems = [
     description:
       'ビールの味わいを表現する言葉や、正しい飲み方、香りの感じ方などを紹介します。',
     icon: '👅',
-    color: 'bg-green-100',
+    color: 'from-green-200 to-green-100',
+    iconBg: 'bg-green-200',
     link: '/guides/tasting',
   },
   {
@@ -28,7 +36,8 @@ const guideItems = [
     description:
       'ビールがどのように作られているのか、原料や製法について解説します。',
     icon: '🌾',
-    color: 'bg-yellow-100',
+    color: 'from-yellow-200 to-yellow-100',
+    iconBg: 'bg-yellow-200',
     link: '/guides/brewing',
   },
   {
@@ -37,7 +46,8 @@ const guideItems = [
     description:
       'ビールと料理の組み合わせについて。スタイルごとの相性の良い料理を紹介します。',
     icon: '🍽️',
-    color: 'bg-red-100',
+    color: 'from-red-200 to-red-100',
+    iconBg: 'bg-red-200',
     link: '/guides/pairing',
   },
   {
@@ -46,7 +56,8 @@ const guideItems = [
     description:
       'クラフトビールを初めて飲む方向けに、おすすめのビールや基礎知識を紹介します。',
     icon: '🔰',
-    color: 'bg-blue-100',
+    color: 'from-blue-200 to-blue-100',
+    iconBg: 'bg-blue-200',
     link: '/guides/beginners',
   },
   {
@@ -55,123 +66,62 @@ const guideItems = [
     description:
       '簡単な質問に答えるだけで、あなたの好みに合ったビールスタイルを診断します。',
     icon: '🔍',
-    color: 'bg-purple-100',
+    color: 'from-purple-200 to-purple-100',
+    iconBg: 'bg-purple-200',
     link: '/guides/beer-finder',
+  },
+];
+
+// FAQ項目
+const faqItems = [
+  {
+    question: 'クラフトビールと普通のビールの違いは何ですか？',
+    answer:
+      'クラフトビールは、小規模な醸造所で職人（クラフトマン）によって丁寧に作られたビールを指します。大量生産のビールと比べて、より多様な原料や製法を用いて個性的な味わいを追求していることが特徴です。地域性や醸造家の個性が反映された、バリエーション豊かな味わいを楽しめます。',
+  },
+  {
+    question: 'クラフトビールはどこで買えますか？',
+    answer:
+      '近年ではスーパーマーケットやコンビニでも取り扱いが増えています。また、専門のビアショップやオンラインショップ、直接ブルワリーのタップルームなどで購入することができます。特に専門店では希少なビールや季節限定商品なども見つけられるでしょう。',
+  },
+  {
+    question: 'クラフトビールの適切な保存方法は？',
+    answer:
+      'クラフトビールは一般的に直射日光と高温を避け、冷暗所で保存するのが理想的です。多くのビールは冷蔵庫で保存すると風味が長持ちします。特にホップの香りが強いIPAなどは、新鮮なうちに飲むことをおすすめします。また、缶や瓶はなるべく立てて保存すると良いでしょう。',
+  },
+  {
+    question: '初心者におすすめのクラフトビールは？',
+    answer:
+      'ビールが初めての方や、苦みが苦手な方には、小麦ビール（ヴァイツェン）やフルーティなペールエールがおすすめです。例えば「よなよなエール」「COEDO 白」などは比較的飲みやすいでしょう。詳しくは「初心者向けガイド」ページをご覧ください。',
   },
 ];
 
 export default function GuidesPage() {
   return (
-    <div className="container mx-auto py-8">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold mb-4">ビールガイド</h1>
-        <p className="text-gray-600 max-w-2xl mx-auto">
-          クラフトビールの世界をより深く楽しむための情報を集めました。初心者の方も愛好家の方も、ぜひご活用ください。
-        </p>
+    <div className="container mx-auto py-8 px-4 sm:px-6">
+      {/* ヒーローセクション */}
+      <div className="relative">
+        <HeroSection
+          title="ビールガイド"
+          description="クラフトビールの世界をより深く楽しむための情報を集めました。初心者の方も愛好家の方も、ぜひご活用ください。"
+        />
+        {/* ヒーローセクションに泡の装飾を追加 */}
+        <div className="absolute top-0 left-0 w-full h-full z-0">
+          <BubbleDecoration count={6} />
+        </div>
       </div>
 
       {/* ガイド項目一覧 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-        {guideItems.map((item) => (
-          <Link
-            key={item.id}
-            href={item.link}
-            className="card bg-base-100 shadow-lg hover:shadow-xl transition-shadow"
-          >
-            <div className="card-body">
-              <div
-                className={`w-12 h-12 ${item.color} rounded-full flex items-center justify-center text-2xl mb-4`}
-              >
-                {item.icon}
-              </div>
-              <h2 className="card-title">{item.title}</h2>
-              <p className="text-gray-600">{item.description}</p>
-              <div className="card-actions justify-end mt-4">
-                <span className="btn btn-sm btn-primary">詳しく見る →</span>
-              </div>
-            </div>
-          </Link>
-        ))}
-      </div>
+      <GuideCategorySection guideItems={guideItems} />
 
       {/* ビール初心者のための導入セクション */}
-      <div className="bg-amber-50 rounded-lg p-8 mb-12">
-        <div className="flex flex-col md:flex-row gap-8 items-center">
-          <div className="w-full md:w-2/3">
-            <h2 className="text-2xl font-bold mb-4">
-              クラフトビールを始めるなら
-            </h2>
-            <p className="mb-4">
-              「クラフトビールって苦いんでしょ？」「何を選んだらいいかわからない」そんな疑問をお持ちの方は多いでしょう。
-              実はクラフトビールには、フルーティな味わいのものや、チョコレートのような風味のもの、すっきり飲みやすいものなど
-              様々な種類があります。
-            </p>
-            <p className="mb-6">
-              ここでは、クラフトビールが初めての方でも楽しめる基礎知識や、初心者におすすめのビールをご紹介します。
-              一緒にクラフトビールの魅力を探してみましょう。
-            </p>
-            <Link href="/guides/beginners" className="btn btn-primary">
-              初心者ガイドを見る
-            </Link>
-          </div>
-          <div className="w-full md:w-1/3 aspect-square rounded-lg bg-amber-200 flex items-center justify-center">
-            <span className="text-6xl">🍻</span>
-          </div>
-        </div>
-      </div>
+      <BeginnerSection />
 
       {/* よくある質問 */}
-      <div className="bg-white rounded-lg shadow-lg p-8">
-        <h2 className="text-2xl font-bold mb-6">よくある質問</h2>
+      <FAQSection faqItems={faqItems} />
 
-        <div className="join join-vertical w-full">
-          <div className="collapse collapse-arrow join-item border border-base-300">
-            <input type="radio" name="my-accordion-4" defaultChecked />
-            <div className="collapse-title text-xl font-medium">
-              クラフトビールと普通のビールの違いは何ですか？
-            </div>
-            <div className="collapse-content">
-              <p>
-                クラフトビールは、小規模な醸造所で職人（クラフトマン）によって丁寧に作られたビールを指します。大量生産のビールと比べて、より多様な原料や製法を用いて個性的な味わいを追求していることが特徴です。地域性や醸造家の個性が反映された、バリエーション豊かな味わいを楽しめます。
-              </p>
-            </div>
-          </div>
-          <div className="collapse collapse-arrow join-item border border-base-300">
-            <input type="radio" name="my-accordion-4" />
-            <div className="collapse-title text-xl font-medium">
-              クラフトビールはどこで買えますか？
-            </div>
-            <div className="collapse-content">
-              <p>
-                近年ではスーパーマーケットやコンビニでも取り扱いが増えています。また、専門のビアショップやオンラインショップ、直接ブルワリーのタップルームなどで購入することができます。特に専門店では希少なビールや季節限定商品なども見つけられるでしょう。
-              </p>
-            </div>
-          </div>
-          <div className="collapse collapse-arrow join-item border border-base-300">
-            <input type="radio" name="my-accordion-4" />
-            <div className="collapse-title text-xl font-medium">
-              クラフトビールの適切な保存方法は？
-            </div>
-            <div className="collapse-content">
-              <p>
-                クラフトビールは一般的に直射日光と高温を避け、冷暗所で保存するのが理想的です。多くのビールは冷蔵庫で保存すると風味が長持ちします。特にホップの香りが強いIPAなどは、新鮮なうちに飲むことをおすすめします。また、缶や瓶はなるべく立てて保存すると良いでしょう。
-              </p>
-            </div>
-          </div>
-          <div className="collapse collapse-arrow join-item border border-base-300">
-            <input type="radio" name="my-accordion-4" />
-            <div className="collapse-title text-xl font-medium">
-              初心者におすすめのクラフトビールは？
-            </div>
-            <div className="collapse-content">
-              <p>
-                ビールが初めての方や、苦みが苦手な方には、小麦ビール（ヴァイツェン）やフルーティなペールエールがおすすめです。例えば「よなよなエール」「COEDO
-                白」などは比較的飲みやすいでしょう。詳しくは「初心者向けガイド」ページをご覧ください。
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* ビールスタイル診断へのCTA */}
+      <BeerFinderCTA />
     </div>
   );
 }

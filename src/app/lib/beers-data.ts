@@ -8,6 +8,7 @@ export type BeerStyle = {
     sweetness: number; // 1-5のスケール
     body: number; // 1-5のスケール（軽い-重い）
     alcohol: number; // 一般的なABV範囲の中央値
+    sourness: number; // 1-5のスケール（酸味）
   };
 };
 
@@ -22,6 +23,7 @@ export const beerStyles: BeerStyle[] = [
       sweetness: 2,
       body: 3,
       alcohol: 6.5,
+      sourness: 1,
     },
   },
   {
@@ -34,6 +36,7 @@ export const beerStyles: BeerStyle[] = [
       sweetness: 3,
       body: 4,
       alcohol: 5.0,
+      sourness: 1,
     },
   },
   {
@@ -46,6 +49,7 @@ export const beerStyles: BeerStyle[] = [
       sweetness: 1,
       body: 2,
       alcohol: 4.5,
+      sourness: 2,
     },
   },
   {
@@ -58,6 +62,7 @@ export const beerStyles: BeerStyle[] = [
       sweetness: 2,
       body: 3,
       alcohol: 5.0,
+      sourness: 2,
     },
   },
   {
@@ -70,6 +75,7 @@ export const beerStyles: BeerStyle[] = [
       sweetness: 2,
       body: 3,
       alcohol: 5.5,
+      sourness: 1,
     },
   },
   {
@@ -82,6 +88,7 @@ export const beerStyles: BeerStyle[] = [
       sweetness: 3,
       body: 3,
       alcohol: 5.5,
+      sourness: 1,
     },
   },
   {
@@ -94,6 +101,7 @@ export const beerStyles: BeerStyle[] = [
       sweetness: 2,
       body: 2,
       alcohol: 4.0,
+      sourness: 5,
     },
   },
   {
@@ -106,6 +114,7 @@ export const beerStyles: BeerStyle[] = [
       sweetness: 3,
       body: 3,
       alcohol: 7.0,
+      sourness: 2,
     },
   },
 ];
@@ -123,6 +132,7 @@ export type Beer = {
   reviewCount: number; // レビュー数
   imageUrl?: string; // 画像URL（オプショナル）
   flavors: string[]; // 風味タグ
+  country?: string; // 原産国（オプショナル）
 };
 
 // モックビールデータ

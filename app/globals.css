@@ -277,7 +277,36 @@
   }
 }
 
+/* 浮遊アニメーション */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
 /* ドロワートグルボタンの追加スタイル */
 #beer-drawer-toggle {
   z-index: 40;
+}
+
+/* ヘッダーとフッターのz-indexを高くして泡の上に表示 */
+header,
+footer {
+  position: relative;
+  z-index: 20;
+}
+
+/* メインコンテンツエリアのz-index */
+main {
+  position: relative;
+  z-index: 10;
+}
+
+/* 背景の泡のz-index */
+.background-bubbles {
+  z-index: -10;
 }

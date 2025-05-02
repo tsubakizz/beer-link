@@ -3,6 +3,20 @@
 import { useState, useEffect } from 'react';
 import { beerStyles, beers } from '../../../src/app/lib/beers-data';
 import Link from 'next/link';
+import {
+  collection,
+  query,
+  where,
+  getCountFromServer,
+  getDocs,
+} from 'firebase/firestore';
+import { db } from '../../../src/app/lib/firebase';
+
+// レビュー情報の型定義
+interface ReviewData {
+  count: number;
+  averageRating: number | null; // nullの場合はレビューがない
+}
 
 // 質問のタイプ定義
 type Question = {
@@ -167,6 +181,9 @@ export default function BeerFinderPage() {
     []
   );
   const [recommendedBeers, setRecommendedBeers] = useState<typeof beers>([]);
+  const [reviewData, setReviewData] = useState<{
+    [beerId: string]: ReviewData;
+  }>({});
 
   // 現在の質問
   const currentQuestion = questions[currentQuestionIndex];
@@ -205,6 +222,7 @@ export default function BeerFinderPage() {
     setCompleted(false);
     setRecommendedStyles([]);
     setRecommendedBeers([]);
+    setReviewData({});
   };
 
   // 回答に基づいて結果を計算
@@ -283,10 +301,61 @@ export default function BeerFinderPage() {
     const topStyleIds = sortedStyles.map((style) => style.id);
     const matchingBeers = beers
       .filter((beer) => topStyleIds.includes(beer.style))
-      .sort((a, b) => b.rating - a.rating)
+      .sort((a, b) => {
+        // レビューデータがない場合は0として扱う（後で取得する）
+        return b.reviewCount - a.reviewCount;
+      })
       .slice(0, 4);
 
     setRecommendedBeers(matchingBeers);
+
+    // レビューデータを取得
+    if (matchingBeers.length > 0) {
+      fetchReviewData(matchingBeers);
+    }
+  };
+
+  // レビューデータを取得する関数
+  const fetchReviewData = async (beersToFetch: typeof beers) => {
+    try {
+      const data: { [beerId: string]: ReviewData } = {};
+
+      // 各ビールIDのレビュー件数と平均評価を取得
+      for (const beer of beersToFetch) {
+        const reviewQuery = query(
+          collection(db, 'reviews'),
+          where('beerId', '==', beer.id)
+        );
+
+        // レビュー件数を取得
+        const countSnapshot = await getCountFromServer(reviewQuery);
+        const count = countSnapshot.data().count;
+
+        // 平均評価を取得（レビューがある場合のみ）
+        let averageRating: number | null = null;
+        if (count > 0) {
+          // レビュースナップショットを取得してスコアの平均を計算
+          const reviewsSnapshot = await getDocs(reviewQuery);
+          let totalScore = 0;
+
+          reviewsSnapshot.forEach((doc) => {
+            const reviewData = doc.data();
+            totalScore += reviewData.rating || 0;
+          });
+
+          averageRating = count > 0 ? totalScore / count : null;
+        }
+
+        data[beer.id] = {
+          count,
+          averageRating,
+        };
+      }
+
+      setReviewData(data);
+    } catch (error) {
+      console.error('レビュー情報の取得中にエラーが発生しました:', error);
+    }
   };
 
   return (
@@ -465,33 +534,44 @@ export default function BeerFinderPage() {
 
             {/* おすすめビール */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {recommendedBeers.map((beer) => (
-                <div key={beer.id} className="card bg-base-100 shadow-sm">
-                  <div className="h-32 bg-amber-100 flex items-center justify-center">
-                    <span className="text-4xl">🍺</span>
-                  </div>
-                  <div className="card-body p-4">
-                    <h3 className="font-bold">{beer.name}</h3>
-                    <p className="text-xs text-gray-600">{beer.brewery}</p>
-                    <div className="flex items-center mt-1">
-                      <div className="badge badge-sm">
-                        {beer.rating.toFixed(1)}
+              {recommendedBeers.map((beer) => {
+                // レビューデータがあれば使用、なければハイフン表示
+                const beerReviewData = reviewData[beer.id];
+                const hasRating =
+                  beerReviewData?.averageRating != null &&
+                  beerReviewData.count &&
+                  beerReviewData.count > 0;
+
+                return (
+                  <div key={beer.id} className="card bg-base-100 shadow-sm">
+                    <div className="h-32 bg-amber-100 flex items-center justify-center">
+                      <span className="text-4xl">🍺</span>
+                    </div>
+                    <div className="card-body p-4">
+                      <h3 className="font-bold">{beer.name}</h3>
+                      <p className="text-xs text-gray-600">{beer.brewery}</p>
+                      <div className="flex items-center mt-1">
+                        <div className="badge badge-sm">
+                          {hasRating
+                            ? beerReviewData.averageRating!.toFixed(1)
+                            : '-'}
+                        </div>
+                        <span className="text-xs ml-1">
+                          ({beerReviewData?.count || 0}件のレビュー)
+                        </span>
                       </div>
-                      <span className="text-xs ml-1">
-                        ({beer.reviewCount}件のレビュー)
-                      </span>
-                    </div>
-                    <div className="card-actions justify-end mt-2">
-                      <Link
-                        href={`/beers/${beer.id}`}
-                        className="btn btn-xs btn-outline"
-                      >
-                        詳細を見る
-                      </Link>
+                      <div className="card-actions justify-end mt-2">
+                        <Link
+                          href={`/beers/${beer.id}`}
+                          className="btn btn-xs btn-outline"
+                        >
+                          詳細を見る
+                        </Link>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* 診断をやり直すボタン */}

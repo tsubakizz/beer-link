@@ -3,6 +3,14 @@
 import { useState, useEffect } from 'react';
 import { Beer, beers } from '../../src/app/lib/beers-data';
 import { motion } from 'framer-motion';
+import {
+  collection,
+  query,
+  where,
+  getCountFromServer,
+  getDocs,
+} from 'firebase/firestore';
+import { db } from '../../src/app/lib/firebase';
 
 // インポートするコンポーネント
 import HeroSection from '../../src/app/components/HeroSection';
@@ -11,6 +19,13 @@ import StyleNavigation from '../../src/app/components/beers/StyleNavigation';
 import BeerCard from '../../src/app/components/beers/BeerCard';
 import EmptyResults from '../../src/app/components/beers/EmptyResults';
 import Pagination from '../../src/app/components/beers/Pagination';
+import LoadingSpinner from '../../src/app/components/LoadingSpinner';
+
+// レビュー情報の型定義
+interface ReviewData {
+  count: number;
+  averageRating: number | null; // nullの場合はレビューがない
+}
 
 export default function BeersPage() {
   // State for filtering and sorting
@@ -18,6 +33,60 @@ export default function BeersPage() {
   const [selectedStyle, setSelectedStyle] = useState<string>('');
   const [sortOption, setSortOption] = useState<string>('rating');
   const [filteredBeers, setFilteredBeers] = useState<Beer[]>(beers);
+  const [reviewData, setReviewData] = useState<{
+    [beerId: string]: ReviewData;
+  }>({});
+  const [loadingReviews, setLoadingReviews] = useState<boolean>(true);
+
+  // レビュー情報を取得
+  useEffect(() => {
+    const fetchReviewData = async () => {
+      setLoadingReviews(true);
+      try {
+        const data: { [beerId: string]: ReviewData } = {};
+
+        // すべてのビールIDのレビュー件数と平均評価を取得
+        for (const beer of beers) {
+          const reviewQuery = query(
+            collection(db, 'reviews'),
+            where('beerId', '==', beer.id)
+          );
+
+          // レビュー件数を取得
+          const countSnapshot = await getCountFromServer(reviewQuery);
+          const count = countSnapshot.data().count;
+
+          // 平均評価を取得（レビューがある場合のみ）
+          let averageRating: number | null = null;
+          if (count > 0) {
+            // レビュースナップショットを取得してスコアの平均を計算
+            const reviewsSnapshot = await getDocs(reviewQuery);
+            let totalScore = 0;
+
+            reviewsSnapshot.forEach((doc) => {
+              const reviewData = doc.data();
+              totalScore += reviewData.rating || 0;
+            });
+
+            averageRating = count > 0 ? totalScore / count : null;
+          }
+
+          data[beer.id] = {
+            count,
+            averageRating,
+          };
+        }
+
+        setReviewData(data);
+      } catch (error) {
+        console.error('レビュー情報の取得中にエラーが発生しました:', error);
+      } finally {
+        setLoadingReviews(false);
+      }
+    };
+
+    fetchReviewData();
+  }, []);
 
   // Apply filters and sorting whenever dependencies change
   useEffect(() => {
@@ -46,18 +115,28 @@ export default function BeersPage() {
         result.sort((a, b) => a.name.localeCompare(b.name));
         break;
       case 'rating':
-        result.sort((a, b) => b.rating - a.rating);
+        // Firestoreの実際の評価値でソート（ない場合は評価が最も低いものとして扱う）
+        result.sort((a, b) => {
+          const aRating = reviewData[a.id]?.averageRating ?? -1;
+          const bRating = reviewData[b.id]?.averageRating ?? -1;
+          return bRating - aRating;
+        });
         break;
       case 'abv':
         result.sort((a, b) => b.abv - a.abv);
         break;
       case 'reviews':
-        result.sort((a, b) => b.reviewCount - a.reviewCount);
+        // 実際のレビュー件数でソート
+        result.sort((a, b) => {
+          const aCount = reviewData[a.id]?.count || 0;
+          const bCount = reviewData[b.id]?.count || 0;
+          return bCount - aCount;
+        });
         break;
     }
 
     setFilteredBeers(result);
-  }, [searchQuery, selectedStyle, sortOption]);
+  }, [searchQuery, selectedStyle, sortOption, reviewData]);
 
   // フィルターをリセットする関数
   const resetFilters = () => {
@@ -138,12 +217,44 @@ export default function BeersPage() {
         </div>
       </motion.div>
 
+      {/* レビュー数読み込み中の表示 */}
+      {loadingReviews && (
+        <div className="my-4">
+          <LoadingSpinner size="small" message="ビール情報を読み込み中..." />
+        </div>
+      )}
+
       {/* ビールリスト */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {filteredBeers.map((beer, index) => (
-          <BeerCard key={beer.id} beer={beer} index={index} />
-        ))}
-      </div>
+      {!loadingReviews && filteredBeers.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredBeers.map((beer, index) => (
+            <BeerCard
+              key={beer.id}
+              beer={beer}
+              index={index}
+              reviewCount={reviewData[beer.id]?.count}
+              reviewRating={reviewData[beer.id]?.averageRating}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* レビューがないビールの表示 */}
+      {!loadingReviews && filteredBeers.length > 0 && (
+        <div className="my-4">
+          {filteredBeers.map((beer) => {
+            const reviewCount = reviewData[beer.id]?.count || 0;
+            if (reviewCount === 0) {
+              return (
+                <div key={beer.id} className="text-center text-gray-500">
+                  {beer.name}にはまだレビューがありません。
+                </div>
+              );
+            }
+            return null;
+          })}
+        </div>
+      )}
 
       {/* 結果が0件の場合 */}
       {filteredBeers.length === 0 && (

@@ -89,7 +89,6 @@ export default function ReviewsPage() {
           if (beerDoc.exists()) {
             const beerData = beerDoc.data() as Beer;
             setBeer({
-              id: beerDoc.id,
               ...beerData,
             });
           } else {

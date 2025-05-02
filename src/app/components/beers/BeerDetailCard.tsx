@@ -7,12 +7,26 @@ import Image from 'next/image';
 interface BeerDetailCardProps {
   beer: Beer;
   styleName: string;
+  reviewCount?: number; // 実際のレビュー件数（Firestoreから）
+  averageRating?: number | null; // 実際の平均評価（Firestoreから）
 }
 
 export default function BeerDetailCard({
   beer,
   styleName,
+  reviewCount,
+  averageRating,
 }: BeerDetailCardProps) {
+  // 表示するレビュー件数と評価（Firestoreの値があればそれを使用、なければ0）
+  const displayReviewCount = reviewCount !== undefined ? reviewCount : 0;
+
+  // レビューが存在するか確認
+  const hasRating =
+    averageRating !== undefined &&
+    averageRating !== null &&
+    reviewCount &&
+    reviewCount > 0;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -63,10 +77,10 @@ export default function BeerDetailCard({
           <div className="flex items-center mb-4">
             <div className="flex items-center mr-4">
               <div className="badge badge-lg bg-amber-400 text-white mr-2">
-                {beer.rating.toFixed(1)}
+                {hasRating ? averageRating!.toFixed(1) : '未評価'}
               </div>
               <span className="text-sm text-amber-700">
-                {beer.reviewCount}件のレビュー
+                {displayReviewCount}件のレビュー
               </span>
             </div>
             <button className="btn btn-sm bg-white hover:bg-amber-50 text-amber-700 border-amber-300">

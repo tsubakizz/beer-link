@@ -34,16 +34,19 @@ interface ReviewsSectionProps {
   beerId: string;
   beerName: string;
   maxReviews?: number; // 表示するレビュー数の上限
+  onReviewsLoaded?: (reviewCount: number, avgRating: number) => void; // 親コンポーネントに情報を渡すためのコールバック
 }
 
 export default function ReviewsSection({
   beerId,
   beerName,
   maxReviews = 3,
+  onReviewsLoaded,
 }: ReviewsSectionProps) {
   const { user } = useAuth();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [totalReviewCount, setTotalReviewCount] = useState<number>(0);
+  const [averageRating, setAverageRating] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [showReviewForm, setShowReviewForm] = useState<boolean>(false);
@@ -53,6 +56,48 @@ export default function ReviewsSection({
     reviewId: string;
   } | null>(null);
   const [actionLoading, setActionLoading] = useState<boolean>(false);
+
+  // 全レビュー取得とレーティングの計算
+  const fetchAllReviewsAndCalculateRating = async () => {
+    try {
+      const reviewsQuery = query(
+        collection(db, 'reviews'),
+        where('beerId', '==', beerId)
+      );
+
+      const snapshot = await getDocs(reviewsQuery);
+      const reviewsData = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Review[];
+
+      // レビュー総数
+      const count = reviewsData.length;
+      setTotalReviewCount(count);
+
+      // 平均評価の計算
+      if (count > 0) {
+        const sum = reviewsData.reduce(
+          (total, review) => total + review.rating,
+          0
+        );
+        const avg = sum / count;
+        setAverageRating(avg);
+
+        // 親コンポーネントにデータを渡す
+        if (onReviewsLoaded) {
+          onReviewsLoaded(count, avg);
+        }
+      } else {
+        setAverageRating(0);
+        if (onReviewsLoaded) {
+          onReviewsLoaded(0, 0);
+        }
+      }
+    } catch (err) {
+      console.error('レーティング計算中にエラーが発生しました:', err);
+    }
+  };
 
   // 全レビュー数を取得する関数
   const fetchTotalReviewCount = async () => {
@@ -96,8 +141,8 @@ export default function ReviewsSection({
           setReviews(reviewsData);
           setLoading(false);
 
-          // 全レビュー数を取得（表示件数制限なし）
-          fetchTotalReviewCount();
+          // 全レビュー取得と評価の計算
+          fetchAllReviewsAndCalculateRating();
         },
         (err) => {
           console.error('レビューデータの取得中にエラーが発生しました:', err);
@@ -119,8 +164,8 @@ export default function ReviewsSection({
     setShowReviewForm(false);
     setEditingReview(null);
 
-    // レビュー追加後に全件数を更新
-    fetchTotalReviewCount();
+    // レビュー追加後に全件数と評価を更新
+    fetchAllReviewsAndCalculateRating();
   };
 
   // レビュー編集を開始
@@ -147,8 +192,8 @@ export default function ReviewsSection({
       await deleteDoc(doc(db, 'reviews', deleteConfirmation.reviewId));
       setDeleteConfirmation(null);
 
-      // レビュー削除後に全件数を更新
-      fetchTotalReviewCount();
+      // レビュー削除後に全件数と評価を更新
+      fetchAllReviewsAndCalculateRating();
     } catch (err) {
       console.error('レビュー削除エラー:', err);
     } finally {

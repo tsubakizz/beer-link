@@ -10,6 +10,14 @@ import {
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import {
+  collection,
+  query,
+  where,
+  getCountFromServer,
+  getDocs,
+} from 'firebase/firestore';
+import { db } from '../../../src/app/lib/firebase';
 
 // インポートするコンポーネント
 import BeerDetailCard from '../../../src/app/components/beers/BeerDetailCard';
@@ -18,6 +26,12 @@ import BreweryCard from '../../../src/app/components/beers/BreweryCard';
 import SimilarBeersCard from '../../../src/app/components/beers/SimilarBeersCard';
 import ReviewsSection from '../../../src/app/components/beers/ReviewsSection';
 import LoadingSpinner from '../../../src/app/components/LoadingSpinner';
+
+// レビューデータの型定義
+interface ReviewData {
+  count: number;
+  averageRating: number | null; // nullの場合はレビューがない
+}
 
 export default function BeerDetailPage() {
   const params = useParams();
@@ -28,6 +42,15 @@ export default function BeerDetailPage() {
   const [styleName, setStyleName] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [initialDataLoaded, setInitialDataLoaded] = useState<boolean>(false);
+  const [reviewCount, setReviewCount] = useState<number | undefined>(undefined);
+  const [averageRating, setAverageRating] = useState<number | undefined>(
+    undefined
+  );
+  // 類似ビール用のレビューデータ
+  const [similarBeersReviewData, setSimilarBeersReviewData] = useState<{
+    [beerId: string]: ReviewData;
+  }>({});
+  const [loadingSimilarReviews, setLoadingSimilarReviews] = useState(false);
 
   useEffect(() => {
     // 初期データ取得処理を即時実行
@@ -45,18 +68,75 @@ export default function BeerDetailPage() {
         .filter((b) => b.style === foundBeer.style && b.id !== foundBeer.id)
         .slice(0, 4);
       setSimilarBeers(similar);
+
+      // 類似ビールのレビューデータを取得
+      if (similar.length > 0) {
+        fetchSimilarBeersReviewData(similar);
+      }
     }
 
     // データ取得完了を通知
     setInitialDataLoaded(true);
   }, [beerId]);
 
-  // LoadingSpinnerが非表示になったときに呼ばれるコールバック
+  // 類似ビールのレビューデータを取得する関数
+  const fetchSimilarBeersReviewData = async (similarBeers: Beer[]) => {
+    setLoadingSimilarReviews(true);
+    try {
+      const data: { [beerId: string]: ReviewData } = {};
+
+      // 各ビールIDのレビュー件数と平均評価を取得
+      for (const beer of similarBeers) {
+        const reviewQuery = query(
+          collection(db, 'reviews'),
+          where('beerId', '==', beer.id)
+        );
+
+        // レビュー件数を取得
+        const countSnapshot = await getCountFromServer(reviewQuery);
+        const count = countSnapshot.data().count;
+
+        // 平均評価を取得（レビューがある場合のみ）
+        let averageRating: number | null = null;
+        if (count > 0) {
+          // レビュースナップショットを取得してスコアの平均を計算
+          const reviewsSnapshot = await getDocs(reviewQuery);
+          let totalScore = 0;
+
+          reviewsSnapshot.forEach((doc) => {
+            const reviewData = doc.data();
+            totalScore += reviewData.rating || 0;
+          });
+
+          averageRating = count > 0 ? totalScore / count : null;
+        }
+
+        data[beer.id] = {
+          count,
+          averageRating,
+        };
+      }
+
+      setSimilarBeersReviewData(data);
+    } catch (error) {
+      console.error(
+        '類似ビールのレビュー情報の取得中にエラーが発生しました:',
+        error
+      );
+    } finally {
+      setLoadingSimilarReviews(false);
+    }
+  };
+
+  const handleReviewsLoaded = (count: number, avgRating: number) => {
+    setReviewCount(count);
+    setAverageRating(avgRating);
+  };
+
   const handleLoadingComplete = () => {
     setIsLoading(false);
   };
 
-  // ローディング表示
   if (isLoading) {
     return (
       <div className="container mx-auto">
@@ -71,7 +151,6 @@ export default function BeerDetailPage() {
     );
   }
 
-  // ビールが見つからない場合
   if (!beer) {
     return (
       <div className="container mx-auto py-16 text-center">
@@ -91,7 +170,6 @@ export default function BeerDetailPage() {
     );
   }
 
-  // ビールの詳細表示
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -99,7 +177,6 @@ export default function BeerDetailPage() {
       transition={{ duration: 0.3 }}
       className="container mx-auto py-8 px-4 sm:px-6"
     >
-      {/* パンくずリスト */}
       <nav className="breadcrumbs mb-6 text-sm">
         <ul className="flex items-center text-amber-600">
           <li className="flex items-center">
@@ -141,25 +218,26 @@ export default function BeerDetailPage() {
       </nav>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* メイン情報エリア */}
         <div className="lg:col-span-2">
-          {/* ビール詳細カード */}
-          <BeerDetailCard beer={beer} styleName={styleName} />
-
-          {/* 味わいプロファイル */}
+          <BeerDetailCard
+            beer={beer}
+            styleName={styleName}
+            reviewCount={reviewCount}
+            averageRating={averageRating}
+          />
           {beerStyle && <FlavorProfileCard beerStyle={beerStyle} />}
-
-          {/* レビューセクション */}
-          <ReviewsSection beerId={beer.id} beerName={beer.name} />
+          <ReviewsSection
+            beerId={beer.id}
+            beerName={beer.name}
+            onReviewsLoaded={handleReviewsLoaded}
+          />
         </div>
-
-        {/* サイドバー */}
         <div className="lg:col-span-1">
-          {/* ブルワリー情報 */}
           <BreweryCard breweryName={beer.brewery} />
-
-          {/* 類似ビール */}
-          <SimilarBeersCard beers={similarBeers} />
+          <SimilarBeersCard
+            beers={similarBeers}
+            reviewData={similarBeersReviewData}
+          />
         </div>
       </div>
     </motion.div>

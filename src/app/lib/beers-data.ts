@@ -128,7 +128,6 @@ export type Beer = {
   abv: number; // アルコール度数
   ibu?: number; // 苦味指数（オプショナル）
   description: string;
-  rating: number; // 評価（5段階）
   reviewCount: number; // レビュー数
   imageUrl?: string; // 画像URL（オプショナル）
   flavors: string[]; // 風味タグ
@@ -146,7 +145,6 @@ export const beers: Beer[] = [
     ibu: 40,
     description:
       'アメリカンペールエールスタイルのビール。柑橘系のさわやかな香りと、やさしい味わいが特徴です。',
-    rating: 4.2,
     reviewCount: 124,
     flavors: ['柑橘', 'フローラル', 'バランス良い'],
   },
@@ -159,7 +157,6 @@ export const beers: Beer[] = [
     ibu: 30,
     description:
       'ポーター・スタイルのビール。チョコレートやコーヒーを思わせる風味があり、飲みやすい黒ビールです。',
-    rating: 4.0,
     reviewCount: 78,
     flavors: ['チョコレート', 'コーヒー', 'カラメル'],
   },
@@ -172,7 +169,6 @@ export const beers: Beer[] = [
     ibu: 65,
     description:
       '強めのホップの香りと苦味、そして柑橘系の風味が特徴のIPA。名前の通り、刺激的な味わいです。',
-    rating: 4.3,
     reviewCount: 112,
     flavors: ['ホップ', '柑橘', 'パイン'],
   },
@@ -185,7 +181,6 @@ export const beers: Beer[] = [
     ibu: 20,
     description:
       'ベルジャンホワイトスタイルのビール。オレンジピールやコリアンダーのスパイシーさが特徴的です。',
-    rating: 4.1,
     reviewCount: 95,
     flavors: ['オレンジ', 'スパイス', 'フルーティー'],
   },
@@ -198,7 +193,6 @@ export const beers: Beer[] = [
     ibu: 25,
     description:
       'キャラメル、モルトの甘みと、シナモン、ナツメグのスパイスが効いたユニークなポーター。',
-    rating: 3.9,
     reviewCount: 67,
     flavors: ['キャラメル', 'シナモン', 'スパイス'],
   },
@@ -210,7 +204,6 @@ export const beers: Beer[] = [
     abv: 5.0,
     description:
       '小麦麦芽を使用したヴァイツェンタイプのビール。バナナのようなフルーティな香りとすっきりとした飲み口が特徴です。',
-    rating: 4.0,
     reviewCount: 82,
     flavors: ['バナナ', 'クローブ', '小麦'],
   },
@@ -222,7 +215,6 @@ export const beers: Beer[] = [
     abv: 5.5,
     description:
       'さつまいもを原料の一部に使用した、琥珀色のビール。香ばしさとほのかな甘みが特徴です。',
-    rating: 4.2,
     reviewCount: 76,
     flavors: ['キャラメル', 'さつまいも', 'トースト'],
   },
@@ -234,7 +226,6 @@ export const beers: Beer[] = [
     abv: 5.5,
     description:
       'コリアンダーシードとオレンジピールを使用したベルジャンスタイルのホワイトエール。爽やかな香りが特徴です。',
-    rating: 4.4,
     reviewCount: 103,
     flavors: ['オレンジ', 'スパイス', 'ハーブ'],
   },
@@ -246,7 +237,6 @@ export const beers: Beer[] = [
     abv: 11.3,
     description:
       'ベルギーのトラピスト修道院で作られる濃厚なエール。複雑なフルーティさとスパイシーさが特徴的です。',
-    rating: 4.7,
     reviewCount: 138,
     flavors: ['プラム', 'イースト', 'キャラメル', 'スパイス'],
   },
@@ -259,7 +249,6 @@ export const beers: Beer[] = [
     ibu: 45,
     description:
       'トロピカルフルーツの香りと心地よい苦味が特徴のIPA。現代のクラフトビールムーブメントを象徴するビールの一つです。',
-    rating: 4.1,
     reviewCount: 115,
     flavors: ['グレープフルーツ', 'パイナップル', 'ホップ'],
   },
@@ -272,7 +261,6 @@ export const beers: Beer[] = [
     ibu: 45,
     description:
       'アイルランドを代表する黒ビール。クリーミーな泡と共に楽しむ、コーヒーやチョコレートの風味が特徴です。',
-    rating: 4.3,
     reviewCount: 210,
     flavors: ['コーヒー', 'チョコレート', 'ロースト'],
   },
@@ -285,7 +273,6 @@ export const beers: Beer[] = [
     ibu: 40,
     description:
       'チェコ発祥の元祖ピルスナー。爽やかな苦みと麦の風味が絶妙なバランスで調和しています。',
-    rating: 4.2,
     reviewCount: 95,
     flavors: ['穀物', 'ハーブ', 'クリーン'],
   },

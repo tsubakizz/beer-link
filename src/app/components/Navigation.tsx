@@ -35,9 +35,9 @@ export default function Navigation() {
   // ユーザーメニューの外側をクリックしたときに閉じる
   const handleClickOutside = (e: MouseEvent) => {
     if (
-      menuRef.current && 
-      buttonRef.current && 
-      !menuRef.current.contains(e.target as Node) && 
+      menuRef.current &&
+      buttonRef.current &&
+      !menuRef.current.contains(e.target as Node) &&
       !buttonRef.current.contains(e.target as Node)
     ) {
       setIsUserMenuOpen(false);
@@ -170,7 +170,7 @@ export default function Navigation() {
 
                 {/* ユーザーメニュードロップダウン */}
                 {isUserMenuOpen && (
-                  <div 
+                  <div
                     ref={menuRef}
                     className="fixed top-0 left-0 right-0 bottom-0 z-40 pointer-events-none"
                   >

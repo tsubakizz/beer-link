@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams, notFound } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   breweries,
@@ -9,6 +9,20 @@ import {
   regionNames,
 } from '../../../src/app/lib/breweries-data';
 import { beers, beerStyles } from '../../../src/app/lib/beers-data';
+import {
+  collection,
+  query,
+  where,
+  getCountFromServer,
+  getDocs,
+} from 'firebase/firestore';
+import { db } from '../../../src/app/lib/firebase';
+
+// レビュー情報の型定義
+interface ReviewData {
+  count: number;
+  averageRating: number | null; // nullの場合はレビューがない
+}
 
 export default function BreweryDetailPage() {
   // URLからブルワリーIDを取得
@@ -28,12 +42,71 @@ export default function BreweryDetailPage() {
   // ソートオプション
   const [sortBy, setSortBy] = useState<string>('name');
 
+  // レビューデータ
+  const [reviewData, setReviewData] = useState<{
+    [beerId: string]: ReviewData;
+  }>({});
+  const [loadingReviews, setLoadingReviews] = useState<boolean>(true);
+
+  // レビュー情報を取得
+  useEffect(() => {
+    const fetchReviewData = async () => {
+      setLoadingReviews(true);
+      try {
+        const data: { [beerId: string]: ReviewData } = {};
+
+        // ブルワリーのビールIDのレビュー件数と平均評価を取得
+        for (const beer of breweryBeers) {
+          const reviewQuery = query(
+            collection(db, 'reviews'),
+            where('beerId', '==', beer.id)
+          );
+
+          // レビュー件数を取得
+          const countSnapshot = await getCountFromServer(reviewQuery);
+          const count = countSnapshot.data().count;
+
+          // 平均評価を取得（レビューがある場合のみ）
+          let averageRating: number | null = null;
+          if (count > 0) {
+            // レビュースナップショットを取得してスコアの平均を計算
+            const reviewsSnapshot = await getDocs(reviewQuery);
+            let totalScore = 0;
+
+            reviewsSnapshot.forEach((doc) => {
+              const reviewData = doc.data();
+              totalScore += reviewData.rating || 0;
+            });
+
+            averageRating = count > 0 ? totalScore / count : null;
+          }
+
+          data[beer.id] = {
+            count,
+            averageRating,
+          };
+        }
+
+        setReviewData(data);
+      } catch (error) {
+        console.error('レビュー情報の取得中にエラーが発生しました:', error);
+      } finally {
+        setLoadingReviews(false);
+      }
+    };
+
+    fetchReviewData();
+  }, [breweryBeers]);
+
   // ビールをソート
   const sortedBeers = [...breweryBeers].sort((a, b) => {
     if (sortBy === 'name') {
       return a.name.localeCompare(b.name);
     } else if (sortBy === 'rating') {
-      return b.rating - a.rating;
+      // Firestoreのレビューデータでソート。レビューがない場合は評価-1として扱う
+      const aRating = reviewData[a.id]?.averageRating ?? -1;
+      const bRating = reviewData[b.id]?.averageRating ?? -1;
+      return bRating - aRating;
     } else if (sortBy === 'abv') {
       return b.abv - a.abv;
     }
@@ -211,7 +284,11 @@ export default function BreweryDetailPage() {
               <h2 className="text-lg font-bold mb-4">おすすめビール</h2>
               {sortedBeers.length > 0 ? (
                 breweryBeers
-                  .sort((a, b) => b.rating - a.rating)
+                  .sort((a, b) => {
+                    const aRating = reviewData[a.id]?.averageRating ?? -1;
+                    const bRating = reviewData[b.id]?.averageRating ?? -1;
+                    return bRating - aRating;
+                  })
                   .slice(0, 3)
                   .map((beer) => (
                     <Link
@@ -225,19 +302,30 @@ export default function BreweryDetailPage() {
                       </div>
                       <div className="flex items-center">
                         <div className="rating rating-xs">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <input
-                              key={star}
-                              type="radio"
-                              name={`rating-${beer.id}`}
-                              className="mask mask-star-2 bg-amber-400"
-                              checked={Math.round(beer.rating) === star}
-                              readOnly
-                            />
-                          ))}
+                          {[1, 2, 3, 4, 5].map((star) => {
+                            // nullまたはundefinedの場合は0として扱う
+                            const rating = reviewData[beer.id]?.averageRating;
+                            const roundedRating =
+                              rating != null ? Math.round(rating) : 0;
+
+                            return (
+                              <input
+                                key={star}
+                                type="radio"
+                                name={`rating-${beer.id}`}
+                                className="mask mask-star-2 bg-amber-400"
+                                checked={roundedRating === star}
+                                readOnly
+                              />
+                            );
+                          })}
                         </div>
                         <span className="text-xs ml-1">
-                          ({beer.rating.toFixed(1)})
+                          (
+                          {reviewData[beer.id]?.averageRating != null
+                            ? reviewData[beer.id].averageRating?.toFixed(1)
+                            : '未評価'}
+                          )
                         </span>
                       </div>
                     </Link>
@@ -316,7 +404,11 @@ export default function BreweryDetailPage() {
                     </div>
                     <div className="flex items-center">
                       <span className="font-medium mr-1">評価:</span>
-                      <span className="badge">{beer.rating.toFixed(1)}</span>
+                      <span className="badge">
+                        {reviewData[beer.id]?.averageRating != null
+                          ? reviewData[beer.id].averageRating?.toFixed(1)
+                          : '未評価'}
+                      </span>
                     </div>
                   </div>
                 </div>

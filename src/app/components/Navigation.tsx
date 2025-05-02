@@ -1,10 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ClientSideNav from './ClientSideNav';
 import { useAuth } from '../lib/auth-context';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
 
 // ナビゲーションコンポーネント（ハンバーガーメニュー対応版）
@@ -12,6 +12,14 @@ export default function Navigation() {
   const { user, logout, isLoading } = useAuth();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
+  const menuRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  // ページ遷移時にメニューを閉じる
+  useEffect(() => {
+    setIsUserMenuOpen(false);
+  }, [pathname]);
 
   // ログアウト処理
   const handleLogout = async () => {
@@ -25,9 +33,28 @@ export default function Navigation() {
   };
 
   // ユーザーメニューの外側をクリックしたときに閉じる
-  const closeUserMenu = () => {
-    setIsUserMenuOpen(false);
+  const handleClickOutside = (e: MouseEvent) => {
+    if (
+      menuRef.current && 
+      buttonRef.current && 
+      !menuRef.current.contains(e.target as Node) && 
+      !buttonRef.current.contains(e.target as Node)
+    ) {
+      setIsUserMenuOpen(false);
+    }
   };
+
+  // メニュー表示時に外側クリックのイベントリスナーを設定
+  useEffect(() => {
+    if (isUserMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isUserMenuOpen]);
 
   return (
     <>
@@ -103,6 +130,7 @@ export default function Navigation() {
               // ログイン済み：ユーザーメニュー
               <div className="relative">
                 <button
+                  ref={buttonRef}
                   onClick={toggleUserMenu}
                   className="btn btn-sm bg-white border-amber-300 text-amber-900 hover:bg-amber-100 flex items-center gap-2"
                 >
@@ -142,14 +170,11 @@ export default function Navigation() {
 
                 {/* ユーザーメニュードロップダウン */}
                 {isUserMenuOpen && (
-                  <>
-                    {/* 閉じるための透明なオーバーレイ */}
-                    <div
-                      className="fixed inset-0 z-10"
-                      onClick={closeUserMenu}
-                    ></div>
-
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-20 border border-amber-100">
+                  <div 
+                    ref={menuRef}
+                    className="fixed top-0 left-0 right-0 bottom-0 z-40 pointer-events-none"
+                  >
+                    <div className="absolute right-0 top-[72px] w-48 bg-white rounded-lg shadow-xl py-1 z-50 pointer-events-auto mr-4 border border-amber-100">
                       <div className="px-4 py-2 border-b border-amber-100">
                         <p className="text-sm font-medium text-amber-900">
                           {user.email?.split('@')[0] ||
@@ -163,21 +188,21 @@ export default function Navigation() {
                       <Link
                         href="/profile"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
-                        onClick={closeUserMenu}
+                        onClick={() => setIsUserMenuOpen(false)}
                       >
                         マイプロフィール
                       </Link>
                       <Link
                         href="/favorites"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
-                        onClick={closeUserMenu}
+                        onClick={() => setIsUserMenuOpen(false)}
                       >
                         お気に入り
                       </Link>
                       <Link
                         href="/reviews/my"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50"
-                        onClick={closeUserMenu}
+                        onClick={() => setIsUserMenuOpen(false)}
                       >
                         マイレビュー
                       </Link>
@@ -190,7 +215,7 @@ export default function Navigation() {
                         </button>
                       </div>
                     </div>
-                  </>
+                  </div>
                 )}
               </div>
             ) : (
@@ -229,7 +254,7 @@ export default function Navigation() {
                 strokeLinejoin="round"
                 strokeWidth="2"
                 d="M4 6h16M4 12h16M4 18h16"
-              ></path>
+              />
             </svg>
           </label>
         </div>

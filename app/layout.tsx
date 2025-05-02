@@ -72,7 +72,7 @@ export default function RootLayout({
             <div className="drawer-content flex flex-col">
               {/* 通常コンテンツ */}
               {/* ヘッダー部分 - ビールのグラデーションカラーと泡のアニメーションを追加 */}
-              <header className="relative bg-gradient-to-br from-amber-300 via-amber-400 to-amber-300 text-amber-900 shadow-lg overflow-hidden z-20">
+              <header className="relative bg-gradient-to-br from-amber-300 via-amber-400 to-amber-300 text-amber-900 shadow-lg z-20">
                 <BubbleAnimation count={10} />
                 <div className="container mx-auto relative z-20">
                   <Navigation />

@@ -16,6 +16,7 @@ import QuickTypeFilter from '../../src/app/components/breweries/QuickTypeFilter'
 import BreweryList from '../../src/app/components/breweries/BreweryList';
 import BreweryTypeInfo from '../../src/app/components/breweries/BreweryTypeInfo';
 import EmptyResults from '../../src/app/components/beers/EmptyResults';
+import LoadingSpinner from '../../src/app/components/LoadingSpinner';
 
 export default function BreweriesPage() {
   // フィルターステート
@@ -27,69 +28,95 @@ export default function BreweriesPage() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   // クライアントサイドレンダリングを追跡
   const [isMounted, setIsMounted] = useState(false);
+  // 処理済みのブルワリーデータを保存するステート
+  const [processedBreweries, setProcessedBreweries] = useState<
+    typeof breweries
+  >([]);
 
-  // コンポーネントがマウントされたかどうかを確認
+  // コンポーネントがマウントされたかどうかを確認し、ブルワリーデータを処理
   useEffect(() => {
+    // ブルワリーデータの処理とソート
+    const processBreweriesData = () => {
+      // フィルタリング処理
+      let filtered = breweries.filter((brewery) => {
+        // 検索クエリでフィルタリング
+        if (
+          searchQuery &&
+          !brewery.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+          !(
+            brewery.nameEn &&
+            brewery.nameEn.toLowerCase().includes(searchQuery.toLowerCase())
+          ) &&
+          !brewery.description
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) &&
+          !(brewery.prefecture && brewery.prefecture.includes(searchQuery)) &&
+          !brewery.country.includes(searchQuery)
+        ) {
+          return false;
+        }
+
+        // 地域でフィルタリング
+        if (selectedRegion !== 'all' && brewery.region !== selectedRegion) {
+          return false;
+        }
+
+        // タイプでフィルタリング
+        if (selectedType !== 'all' && brewery.type !== selectedType) {
+          return false;
+        }
+
+        // 特徴でフィルタリング
+        if (selectedFeatures.includes('taproom') && !brewery.taproom) {
+          return false;
+        }
+        if (selectedFeatures.includes('tours') && !brewery.tours) {
+          return false;
+        }
+        if (
+          selectedFeatures.includes('domestic') &&
+          brewery.country !== '日本'
+        ) {
+          return false;
+        }
+        if (
+          selectedFeatures.includes('overseas') &&
+          brewery.country === '日本'
+        ) {
+          return false;
+        }
+
+        return true;
+      });
+
+      // 安定したソート
+      const sorted = [...filtered].sort((a, b) => {
+        if (sortBy === 'name') {
+          return a.name.localeCompare(b.name, 'ja');
+        } else if (sortBy === 'year-old') {
+          return a.foundedYear - b.foundedYear || a.id.localeCompare(b.id);
+        } else if (sortBy === 'year-new') {
+          return b.foundedYear - a.foundedYear || a.id.localeCompare(b.id);
+        } else if (sortBy === 'country') {
+          return (
+            a.country.localeCompare(b.country, 'ja') ||
+            a.name.localeCompare(b.name, 'ja')
+          );
+        }
+        // デフォルトはIDでソートして安定させる
+        return a.id.localeCompare(b.id);
+      });
+
+      setProcessedBreweries(sorted);
+    };
+
+    processBreweriesData();
+  }, [searchQuery, selectedRegion, selectedType, selectedFeatures, sortBy]);
+
+  // LoadingSpinnerが非表示になったときに呼ばれるコールバック
+  const handleLoadingComplete = () => {
     setIsMounted(true);
-  }, []);
-
-  // フィルター適用されたブルワリーリスト
-  const filteredBreweries = breweries.filter((brewery) => {
-    // 検索クエリでフィルタリング
-    if (
-      searchQuery &&
-      !brewery.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-      !(
-        brewery.nameEn &&
-        brewery.nameEn.toLowerCase().includes(searchQuery.toLowerCase())
-      ) &&
-      !brewery.description.toLowerCase().includes(searchQuery.toLowerCase()) &&
-      !(brewery.prefecture && brewery.prefecture.includes(searchQuery)) &&
-      !brewery.country.includes(searchQuery)
-    ) {
-      return false;
-    }
-
-    // 地域でフィルタリング
-    if (selectedRegion !== 'all' && brewery.region !== selectedRegion) {
-      return false;
-    }
-
-    // タイプでフィルタリング
-    if (selectedType !== 'all' && brewery.type !== selectedType) {
-      return false;
-    }
-
-    // 特徴でフィルタリング
-    if (selectedFeatures.includes('taproom') && !brewery.taproom) {
-      return false;
-    }
-    if (selectedFeatures.includes('tours') && !brewery.tours) {
-      return false;
-    }
-    if (selectedFeatures.includes('domestic') && brewery.country !== '日本') {
-      return false;
-    }
-    if (selectedFeatures.includes('overseas') && brewery.country === '日本') {
-      return false;
-    }
-
-    return true;
-  });
-
-  // ソート
-  const sortedBreweries = [...filteredBreweries].sort((a, b) => {
-    if (sortBy === 'name') {
-      return a.name.localeCompare(b.name);
-    } else if (sortBy === 'year-old') {
-      return a.foundedYear - b.foundedYear;
-    } else if (sortBy === 'year-new') {
-      return b.foundedYear - a.foundedYear;
-    } else if (sortBy === 'country') {
-      return a.country.localeCompare(b.country) || a.name.localeCompare(b.name);
-    }
-    return 0;
-  });
+  };
 
   // ブルワリーの製造しているビールの数を計算
   const getBeerCount = (breweryId: string) => {
@@ -120,12 +147,30 @@ export default function BreweriesPage() {
     | BreweryType
   )[];
 
+  // クライアント側でレンダリングされるまで何も表示しない
+  if (!isMounted) {
+    return (
+      <div className="container mx-auto">
+        <LoadingSpinner
+          size="medium"
+          message="ブルワリー情報を読み込み中..."
+          minDisplayTime={700}
+          initialLoading={false} // データ取得はすでに完了している
+          onLoadingComplete={handleLoadingComplete}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto py-8 px-4 sm:px-6">
       {/* ヒーローセクション */}
-      <HeroSection title="ブルワリーを探る" description="日本全国のクラフトブルワリーから大手メーカーまで、
+      <HeroSection
+        title="ブルワリーを探る"
+        description="日本全国のクラフトブルワリーから大手メーカーまで、
             あなたのお気に入りの醸造所を見つけよう。
-            ブルワリーごとの特徴やこだわりをチェックして、ビール選びの幅を広げましょう。" />
+            ブルワリーごとの特徴やこだわりをチェックして、ビール選びの幅を広げましょう。"
+      />
 
       {/* フィルターと検索セクション */}
       <motion.div
@@ -199,14 +244,14 @@ export default function BreweriesPage() {
         className="mb-6 flex items-center justify-between"
       >
         <p className="text-amber-800 font-medium">
-          {sortedBreweries.length} 件のブルワリーが見つかりました
+          {processedBreweries.length} 件のブルワリーが見つかりました
         </p>
       </motion.div>
 
       {/* ブルワリーリスト */}
-      {sortedBreweries.length > 0 ? (
+      {processedBreweries.length > 0 ? (
         <BreweryList
-          breweries={sortedBreweries}
+          breweries={processedBreweries}
           getBeerCount={getBeerCount}
           resetFilters={resetFilters}
         />

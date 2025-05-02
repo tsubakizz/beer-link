@@ -17,7 +17,7 @@ const typeConfig: Record<
     icon: '🍺',
     bgColor: 'bg-amber-100 hover:bg-amber-200',
   },
-  major: {
+  macro: {
     label: '大手',
     icon: '🏭',
     bgColor: 'bg-blue-100 hover:bg-blue-200',
@@ -32,7 +32,7 @@ const typeConfig: Record<
     icon: '🤝',
     bgColor: 'bg-purple-100 hover:bg-purple-200',
   },
-  special: {
+  proprietary: {
     label: '特殊醸造',
     icon: '✨',
     bgColor: 'bg-red-100 hover:bg-red-200',

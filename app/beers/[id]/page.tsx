@@ -17,6 +17,7 @@ import FlavorProfileCard from '../../../src/app/components/beers/FlavorProfileCa
 import BreweryCard from '../../../src/app/components/beers/BreweryCard';
 import SimilarBeersCard from '../../../src/app/components/beers/SimilarBeersCard';
 import ReviewsSection from '../../../src/app/components/beers/ReviewsSection';
+import LoadingSpinner from '../../../src/app/components/LoadingSpinner';
 
 export default function BeerDetailPage() {
   const params = useParams();
@@ -25,9 +26,11 @@ export default function BeerDetailPage() {
   const [beerStyle, setBeerStyle] = useState<BeerStyle | null>(null);
   const [similarBeers, setSimilarBeers] = useState<Beer[]>([]);
   const [styleName, setStyleName] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [initialDataLoaded, setInitialDataLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    // 指定されたIDのビールを検索
+    // 初期データ取得処理を即時実行
     const foundBeer = beers.find((b) => b.id === beerId) || null;
     setBeer(foundBeer);
 
@@ -43,8 +46,32 @@ export default function BeerDetailPage() {
         .slice(0, 4);
       setSimilarBeers(similar);
     }
+
+    // データ取得完了を通知
+    setInitialDataLoaded(true);
   }, [beerId]);
 
+  // LoadingSpinnerが非表示になったときに呼ばれるコールバック
+  const handleLoadingComplete = () => {
+    setIsLoading(false);
+  };
+
+  // ローディング表示
+  if (isLoading) {
+    return (
+      <div className="container mx-auto">
+        <LoadingSpinner
+          size="large"
+          message="ビール情報を読み込み中..."
+          minDisplayTime={700}
+          initialLoading={!initialDataLoaded}
+          onLoadingComplete={handleLoadingComplete}
+        />
+      </div>
+    );
+  }
+
+  // ビールが見つからない場合
   if (!beer) {
     return (
       <div className="container mx-auto py-16 text-center">
@@ -64,6 +91,7 @@ export default function BeerDetailPage() {
     );
   }
 
+  // ビールの詳細表示
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -122,7 +150,7 @@ export default function BeerDetailPage() {
           {beerStyle && <FlavorProfileCard beerStyle={beerStyle} />}
 
           {/* レビューセクション */}
-          <ReviewsSection beerId={beer.id} />
+          <ReviewsSection beerId={beer.id} beerName={beer.name} />
         </div>
 
         {/* サイドバー */}

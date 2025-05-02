@@ -14,10 +14,10 @@ interface BreweryListProps {
 // ブルワリータイプの日本語名マッピング
 const breweryTypeNames: Record<BreweryType, string> = {
   craft: 'クラフト',
-  major: '大手',
+  macro: '大手',
   brewpub: 'ブルーパブ',
   contract: '委託醸造',
-  special: '特殊醸造',
+  proprietary: '特殊醸造',
 };
 
 export default function BreweryList({
@@ -71,11 +71,7 @@ export default function BreweryList({
             <BreweryCard
               brewery={brewery}
               typeNames={breweryTypeNames}
-              beerCount={
-                getBeerCount
-                  ? getBeerCount(brewery.id)
-                  : brewery.beers?.length || 0
-              }
+              beerCount={getBeerCount ? getBeerCount(brewery.id) : 0}
               index={index}
             />
           </motion.div>

@@ -77,12 +77,6 @@ export default function Navigation() {
               </Link>
             </li>
             <li>
-              <Link href="/reviews" className="nav-link group text-[#7c2d12]">
-                <span className="nav-text">レビュー</span>
-                <span className="nav-indicator"></span>
-              </Link>
-            </li>
-            <li>
               <Link href="/community" className="nav-link group text-[#7c2d12]">
                 <span className="nav-text">コミュニティ</span>
                 <span className="nav-indicator"></span>

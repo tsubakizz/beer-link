@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../lib/auth-context';
 import {
@@ -18,27 +17,13 @@ import {
   getCountFromServer,
 } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
-import ReviewForm from './ReviewForm';
 import LoadingSpinner from '../LoadingSpinner';
 import AuthModal from '../AuthModal';
-
-interface Review {
-  id: string;
-  userId: string;
-  userName: string;
-  userPhotoURL?: string | null;
-  rating: number;
-  comment: string;
-  imageUrl?: string | null;
-  createdAt: any; // Firestoreのタイムスタンプ
-}
-
-interface ReviewsSectionProps {
-  beerId: string;
-  beerName: string;
-  maxReviews?: number; // 表示するレビュー数の上限
-  onReviewsLoaded?: (reviewCount: number, avgRating: number) => void; // 親コンポーネントに情報を渡すためのコールバック
-}
+import ReviewItem from './ReviewItem';
+import ImageModal from './ImageModal';
+import DeleteConfirmationModal from './DeleteConfirmationModal';
+import ReviewActions from './ReviewActions';
+import { Review, ReviewsSectionProps } from './types/review.types';
 
 export default function ReviewsSection({
   beerId,
@@ -101,22 +86,6 @@ export default function ReviewsSection({
       }
     } catch (err) {
       console.error('レーティング計算中にエラーが発生しました:', err);
-    }
-  };
-
-  // 全レビュー数を取得する関数
-  const fetchTotalReviewCount = async () => {
-    try {
-      const countQuery = query(
-        collection(db, 'reviews'),
-        where('beerId', '==', beerId)
-      );
-
-      const snapshot = await getCountFromServer(countQuery);
-      setTotalReviewCount(snapshot.data().count);
-    } catch (err) {
-      console.error('レビュー総数の取得中にエラーが発生しました:', err);
-      // エラーがあっても処理は継続する
     }
   };
 
@@ -254,6 +223,7 @@ export default function ReviewsSection({
       transition={{ duration: 0.5, delay: 0.4 }}
       className="bg-white rounded-xl shadow-sm p-6"
     >
+      {/* ヘッダー部分 */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold text-amber-900 flex items-center gap-2">
           <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -284,77 +254,17 @@ export default function ReviewsSection({
       </div>
 
       {/* 削除確認モーダル */}
-      {deleteConfirmation && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg max-w-md w-full p-6 shadow-xl">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              レビューを削除しますか？
-            </h3>
-            <p className="text-gray-600 mb-6">
-              この操作は取り消せません。本当にこのレビューを削除しますか？
-            </p>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setDeleteConfirmation(null)}
-                className="btn btn-ghost text-gray-700"
-                disabled={actionLoading}
-              >
-                キャンセル
-              </button>
-              <button
-                onClick={handleDeleteReview}
-                className="btn bg-red-600 hover:bg-red-700 text-white"
-                disabled={actionLoading}
-              >
-                {actionLoading ? (
-                  <div className="flex items-center">
-                    <LoadingSpinner size="small" className="p-0" />
-                    <span className="ml-2">削除中...</span>
-                  </div>
-                ) : (
-                  '削除する'
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <DeleteConfirmationModal
+        isOpen={!!deleteConfirmation}
+        isLoading={actionLoading}
+        onCancel={() => setDeleteConfirmation(null)}
+        onConfirm={handleDeleteReview}
+      />
 
       {/* 画像拡大表示モーダル */}
-      {enlargedImage && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 cursor-pointer"
-          onClick={handleCloseEnlargedImage}
-        >
-          <div className="relative max-w-4xl w-full max-h-[90vh] flex items-center justify-center">
-            <button
-              onClick={handleCloseEnlargedImage}
-              className="absolute top-2 right-2 bg-black bg-opacity-50 text-white rounded-full p-2 hover:bg-opacity-70"
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-            <img
-              src={enlargedImage}
-              alt="拡大画像"
-              className="max-w-full max-h-[90vh] object-contain"
-              onClick={(e) => e.stopPropagation()}
-            />
-          </div>
-        </div>
-      )}
+      <ImageModal imageUrl={enlargedImage} onClose={handleCloseEnlargedImage} />
 
+      {/* コンテンツ部分 */}
       {loading ? (
         <LoadingSpinner size="small" message="レビューを読み込み中..." />
       ) : error ? (
@@ -368,194 +278,19 @@ export default function ReviewsSection({
               key={review.id}
               className="border-b border-amber-100 pb-6 last:border-b-0"
             >
-              {/* 編集中のレビュー */}
-              {editingReview && editingReview.id === review.id ? (
-                <ReviewForm
-                  beerId={beerId}
-                  beerName={beerName}
-                  isEditMode={true}
-                  existingReview={{
-                    id: review.id,
-                    rating: review.rating,
-                    comment: review.comment,
-                    imageUrl: review.imageUrl,
-                  }}
-                  onReviewSubmitted={handleReviewSubmitted}
-                  onCancelEdit={handleCancelEdit}
-                />
-              ) : (
-                /* レビュー表示 */
-                <>
-                  <div className="flex justify-between items-start">
-                    <div className="flex items-center gap-3">
-                      <div className="avatar">
-                        {review.userPhotoURL ? (
-                          <div className="w-10 h-10 rounded-full overflow-hidden">
-                            <img
-                              src={review.userPhotoURL}
-                              alt={review.userName}
-                            />
-                          </div>
-                        ) : (
-                          <div className="bg-gradient-to-br from-amber-200 to-amber-100 text-amber-800 rounded-full w-10 h-10 flex items-center justify-center font-bold">
-                            {review.userName.charAt(0)}
-                          </div>
-                        )}
-                      </div>
-                      <div>
-                        <p className="font-medium text-amber-900">
-                          {review.userName}
-                        </p>
-                        <div className="flex items-center">
-                          {/* 星評価の表示 */}
-                          {[1, 2, 3, 4, 5].map((star) => {
-                            // 整数部分の星
-                            const fullStar = star <= Math.floor(review.rating);
-                            // 部分的に塗りつぶす星（0.1〜0.9）
-                            const partialFill =
-                              !fullStar && star === Math.ceil(review.rating);
-                            // 塗りつぶし率（小数点以下の値）
-                            const fillPercentage = partialFill
-                              ? (review.rating % 1) * 100
-                              : 0;
-
-                            return (
-                              <div key={star} className="relative">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  className={`h-4 w-4 ${
-                                    fullStar || partialFill
-                                      ? 'text-amber-500'
-                                      : 'text-gray-300'
-                                  }`}
-                                  fill={
-                                    fullStar
-                                      ? 'currentColor'
-                                      : partialFill
-                                      ? `url(#partial-gradient-${review.id}-${star})`
-                                      : 'none'
-                                  }
-                                  viewBox="0 0 20 20"
-                                >
-                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-
-                                  {/* 部分的に塗りつぶす星のグラデーション */}
-                                  {partialFill && (
-                                    <defs>
-                                      <linearGradient
-                                        id={`partial-gradient-${review.id}-${star}`}
-                                        x1="0%"
-                                        y1="0%"
-                                        x2="100%"
-                                        y2="0%"
-                                      >
-                                        <stop
-                                          offset={`${fillPercentage}%`}
-                                          stopColor="currentColor"
-                                        />
-                                        <stop
-                                          offset={`${fillPercentage}%`}
-                                          stopColor="transparent"
-                                        />
-                                      </linearGradient>
-                                    </defs>
-                                  )}
-                                </svg>
-                              </div>
-                            );
-                          })}
-                          <span className="text-xs text-amber-600 ml-1">
-                            {review.rating.toFixed(1)}
-                          </span>
-                          <span className="text-xs text-gray-500 ml-3">
-                            {formatDate(review.createdAt)}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* 編集・削除ボタン（自分のレビューの場合のみ表示） */}
-                    {isReviewOwner(review) && (
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => handleEditReview(review)}
-                          className="text-amber-600 hover:text-amber-800"
-                          title="レビューを編集"
-                        >
-                          <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                            />
-                          </svg>
-                        </button>
-                        <button
-                          onClick={() => handleDeleteConfirm(review.id)}
-                          className="text-red-500 hover:text-red-700"
-                          title="レビューを削除"
-                        >
-                          <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                  <p className="mt-3 text-amber-800 whitespace-pre-wrap">
-                    {review.comment}
-                  </p>
-
-                  {/* レビュー画像表示 */}
-                  {review.imageUrl && (
-                    <div className="mt-3">
-                      <div
-                        className="relative h-48 w-full md:w-1/2 lg:w-1/3 bg-gray-100 rounded-lg overflow-hidden cursor-pointer"
-                        onClick={() => handleImageClick(review.imageUrl!)}
-                      >
-                        <Image
-                          src={review.imageUrl}
-                          alt={`${review.userName}さんのレビュー画像`}
-                          fill
-                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          style={{ objectFit: "contain" }}
-                          className="rounded-lg"
-                        />
-                        <div className="absolute inset-0 bg-black opacity-0 hover:opacity-10 transition-opacity duration-200 flex items-center justify-center">
-                          <svg
-                            className="w-10 h-10 text-white"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                            <path
-                              fillRule="evenodd"
-                              d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </>
-              )}
+              <ReviewItem
+                review={review}
+                isEditing={!!editingReview && editingReview.id === review.id}
+                isOwner={isReviewOwner(review)}
+                beerId={beerId}
+                beerName={beerName}
+                onEdit={handleEditReview}
+                onDelete={handleDeleteConfirm}
+                onImageClick={handleImageClick}
+                onReviewSubmitted={handleReviewSubmitted}
+                onCancelEdit={handleCancelEdit}
+                formatDate={formatDate}
+              />
             </div>
           ))}
         </div>
@@ -570,45 +305,16 @@ export default function ReviewsSection({
 
       {/* レビュー投稿フォーム/レビュー投稿ボタン */}
       <div className="mt-6">
-        {showReviewForm && !editingReview ? (
-          <div className="mt-4">
-            <ReviewForm
-              beerId={beerId}
-              beerName={beerName}
-              onReviewSubmitted={handleReviewSubmitted}
-            />
-            <button
-              onClick={() => setShowReviewForm(false)}
-              className="w-full mt-3 btn btn-outline border-amber-300 text-amber-700 hover:bg-amber-100"
-            >
-              キャンセル
-            </button>
-          </div>
-        ) : (
-          !editingReview && (
-            <div className="text-center">
-              <button
-                onClick={handleReviewButtonClick}
-                className="btn bg-white hover:bg-amber-50 border-amber-300 text-amber-800"
-              >
-                <svg
-                  className="w-5 h-5 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                  />
-                </svg>
-                レビューを書く
-              </button>
-            </div>
-          )
-        )}
+        <ReviewActions
+          showForm={showReviewForm}
+          isEditing={!!editingReview}
+          beerId={beerId}
+          beerName={beerName}
+          isLoggedIn={!!user}
+          onReviewButtonClick={handleReviewButtonClick}
+          onFormCancel={() => setShowReviewForm(false)}
+          onReviewSubmitted={handleReviewSubmitted}
+        />
       </div>
 
       {/* 認証モーダル */}

@@ -27,7 +27,7 @@ export default function BackgroundBubbles({
 }: BackgroundBubblesProps) {
   return (
     <div
-      className={`fixed top-0 left-0 w-full h-full -z-10 overflow-hidden pointer-events-none ${className}`}
+      className={`absolute top-0 left-0 w-full h-full -z-10 overflow-hidden pointer-events-none ${className}`}
     >
       {[...Array(count)].map((_, i) => (
         <div

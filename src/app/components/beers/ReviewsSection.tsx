@@ -19,6 +19,7 @@ import {
 import { db } from '../../lib/firebase';
 import ReviewForm from './ReviewForm';
 import LoadingSpinner from '../LoadingSpinner';
+import AuthModal from '../AuthModal';
 
 interface Review {
   id: string;
@@ -56,6 +57,7 @@ export default function ReviewsSection({
     reviewId: string;
   } | null>(null);
   const [actionLoading, setActionLoading] = useState<boolean>(false);
+  const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
 
   // 全レビュー取得とレーティングの計算
   const fetchAllReviewsAndCalculateRating = async () => {
@@ -218,6 +220,18 @@ export default function ReviewsSection({
   // レビュー所有者かどうかを確認
   const isReviewOwner = (review: Review): boolean => {
     return user?.uid === review.userId;
+  };
+
+  const handleReviewButtonClick = () => {
+    if (!user) {
+      setShowAuthModal(true);
+    } else {
+      setShowReviewForm(true);
+    }
+  };
+
+  const handleAuthModalClose = () => {
+    setShowAuthModal(false);
   };
 
   return (
@@ -492,7 +506,7 @@ export default function ReviewsSection({
           !editingReview && (
             <div className="text-center">
               <button
-                onClick={() => setShowReviewForm(true)}
+                onClick={handleReviewButtonClick}
                 className="btn bg-white hover:bg-amber-50 border-amber-300 text-amber-800"
               >
                 <svg
@@ -514,6 +528,13 @@ export default function ReviewsSection({
           )
         )}
       </div>
+
+      {/* 認証モーダル */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={handleAuthModalClose}
+        returnUrl={`/beers/${beerId}`}
+      />
     </motion.div>
   );
 }

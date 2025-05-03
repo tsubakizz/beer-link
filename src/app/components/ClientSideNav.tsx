@@ -3,8 +3,12 @@
 import Link from 'next/link';
 import { useAuth } from '../lib/auth-context';
 
+interface ClientSideNavProps {
+  closeDrawer?: () => void;
+}
+
 // クライアント側のナビゲーションコンポーネント
-export default function ClientSideNav() {
+export default function ClientSideNav({ closeDrawer }: ClientSideNavProps) {
   const { user, logout } = useAuth();
 
   return (
@@ -12,9 +16,9 @@ export default function ClientSideNav() {
       {user ? (
         <>
           <div className="flex items-center mb-2">
-            {user.avatarUrl ? (
+            {user.photoURL ? (
               <img
-                src={user.avatarUrl}
+                src={user.photoURL}
                 alt="ユーザーアイコン"
                 className="w-10 h-10 rounded-full mr-3"
               />
@@ -30,24 +34,46 @@ export default function ClientSideNav() {
               <p className="text-xs text-amber-700">ログイン中</p>
             </div>
           </div>
-          <Link
-            href="/profile"
-            className="btn btn-sm w-full btn-outline btn-warning justify-start"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-2"
-              viewBox="0 0 20 20"
-              fill="currentColor"
+          <div className="space-y-2">
+            <Link
+              href="/mypage"
+              className="beer-menu-item"
+              onClick={closeDrawer}
             >
-              <path
-                fillRule="evenodd"
-                d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                clipRule="evenodd"
-              />
-            </svg>
-            マイプロフィール
-          </Link>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              マイページ
+            </Link>
+            <Link
+              href="/favorites"
+              className="beer-menu-item"
+              onClick={closeDrawer}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1V4a1 1 0 00-1-1H3zm11 4a1 1 0 10-2 0v4.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L14 11.586V7z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              お気に入り
+            </Link>
+          </div>
           <button
             onClick={logout}
             className="btn btn-sm w-full btn-outline btn-warning justify-start"

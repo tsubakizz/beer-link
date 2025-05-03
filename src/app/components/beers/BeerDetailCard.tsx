@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Beer } from '../../../app/lib/beers-data';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useAuth } from '../../lib/auth-context';
+import AuthModal from '../AuthModal';
 
 interface BeerDetailCardProps {
   beer: Beer;
@@ -17,6 +19,11 @@ export default function BeerDetailCard({
   reviewCount,
   averageRating,
 }: BeerDetailCardProps) {
+  const { user, toggleFavoriteBeer, isLoading } = useAuth();
+  const [isFavorite, setIsFavorite] = useState<boolean>(false);
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
+
   // 表示するレビュー件数と評価（Firestoreの値があればそれを使用、なければ0）
   const displayReviewCount = reviewCount !== undefined ? reviewCount : 0;
 
@@ -26,6 +33,39 @@ export default function BeerDetailCard({
     averageRating !== null &&
     reviewCount &&
     reviewCount > 0;
+
+  // ユーザーのお気に入りリストにこのビールがあるかチェック
+  useEffect(() => {
+    if (user && user.favoriteBeers) {
+      setIsFavorite(user.favoriteBeers.includes(beer.id));
+    } else {
+      setIsFavorite(false);
+    }
+  }, [user, beer.id]);
+
+  // お気に入りの切り替えまたはログインモーダル表示
+  const handleToggleFavorite = async () => {
+    if (!user) {
+      // ユーザーがログインしていない場合、ログインモーダルを表示
+      setShowAuthModal(true);
+      return;
+    }
+
+    setIsProcessing(true);
+    try {
+      const success = await toggleFavoriteBeer(beer.id);
+      if (success) {
+        setIsFavorite(!isFavorite);
+      }
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  // ログインモーダルを閉じる
+  const handleAuthModalClose = () => {
+    setShowAuthModal(false);
+  };
 
   return (
     <motion.div
@@ -83,11 +123,23 @@ export default function BeerDetailCard({
                 {displayReviewCount}件のレビュー
               </span>
             </div>
-            <button className="btn btn-sm bg-white hover:bg-amber-50 text-amber-700 border-amber-300">
+            <button
+              className={`btn btn-sm ${
+                isFavorite
+                  ? 'bg-amber-500 hover:bg-amber-600 text-white'
+                  : 'bg-white hover:bg-amber-50 text-amber-700 border-amber-300'
+              }`}
+              onClick={handleToggleFavorite}
+              disabled={isProcessing || isLoading}
+              title={
+                isFavorite ? 'お気に入りから削除する' : 'お気に入りに追加する'
+              }
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 mr-1"
-                fill="none"
+                className={`h-4 w-4 mr-1 ${
+                  isFavorite ? 'fill-white' : 'fill-none'
+                }`}
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
@@ -98,7 +150,7 @@ export default function BeerDetailCard({
                   d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
                 />
               </svg>
-              お気に入り
+              {isFavorite ? 'お気に入り済' : 'お気に入り'}
             </button>
           </div>
 
@@ -160,6 +212,13 @@ export default function BeerDetailCard({
         </h2>
         <p className="text-amber-800">{beer.description}</p>
       </div>
+
+      {/* 認証モーダル */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={handleAuthModalClose}
+        returnUrl={`/beers/${beer.id}`}
+      />
     </motion.div>
   );
 }

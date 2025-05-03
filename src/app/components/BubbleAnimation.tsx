@@ -24,7 +24,7 @@ export default function BubbleAnimation({
 
   if (type === 'background') {
     containerClassName =
-      'fixed top-0 left-0 w-full h-full -z-10 overflow-hidden pointer-events-none';
+      'absolute top-0 left-0 w-full h-full -z-10 overflow-hidden pointer-events-none';
     bubbleBaseStyle = {
       backgroundColor: '#fef3c7', // amber-100
       opacity: 0.3,

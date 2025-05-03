@@ -17,6 +17,11 @@ import {
   signInWithPopup,
   updateProfile,
   sendPasswordResetEmail,
+  fetchSignInMethodsForEmail,
+  linkWithCredential,
+  EmailAuthProvider,
+  AuthCredential,
+  deleteUser,
 } from 'firebase/auth';
 import {
   doc,
@@ -24,6 +29,8 @@ import {
   getDoc,
   updateDoc,
   serverTimestamp,
+  arrayUnion,
+  deleteDoc,
 } from 'firebase/firestore';
 import { auth, db } from './firebase';
 import { users, type User } from './users-data';
@@ -72,6 +79,8 @@ interface AuthContextType {
     displayName: string
   ) => Promise<boolean>;
   sendPasswordReset: (email: string) => Promise<boolean>;
+  deleteAccount: () => Promise<boolean>;
+  toggleFavoriteBeer: (beerId: string) => Promise<boolean>; // お気に入りビール切り替え
   isLoading: boolean;
   error: string | null;
 }
@@ -230,11 +239,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
+      const credential = GoogleAuthProvider.credentialFromResult(result);
 
-      // Firestoreにユーザーが存在するか確認
+      if (!credential) {
+        throw new Error('認証情報の取得に失敗しました');
+      }
+
+      // 現在のユーザーがログインしている場合は、アカウントをリンク
+      if (auth.currentUser && credential) {
+        try {
+          await linkWithCredential(auth.currentUser, credential);
+          // プロバイダー情報を更新
+          await updateDoc(doc(db, 'users', auth.currentUser.uid), {
+            providers: arrayUnion('google'),
+            updatedAt: serverTimestamp(),
+          });
+          return true;
+        } catch (e: any) {
+          if (e.code === 'auth/provider-already-linked') {
+            setError('このGoogleアカウントは既に連携されています');
+          } else if (e.code === 'auth/credential-already-in-use') {
+            setError(
+              'このGoogleアカウントは既に別のアカウントで使用されています'
+            );
+          } else {
+            setError('アカウントの連携中にエラーが発生しました');
+          }
+          return false;
+        }
+      }
+
+      // 新規ユーザーの場合は通常のログインフロー
       const userDoc = await getDoc(doc(db, 'users', user.uid));
 
-      // ユーザーが存在しない場合は新規作成
       if (!userDoc.exists()) {
         const username = user.email
           ? user.email.split('@')[0]
@@ -252,10 +289,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           lastLoggedIn: serverTimestamp(),
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
+          providers: ['google'],
         });
       } else {
-        // 存在する場合はログイン時刻を更新
         await updateLoginTimestamp(user.uid);
+        await updateDoc(doc(db, 'users', user.uid), {
+          providers: arrayUnion('google'),
+          updatedAt: serverTimestamp(),
+        });
       }
 
       return true;
@@ -267,6 +308,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else if (e.code === 'auth/popup-blocked') {
         errorMessage =
           'ポップアップがブロックされました。ポップアップを許可してください';
+      } else if (e.code === 'auth/account-exists-with-different-credential') {
+        errorMessage = 'このメールアドレスは既に別の方法で登録されています';
       }
 
       setError(errorMessage);
@@ -399,6 +442,71 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // ユーザーアカウントの削除（退会）
+  const deleteAccount = async (): Promise<boolean> => {
+    if (!auth || !auth.currentUser || !db) return false;
+
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      const user = auth.currentUser;
+
+      // Firestoreからユーザーデータを削除
+      await deleteDoc(doc(db, 'users', user.uid));
+
+      // Firebaseユーザーを削除
+      await user.delete();
+
+      return true;
+    } catch (e: any) {
+      let errorMessage = '退会処理中にエラーが発生しました';
+
+      if (e.code === 'auth/requires-recent-login') {
+        errorMessage =
+          '安全のため、再度ログインしてから退会手続きを行ってください';
+      }
+
+      setError(errorMessage);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // お気に入りビールの切り替え
+  const toggleFavoriteBeer = async (beerId: string): Promise<boolean> => {
+    if (!auth || !auth.currentUser || !db || !user) return false;
+
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      const userRef = doc(db, 'users', auth.currentUser.uid);
+      const currentFavorites = user.favoriteBeers || [];
+
+      let updatedFavorites;
+      if (currentFavorites.includes(beerId)) {
+        updatedFavorites = currentFavorites.filter((id) => id !== beerId);
+      } else {
+        updatedFavorites = [...currentFavorites, beerId];
+      }
+
+      await updateDoc(userRef, {
+        favoriteBeers: updatedFavorites,
+        updatedAt: serverTimestamp(),
+      });
+
+      setUser({ ...user, favoriteBeers: updatedFavorites });
+      return true;
+    } catch (e) {
+      console.error('お気に入りビールの切り替え中にエラーが発生しました', e);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // コンテキスト値
   const value = {
     user,
@@ -408,6 +516,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     logout,
     register,
     sendPasswordReset,
+    deleteAccount,
+    toggleFavoriteBeer,
     isLoading,
     error,
   };

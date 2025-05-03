@@ -1,9 +1,21 @@
+'use client';
+
 import Link from 'next/link';
 import React from 'react';
 import ClientSideNav from './ClientSideNav';
 
 // ドロワーメニューコンポーネント
 export default function DrawerMenu() {
+  // ドロワーメニューを閉じる関数
+  const closeDrawer = () => {
+    const drawerCheckbox = document.getElementById(
+      'beer-drawer'
+    ) as HTMLInputElement;
+    if (drawerCheckbox) {
+      drawerCheckbox.checked = false;
+    }
+  };
+
   return (
     <div className="drawer-side z-30">
       <label
@@ -62,13 +74,13 @@ export default function DrawerMenu() {
 
           {/* ログイン・会員登録リンク（メニュー内に配置） */}
           <div className="mb-6 pb-4 border-b border-amber-200">
-            <ClientSideNav />
+            <ClientSideNav closeDrawer={closeDrawer} />
           </div>
 
           {/* モバイルメニュー項目 */}
           <ul className="space-y-1">
             <li>
-              <Link href="/" className="beer-menu-item">
+              <Link href="/" className="beer-menu-item" onClick={closeDrawer}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5"
@@ -81,7 +93,11 @@ export default function DrawerMenu() {
               </Link>
             </li>
             <li>
-              <Link href="/guides" className="beer-menu-item">
+              <Link
+                href="/guides"
+                className="beer-menu-item"
+                onClick={closeDrawer}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5"
@@ -94,7 +110,11 @@ export default function DrawerMenu() {
               </Link>
             </li>
             <li>
-              <Link href="/beers" className="beer-menu-item">
+              <Link
+                href="/beers"
+                className="beer-menu-item"
+                onClick={closeDrawer}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5"
@@ -112,7 +132,11 @@ export default function DrawerMenu() {
               </Link>
             </li>
             <li>
-              <Link href="/breweries" className="beer-menu-item">
+              <Link
+                href="/breweries"
+                className="beer-menu-item"
+                onClick={closeDrawer}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5"
@@ -129,7 +153,11 @@ export default function DrawerMenu() {
               </Link>
             </li>
             <li>
-              <Link href="/community" className="beer-menu-item">
+              <Link
+                href="/community"
+                className="beer-menu-item"
+                onClick={closeDrawer}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5"
@@ -142,7 +170,11 @@ export default function DrawerMenu() {
               </Link>
             </li>
             <li>
-              <Link href="/about" className="beer-menu-item">
+              <Link
+                href="/about"
+                className="beer-menu-item"
+                onClick={closeDrawer}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5"

@@ -12,12 +12,12 @@ import {
 } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import LoadingSpinner from '../LoadingSpinner';
+import AuthModal from '../AuthModal';
 
 interface ReviewFormProps {
   beerId: string;
   beerName: string;
   onReviewSubmitted?: () => void;
-  // 編集モード用の追加プロパティ
   isEditMode?: boolean;
   existingReview?: {
     id: string;
@@ -52,22 +52,14 @@ export default function ReviewForm({
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
-
-  // ログインしていない場合はログインページへリダイレクト
-  useEffect(() => {
-    if (!user && typeof window !== 'undefined') {
-      // 遷移前にセッションストレージにリダイレクト情報を保存
-      sessionStorage.setItem('redirectAfterLogin', `/beers/${beerId}`);
-      router.push('/login?redirect=true');
-    }
-  }, [user, router, beerId]);
+  const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
 
   // レビュー送信処理
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!user) {
-      setError('レビューを投稿するにはログインが必要です');
+      setShowAuthModal(true);
       return;
     }
 
@@ -194,16 +186,6 @@ export default function ReviewForm({
     return <div className="flex justify-center mt-2 mb-1">{stars}</div>;
   };
 
-  // ログインしていない場合はローディング表示
-  if (!user) {
-    return (
-      <LoadingSpinner
-        size="small"
-        message="ログインページへリダイレクト中..."
-      />
-    );
-  }
-
   return (
     <div className="bg-amber-50 rounded-xl p-6 shadow-sm border border-amber-100">
       <h3 className="text-lg font-semibold text-amber-900 mb-4">
@@ -318,6 +300,12 @@ export default function ReviewForm({
           </div>
         </form>
       )}
+
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        returnUrl={`/beers/${beerId}`}
+      />
     </div>
   );
 }

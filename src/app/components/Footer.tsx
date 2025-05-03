@@ -3,7 +3,7 @@ import React from 'react';
 
 export default function Footer() {
   return (
-    <footer className="bg-gradient-to-br from-amber-300 via-amber-400 to-amber-300 text-amber-900 py-10 relative overflow-hidden">
+    <footer className="bg-gradient-to-br from-amber-300 via-amber-400 to-amber-300 text-amber-900 py-10 relative overflow-hidden z-[7]">
       {/* 泡の装飾 - フッター用（少なめ） */}
       <div className="bubbles-footer">
         {[...Array(8)].map((_, i) => (

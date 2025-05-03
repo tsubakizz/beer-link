@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../lib/auth-context';
 import {
@@ -13,6 +13,9 @@ import {
 import { db } from '../../lib/firebase';
 import LoadingSpinner from '../LoadingSpinner';
 import AuthModal from '../AuthModal';
+import { uploadImageToR2 } from '../../lib/r2-storage';
+import { compressImage } from '../../lib/image-compressor';
+import Image from 'next/image';
 
 interface ReviewFormProps {
   beerId: string;
@@ -23,6 +26,7 @@ interface ReviewFormProps {
     id: string;
     rating: number;
     comment: string;
+    imageUrl?: string;
   };
   onCancelEdit?: () => void;
 }
@@ -41,6 +45,7 @@ export default function ReviewForm({
 }: ReviewFormProps) {
   const { user } = useAuth();
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // フォーム状態
   const [rating, setRating] = useState<number>(
@@ -49,10 +54,72 @@ export default function ReviewForm({
   const [comment, setComment] = useState<string>(
     isEditMode && existingReview ? existingReview.comment : ''
   );
+  const [image, setImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    isEditMode && existingReview?.imageUrl ? existingReview.imageUrl : null
+  );
+  const [isUploading, setIsUploading] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
   const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
+
+  // 画像ファイル選択時のハンドラー
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const selectedFile = e.target.files[0];
+
+      // ファイルサイズのチェック (最大10MB)
+      if (selectedFile.size > 10 * 1024 * 1024) {
+        setError('画像サイズは10MB以下にしてください');
+        return;
+      }
+
+      // 画像ファイルのみ許可
+      if (!selectedFile.type.startsWith('image/')) {
+        setError('画像ファイルのみアップロードできます');
+        return;
+      }
+
+      setError(null);
+
+      // プレビュー表示（元のサイズの画像）
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(selectedFile);
+
+      try {
+        // 画像を圧縮（ここでは保存せず、setImageで保持するだけ）
+        const compressedImage = await compressImage(selectedFile, {
+          maxSizeMB: 1, // 最大1MB
+          maxWidthOrHeight: 1280, // 最大幅/高さ1280px
+          quality: 0.8, // 品質80%
+        });
+
+        setImage(compressedImage);
+        console.log(
+          `画像圧縮: ${(selectedFile.size / 1024).toFixed(2)}KB → ${(
+            compressedImage.size / 1024
+          ).toFixed(2)}KB`
+        );
+      } catch (err) {
+        console.error('画像圧縮エラー:', err);
+        // 圧縮に失敗した場合は、元の画像をそのまま使用
+        setImage(selectedFile);
+      }
+    }
+  };
+
+  // 画像削除ボタンのハンドラー
+  const handleRemoveImage = () => {
+    setImage(null);
+    setImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
   // レビュー送信処理
   const handleSubmit = async (e: React.FormEvent) => {
@@ -72,6 +139,25 @@ export default function ReviewForm({
     setError(null);
 
     try {
+      // 画像のアップロード処理
+      let imageUrl =
+        isEditMode && existingReview?.imageUrl ? existingReview.imageUrl : null;
+
+      if (image) {
+        setIsUploading(true);
+        try {
+          // すでに圧縮済みの画像をR2にアップロード
+          imageUrl = await uploadImageToR2(image, 'reviews');
+          setIsUploading(false);
+        } catch (uploadError) {
+          console.error('画像アップロードエラー:', uploadError);
+          setError('画像のアップロードに失敗しました');
+          setIsSubmitting(false);
+          setIsUploading(false);
+          return;
+        }
+      }
+
       if (isEditMode && existingReview) {
         // 既存レビューの更新
         const reviewRef = doc(db, 'reviews', existingReview.id);
@@ -79,6 +165,10 @@ export default function ReviewForm({
           rating,
           comment,
           updatedAt: serverTimestamp(),
+          ...(imageUrl !== null ? { imageUrl } : {}),
+          ...(imageUrl === null && existingReview.imageUrl
+            ? { imageUrl: null }
+            : {}),
         });
       } else {
         // 新規レビューの登録
@@ -90,6 +180,7 @@ export default function ReviewForm({
           userPhotoURL: user.photoURL || null,
           rating,
           comment,
+          imageUrl: imageUrl || null,
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
         };
@@ -104,6 +195,11 @@ export default function ReviewForm({
       if (!isEditMode) {
         setRating(0);
         setComment('');
+        setImage(null);
+        setImagePreview(null);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
       }
 
       // 親コンポーネントに通知（必要に応じて）
@@ -262,6 +358,95 @@ export default function ReviewForm({
             />
           </div>
 
+          {/* 画像アップロード部分 */}
+          <div className="mb-4">
+            <label
+              htmlFor="image"
+              className="block text-amber-800 text-sm font-medium mb-2"
+            >
+              画像を追加 (オプション)
+            </label>
+
+            {imagePreview ? (
+              <div className="relative mb-3">
+                <div className="relative h-48 w-full bg-gray-100 rounded-lg overflow-hidden">
+                  <Image
+                    src={imagePreview}
+                    alt="レビュー画像プレビュー"
+                    fill
+                    sizes="100vw"
+                    style={{ objectFit: 'contain' }}
+                    className="rounded-lg"
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={handleRemoveImage}
+                  className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                  title="画像を削除"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center w-full">
+                <label
+                  htmlFor="image-upload"
+                  className="flex flex-col items-center justify-center w-full h-32 border-2 border-amber-300 border-dashed rounded-lg cursor-pointer bg-amber-50 hover:bg-amber-100"
+                >
+                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                    <svg
+                      className="w-8 h-8 mb-2 text-amber-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                    <p className="text-sm text-amber-800">
+                      クリックして画像をアップロード
+                    </p>
+                    <p className="text-xs text-amber-600">
+                      (最大5MB、JPG、PNG)
+                    </p>
+                  </div>
+                  <input
+                    id="image-upload"
+                    type="file"
+                    ref={fileInputRef}
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageChange}
+                  />
+                </label>
+              </div>
+            )}
+
+            {isUploading && (
+              <div className="flex items-center mt-2 text-amber-700">
+                <LoadingSpinner size="small" />
+                <span className="ml-2 text-sm">画像をアップロード中...</span>
+              </div>
+            )}
+          </div>
+
           {error && (
             <div className="bg-red-100 text-red-800 p-3 rounded-lg mb-4">
               {error}
@@ -271,7 +456,7 @@ export default function ReviewForm({
           <div className="flex flex-col sm:flex-row gap-3">
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isUploading}
               className="btn bg-amber-600 hover:bg-amber-700 text-white flex-1"
             >
               {isSubmitting ? (

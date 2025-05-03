@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../lib/auth-context';
 import {
@@ -28,6 +29,7 @@ interface Review {
   userPhotoURL?: string | null;
   rating: number;
   comment: string;
+  imageUrl?: string | null;
   createdAt: any; // Firestoreのタイムスタンプ
 }
 
@@ -58,6 +60,7 @@ export default function ReviewsSection({
   } | null>(null);
   const [actionLoading, setActionLoading] = useState<boolean>(false);
   const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
+  const [enlargedImage, setEnlargedImage] = useState<string | null>(null);
 
   // 全レビュー取得とレーティングの計算
   const fetchAllReviewsAndCalculateRating = async () => {
@@ -234,6 +237,16 @@ export default function ReviewsSection({
     setShowAuthModal(false);
   };
 
+  // 画像を拡大表示
+  const handleImageClick = (imageUrl: string) => {
+    setEnlargedImage(imageUrl);
+  };
+
+  // 拡大表示を閉じる
+  const handleCloseEnlargedImage = () => {
+    setEnlargedImage(null);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -307,6 +320,41 @@ export default function ReviewsSection({
         </div>
       )}
 
+      {/* 画像拡大表示モーダル */}
+      {enlargedImage && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 cursor-pointer"
+          onClick={handleCloseEnlargedImage}
+        >
+          <div className="relative max-w-4xl w-full max-h-[90vh] flex items-center justify-center">
+            <button
+              onClick={handleCloseEnlargedImage}
+              className="absolute top-2 right-2 bg-black bg-opacity-50 text-white rounded-full p-2 hover:bg-opacity-70"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+            <img
+              src={enlargedImage}
+              alt="拡大画像"
+              className="max-w-full max-h-[90vh] object-contain"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
+
       {loading ? (
         <LoadingSpinner size="small" message="レビューを読み込み中..." />
       ) : error ? (
@@ -330,6 +378,7 @@ export default function ReviewsSection({
                     id: review.id,
                     rating: review.rating,
                     comment: review.comment,
+                    imageUrl: review.imageUrl,
                   }}
                   onReviewSubmitted={handleReviewSubmitted}
                   onCancelEdit={handleCancelEdit}
@@ -472,6 +521,39 @@ export default function ReviewsSection({
                   <p className="mt-3 text-amber-800 whitespace-pre-wrap">
                     {review.comment}
                   </p>
+
+                  {/* レビュー画像表示 */}
+                  {review.imageUrl && (
+                    <div className="mt-3">
+                      <div
+                        className="relative h-48 w-full md:w-1/2 lg:w-1/3 bg-gray-100 rounded-lg overflow-hidden cursor-pointer"
+                        onClick={() => handleImageClick(review.imageUrl!)}
+                      >
+                        <Image
+                          src={review.imageUrl}
+                          alt={`${review.userName}さんのレビュー画像`}
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          style={{ objectFit: "contain" }}
+                          className="rounded-lg"
+                        />
+                        <div className="absolute inset-0 bg-black opacity-0 hover:opacity-10 transition-opacity duration-200 flex items-center justify-center">
+                          <svg
+                            className="w-10 h-10 text-white"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path
+                              fillRule="evenodd"
+                              d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </>
               )}
             </div>

@@ -48,33 +48,6 @@
 
 /* カスタムコンポーネント定義 */
 @layer components {
-  /* ヘッダーナビゲーションのスタイル */
-  .nav-link {
-    @apply relative px-2 py-3 flex items-center text-white/80 hover:text-white transition-colors duration-300;
-  }
-
-  .nav-text {
-    @apply relative z-10;
-  }
-
-  .nav-indicator {
-    @apply absolute inset-x-0 bottom-1 h-0.5 bg-amber-300 scale-x-0 origin-left transition-transform duration-300 ease-out opacity-0 group-hover:scale-x-100 group-hover:opacity-100;
-  }
-
-  /* フッターリンクのスタイル */
-  .footer-link {
-    @apply text-amber-100/80 hover:text-amber-100 flex items-center hover:translate-x-1 transition-all duration-300;
-  }
-
-  .footer-link::before {
-    content: '→';
-    @apply mr-1 text-amber-400 opacity-0 -translate-x-2 transition-all duration-300;
-  }
-
-  .footer-link:hover::before {
-    @apply opacity-100 -translate-x-0;
-  }
-
   /* 泡のアニメーション用スタイル */
   .bubbles {
     @apply absolute inset-0 z-0 overflow-hidden pointer-events-none;
@@ -202,26 +175,18 @@
     border-bottom: 1px dashed rgba(217, 119, 6, 0.2);
   }
 
-  .beer-menu-item:hover {
-    @apply bg-amber-100;
-    background-color: rgba(255, 255, 255, 0.3);
-    transform: translateY(-2px);
+  .beer-menu-item:hover,
+  .beer-menu-item:focus {
+    @apply bg-amber-100/60 text-amber-800;
+    outline: none;
   }
 
   .beer-menu-item:active {
-    background-color: rgba(245, 158, 11, 0.2);
-    transform: translateY(0);
-  }
-
-  .beer-menu-item:focus {
-    background: rgba(255, 255, 255, 0.4);
-    color: #5c3502;
-    transform: translateX(4px);
+    @apply bg-amber-200/60;
   }
 
   .beer-menu-item svg {
     @apply mr-3 text-amber-600;
-    color: #a05c05;
   }
 
   .beer-menu-item-active {

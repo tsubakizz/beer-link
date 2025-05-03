@@ -78,41 +78,53 @@ export default function Navigation() {
 
         {/* モバイルでは非表示、lg以上で表示 */}
         <div className="navbar-center hidden lg:flex">
-          <ul className="menu menu-horizontal gap-2">
+          <ul className="menu menu-horizontal gap-1">
             <li>
-              <Link href="/" className="nav-link group text-[#7c2d12]">
-                <span className="nav-text">ホーム</span>
-                <span className="nav-indicator"></span>
+              <Link
+                href="/"
+                className="btn btn-ghost rounded-btn text-[#7c2d12] hover:bg-amber-100/50"
+              >
+                ホーム
               </Link>
             </li>
             <li>
-              <Link href="/guides" className="nav-link group text-[#7c2d12]">
-                <span className="nav-text">ビールガイド</span>
-                <span className="nav-indicator"></span>
+              <Link
+                href="/guides"
+                className="btn btn-ghost rounded-btn text-[#7c2d12] hover:bg-amber-100/50"
+              >
+                ビールガイド
               </Link>
             </li>
             <li>
-              <Link href="/beers" className="nav-link group text-[#7c2d12]">
-                <span className="nav-text">ビール図鑑</span>
-                <span className="nav-indicator"></span>
+              <Link
+                href="/beers"
+                className="btn btn-ghost rounded-btn text-[#7c2d12] hover:bg-amber-100/50"
+              >
+                ビール図鑑
               </Link>
             </li>
             <li>
-              <Link href="/breweries" className="nav-link group text-[#7c2d12]">
-                <span className="nav-text">ブルワリー</span>
-                <span className="nav-indicator"></span>
+              <Link
+                href="/breweries"
+                className="btn btn-ghost rounded-btn text-[#7c2d12] hover:bg-amber-100/50"
+              >
+                ブルワリー
               </Link>
             </li>
             <li>
-              <Link href="/community" className="nav-link group text-[#7c2d12]">
-                <span className="nav-text">コミュニティ</span>
-                <span className="nav-indicator"></span>
+              <Link
+                href="/community"
+                className="btn btn-ghost rounded-btn text-[#7c2d12] hover:bg-amber-100/50"
+              >
+                コミュニティ
               </Link>
             </li>
             <li>
-              <Link href="/about" className="nav-link group text-[#7c2d12]">
-                <span className="nav-text">サイトについて</span>
-                <span className="nav-indicator"></span>
+              <Link
+                href="/about"
+                className="btn btn-ghost rounded-btn text-[#7c2d12] hover:bg-amber-100/50"
+              >
+                サイトについて
               </Link>
             </li>
           </ul>

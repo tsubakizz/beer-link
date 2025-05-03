@@ -49,7 +49,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/guides"
-                  className="footer-link text-amber-800 hover:text-amber-950"
+                  className="link text-amber-800 hover:text-amber-950"
                 >
                   ビールガイド
                 </Link>
@@ -57,7 +57,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/beers"
-                  className="footer-link text-amber-800 hover:text-amber-950"
+                  className="link text-amber-800 hover:text-amber-950"
                 >
                   ビール図鑑
                 </Link>
@@ -65,7 +65,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/reviews"
-                  className="footer-link text-amber-800 hover:text-amber-950"
+                  className="link text-amber-800 hover:text-amber-950"
                 >
                   レビュー
                 </Link>
@@ -73,7 +73,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/breweries"
-                  className="footer-link text-amber-800 hover:text-amber-950"
+                  className="link text-amber-800 hover:text-amber-950"
                 >
                   ブルワリー
                 </Link>
@@ -81,7 +81,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/community"
-                  className="footer-link text-amber-800 hover:text-amber-950"
+                  className="link text-amber-800 hover:text-amber-950"
                 >
                   コミュニティ
                 </Link>
@@ -89,7 +89,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/about"
-                  className="footer-link text-amber-800 hover:text-amber-950"
+                  className="link text-amber-800 hover:text-amber-950"
                 >
                   サイトについて
                 </Link>
@@ -106,7 +106,7 @@ export default function Footer() {
             </p>
             <Link
               href="/about"
-              className="btn bg-amber-500 hover:bg-amber-600 text-white border-none rounded-full"
+              className="link link-hover text-amber-900 font-medium"
             >
               お問い合わせフォーム
             </Link>

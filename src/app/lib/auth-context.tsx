@@ -1,13 +1,6 @@
 'use client';
 
 import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from 'react';
-import {
   User as FirebaseUser,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -17,11 +10,7 @@ import {
   signInWithPopup,
   updateProfile,
   sendPasswordResetEmail,
-  fetchSignInMethodsForEmail,
   linkWithCredential,
-  EmailAuthProvider,
-  AuthCredential,
-  deleteUser,
 } from 'firebase/auth';
 import {
   doc,
@@ -31,9 +20,18 @@ import {
   serverTimestamp,
   arrayUnion,
   deleteDoc,
+  Timestamp,
 } from 'firebase/firestore';
+import { FirebaseError } from 'firebase/app';
 import { auth, db } from './firebase';
 import { users, type User } from './users-data';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react';
 
 // 認証ユーザーの型定義（Firebaseと内部ユーザー情報を統合）
 export interface AuthUser {
@@ -61,9 +59,9 @@ interface FirestoreUser {
   favoriteBeers: string[];
   favoriteBreweries: string[];
   role: 'user' | 'admin';
-  lastLoggedIn: any; // serverTimestamp()を使用するため
-  createdAt: any;
-  updatedAt: any;
+  lastLoggedIn: Timestamp; // serverTimestamp()を使用するため
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
 }
 
 // 認証コンテキストの型定義
@@ -203,20 +201,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await updateLoginTimestamp(userCredential.user.uid);
 
       return true;
-    } catch (e: any) {
+    } catch (e) {
+      const firebaseError = e as FirebaseError;
       let errorMessage = 'ログイン中にエラーが発生しました';
 
       // Firebase Auth エラーコードに基づくメッセージ
       if (
-        e.code === 'auth/user-not-found' ||
-        e.code === 'auth/wrong-password'
+        firebaseError.code === 'auth/user-not-found' ||
+        firebaseError.code === 'auth/wrong-password'
       ) {
         errorMessage = 'メールアドレスまたはパスワードが正しくありません';
-      } else if (e.code === 'auth/invalid-email') {
+      } else if (firebaseError.code === 'auth/invalid-email') {
         errorMessage = 'メールアドレスの形式が正しくありません';
-      } else if (e.code === 'auth/user-disabled') {
+      } else if (firebaseError.code === 'auth/user-disabled') {
         errorMessage = 'このアカウントは無効になっています';
-      } else if (e.code === 'auth/too-many-requests') {
+      } else if (firebaseError.code === 'auth/too-many-requests') {
         errorMessage =
           'ログイン試行回数が多すぎます。しばらくしてからもう一度お試しください';
       }
@@ -255,10 +254,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             updatedAt: serverTimestamp(),
           });
           return true;
-        } catch (e: any) {
-          if (e.code === 'auth/provider-already-linked') {
+        } catch (e) {
+          const firebaseError = e as FirebaseError;
+          if (firebaseError.code === 'auth/provider-already-linked') {
             setError('このGoogleアカウントは既に連携されています');
-          } else if (e.code === 'auth/credential-already-in-use') {
+          } else if (firebaseError.code === 'auth/credential-already-in-use') {
             setError(
               'このGoogleアカウントは既に別のアカウントで使用されています'
             );
@@ -300,15 +300,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       return true;
-    } catch (e: any) {
+    } catch (e) {
+      const firebaseError = e as FirebaseError;
       let errorMessage = 'Googleログイン中にエラーが発生しました';
 
-      if (e.code === 'auth/popup-closed-by-user') {
+      if (firebaseError.code === 'auth/popup-closed-by-user') {
         errorMessage = 'ログインがキャンセルされました';
-      } else if (e.code === 'auth/popup-blocked') {
+      } else if (firebaseError.code === 'auth/popup-blocked') {
         errorMessage =
           'ポップアップがブロックされました。ポップアップを許可してください';
-      } else if (e.code === 'auth/account-exists-with-different-credential') {
+      } else if (
+        firebaseError.code === 'auth/account-exists-with-different-credential'
+      ) {
         errorMessage = 'このメールアドレスは既に別の方法で登録されています';
       }
 
@@ -398,14 +401,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       return true;
-    } catch (e: any) {
+    } catch (e) {
+      const firebaseError = e as FirebaseError;
       let errorMessage = '登録中にエラーが発生しました';
 
-      if (e.code === 'auth/email-already-in-use') {
+      if (firebaseError.code === 'auth/email-already-in-use') {
         errorMessage = 'このメールアドレスは既に使用されています';
-      } else if (e.code === 'auth/invalid-email') {
+      } else if (firebaseError.code === 'auth/invalid-email') {
         errorMessage = 'メールアドレスの形式が正しくありません';
-      } else if (e.code === 'auth/weak-password') {
+      } else if (firebaseError.code === 'auth/weak-password') {
         errorMessage = 'パスワードは6文字以上である必要があります';
       }
 
@@ -426,12 +430,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await sendPasswordResetEmail(auth, email);
       return true;
-    } catch (e: any) {
+    } catch (e) {
+      const firebaseError = e as FirebaseError;
       let errorMessage = 'パスワードリセットメール送信中にエラーが発生しました';
 
-      if (e.code === 'auth/user-not-found') {
+      if (firebaseError.code === 'auth/user-not-found') {
         errorMessage = 'このメールアドレスのユーザーは見つかりませんでした';
-      } else if (e.code === 'auth/invalid-email') {
+      } else if (firebaseError.code === 'auth/invalid-email') {
         errorMessage = 'メールアドレスの形式が正しくありません';
       }
 
@@ -459,10 +464,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await user.delete();
 
       return true;
-    } catch (e: any) {
+    } catch (e) {
+      const firebaseError = e as FirebaseError;
       let errorMessage = '退会処理中にエラーが発生しました';
 
-      if (e.code === 'auth/requires-recent-login') {
+      if (firebaseError.code === 'auth/requires-recent-login') {
         errorMessage =
           '安全のため、再度ログインしてから退会手続きを行ってください';
       }
@@ -500,7 +506,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser({ ...user, favoriteBeers: updatedFavorites });
       return true;
     } catch (e) {
-      console.error('お気に入りビールの切り替え中にエラーが発生しました', e);
+      const firebaseError = e as FirebaseError;
+      console.error(
+        'お気に入りビールの切り替え中にエラーが発生しました',
+        firebaseError
+      );
       return false;
     } finally {
       setIsLoading(false);

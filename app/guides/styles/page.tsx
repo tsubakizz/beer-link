@@ -1,12 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { beerStyles } from '../../../src/app/lib/beers-data';
+import { beerStyles, BeerStyle } from '../../../src/app/lib/beers-data';
 import { motion } from 'framer-motion';
 
 // インポートするコンポーネント
 import HeroSection from '../../../src/app/components/HeroSection';
-import LoadingSpinner from '../../../src/app/components/LoadingSpinner';
 import StyleFilter from '../../../src/app/components/guides/styles/StyleFilter';
 import StyleGroupNavigation from '../../../src/app/components/guides/styles/StyleGroupNavigation';
 import StyleCard from '../../../src/app/components/guides/styles/StyleCard';
@@ -14,7 +13,7 @@ import EmptyStyleResults from '../../../src/app/components/guides/styles/EmptySt
 import StyleInformation from '../../../src/app/components/guides/styles/StyleInformation';
 
 // スタイルイメージのプレースホルダー
-const getStyleColorBySRM = (style: any): string => {
+const getStyleColorBySRM = (style: BeerStyle): string => {
   // SRMの範囲の中央値を計算（最小値と最大値の平均）
   const avgSRM = style.srm ? (style.srm[0] + style.srm[1]) / 2 : 0;
 
@@ -58,7 +57,7 @@ const specialStyleColors: { [key: string]: string } = {
 };
 
 // スタイルに対して色を決定する関数
-const getStyleColor = (style: any): string => {
+const getStyleColor = (style: BeerStyle): string => {
   // 特別なスタイルがあればそれを返す、なければSRMベースの色を返す
   return specialStyleColors[style.id] || getStyleColorBySRM(style);
 };
@@ -146,7 +145,6 @@ const styleGroupMapping: { [key: string]: string[] } = {
 export default function BeerStylesPage() {
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // フィルターと検索に基づいてスタイルをフィルタリング
   const filteredStyles = beerStyles.filter((style) => {
@@ -218,30 +216,22 @@ export default function BeerStylesPage() {
       </motion.div>
 
       {/* ローディング表示 */}
-      {isLoading && (
-        <div className="my-4">
-          <LoadingSpinner size="small" message="スタイル情報を読み込み中..." />
-        </div>
-      )}
-
       {/* スタイル一覧 */}
-      {!isLoading && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-        >
-          {filteredStyles.map((style, index) => (
-            <StyleCard
-              key={style.id}
-              style={style}
-              index={index}
-              styleImagePlaceholders={getStyleColor(style)}
-            />
-          ))}
-        </motion.div>
-      )}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6, delay: 0.4 }}
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+      >
+        {filteredStyles.map((style, index) => (
+          <StyleCard
+            key={style.id}
+            style={style}
+            index={index}
+            styleImagePlaceholders={getStyleColor(style)}
+          />
+        ))}
+      </motion.div>
 
       {/* 結果が0件の場合 */}
       {filteredStyles.length === 0 && (

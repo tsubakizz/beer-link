@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { beerStyles, beers } from '../../../src/app/lib/beers-data';
 import Link from 'next/link';
 import {
@@ -279,7 +279,7 @@ export default function BeerFinderPage() {
       const alcoholScore =
         5 -
         Math.abs(
-          Math.ceil(style.characteristics.alcohol / 2) - userAnswers.alcohol
+          Math.ceil((style.abv[0] + style.abv[1]) / 4) - userAnswers.alcohol
         );
       score += alcoholScore;
 
@@ -412,7 +412,7 @@ export default function BeerFinderPage() {
                     >
                       <path
                         fillRule="evenodd"
-                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 011.414-1.414l4 4a1 1 010 1.414l-4 4a1 1 01-1.414 0z"
                         clipRule="evenodd"
                       />
                     </svg>

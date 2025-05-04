@@ -46,12 +46,10 @@ export default function BreweryDetailPage() {
   const [reviewData, setReviewData] = useState<{
     [beerId: string]: ReviewData;
   }>({});
-  const [loadingReviews, setLoadingReviews] = useState<boolean>(true);
 
   // レビュー情報を取得
   useEffect(() => {
     const fetchReviewData = async () => {
-      setLoadingReviews(true);
       try {
         const data: { [beerId: string]: ReviewData } = {};
 
@@ -90,8 +88,6 @@ export default function BreweryDetailPage() {
         setReviewData(data);
       } catch (error) {
         console.error('レビュー情報の取得中にエラーが発生しました:', error);
-      } finally {
-        setLoadingReviews(false);
       }
     };
 

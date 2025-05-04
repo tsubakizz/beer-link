@@ -6,7 +6,6 @@ type BubbleAnimationProps = {
   count?: number;
   className?: string;
   type?: 'header' | 'footer' | 'background';
-  opacity?: number;
   minSize?: number;
   maxSize?: number;
 };
@@ -16,7 +15,6 @@ export default function BubbleAnimation({
   count = 20,
   className = 'bubbles',
   type = 'header',
-  opacity = 0.6,
   minSize = 1,
   maxSize = 4,
 }: BubbleAnimationProps) {

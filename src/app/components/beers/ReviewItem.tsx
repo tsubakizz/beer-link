@@ -45,7 +45,12 @@ export default function ReviewItem({
           <div className="avatar">
             {review.userPhotoURL ? (
               <div className="w-10 h-10 rounded-full overflow-hidden">
-                <img src={review.userPhotoURL} alt={review.userName} />
+                <Image
+                  src={review.userPhotoURL}
+                  alt={review.userName}
+                  width={40}
+                  height={40}
+                />
               </div>
             ) : (
               <div className="bg-gradient-to-br from-amber-200 to-amber-100 text-amber-800 rounded-full w-10 h-10 flex items-center justify-center font-bold">

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { db } from '../../lib/firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 
@@ -97,9 +98,11 @@ export default function ReviewsList({ reviews }: ReviewsListProps) {
                 className="flex items-start space-x-4 mb-3 hover:bg-amber-50 rounded-lg p-2 transition-colors"
               >
                 {review.beer.imageUrl && (
-                  <img
+                  <Image
                     src={review.beer.imageUrl}
                     alt={review.beer.name}
+                    width={64}
+                    height={64}
                     className="w-16 h-16 object-cover rounded"
                   />
                 )}

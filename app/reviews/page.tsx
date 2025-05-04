@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
@@ -10,19 +10,20 @@ import {
   where,
   orderBy,
   getDocs,
-  onSnapshot,
   limit,
   startAfter,
   DocumentData,
   QueryDocumentSnapshot,
   getDoc,
   doc,
+  Timestamp,
 } from 'firebase/firestore';
 import { db } from '../../src/app/lib/firebase';
 import { beers } from '../../src/app/lib/beers-data';
 import LoadingSpinner from '../../src/app/components/LoadingSpinner';
 import ReviewForm from '../../src/app/components/beers/ReviewForm';
 import Pagination from '../../src/app/components/beers/Pagination';
+import Image from 'next/image';
 
 // レビュータイプの定義
 interface Review {
@@ -32,7 +33,7 @@ interface Review {
   userPhotoURL?: string | null;
   rating: number;
   comment: string;
-  createdAt: any; // Firestoreのタイムスタンプ
+  createdAt: Timestamp; // Firestoreのタイムスタンプ
 }
 
 // ビール情報の型
@@ -46,7 +47,6 @@ interface Beer {
 
 export default function ReviewsPage() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const beerId = searchParams.get('beerId');
 
   const [beer, setBeer] = useState<Beer | null>(null);
@@ -176,14 +176,14 @@ export default function ReviewsPage() {
     };
 
     fetchReviews();
-  }, [beerId, currentPage]);
+  }, [beerId, currentPage, lastDoc]);
 
   // 日付フォーマット
-  const formatDate = (timestamp: any): string => {
+  const formatDate = (timestamp: Timestamp): string => {
     if (!timestamp) return '日付不明';
 
     // FirestoreのタイムスタンプをJSのDateに変換
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    const date = timestamp.toDate();
 
     return new Intl.DateTimeFormat('ja-JP', {
       year: 'numeric',
@@ -390,9 +390,11 @@ export default function ReviewsPage() {
                         <div className="avatar">
                           {review.userPhotoURL ? (
                             <div className="w-12 h-12 rounded-full overflow-hidden">
-                              <img
+                              <Image
                                 src={review.userPhotoURL}
                                 alt={review.userName}
+                                width={48}
+                                height={48}
                               />
                             </div>
                           ) : (

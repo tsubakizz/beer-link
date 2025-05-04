@@ -7,7 +7,6 @@ export default function ReviewActions({
   isEditing,
   beerId,
   beerName,
-  isLoggedIn,
   onReviewButtonClick,
   onFormCancel,
   onReviewSubmitted,

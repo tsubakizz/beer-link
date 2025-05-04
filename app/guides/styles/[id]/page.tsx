@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { notFound, useRouter } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
   beerStyles,
   beers,
   BeerStyle,
+  Beer,
 } from '../../../../src/app/lib/beers-data';
 
 // コンポーネントのインポート
@@ -18,8 +19,17 @@ import RelatedStyles from '../../../../src/app/components/guides/styles/RelatedS
 import ExampleBeers from '../../../../src/app/components/guides/styles/ExampleBeers';
 import LoadingSpinner from '../../../../src/app/components/LoadingSpinner';
 
+// ページのパラメータ型定義
+type PageParams = {
+  id: string;
+};
+
+type PageProps = {
+  params: PageParams;
+};
+
 // スタイルイメージのプレースホルダー
-const getStyleColorBySRM = (style: any): string => {
+const getStyleColorBySRM = (style: BeerStyle): string => {
   // SRMの範囲の中央値を計算（最小値と最大値の平均）
   const avgSRM = style.srm ? (style.srm[0] + style.srm[1]) / 2 : 0;
 
@@ -63,23 +73,19 @@ const specialStyleColors: { [key: string]: string } = {
 };
 
 // スタイルに対して色を決定する関数
-const getStyleColor = (style: any): string => {
+const getStyleColor = (style: BeerStyle): string => {
   // 特別なスタイルがあればそれを返す、なければSRMベースの色を返す
   return specialStyleColors[style.id] || getStyleColorBySRM(style);
 };
 
 // ビールスタイル詳細ページコンポーネント
-export default function BeerStyleDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default function BeerStyleDetailPage({ params }: PageProps) {
   // パラメータからIDを抽出
   const id = params.id;
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [style, setStyle] = useState<BeerStyle | null>(null);
-  const [exampleBeers, setExampleBeers] = useState<any[]>([]);
+  const [exampleBeers, setExampleBeers] = useState<Beer[]>([]);
   const [relatedStyles, setRelatedStyles] = useState<{
     parentStyles: BeerStyle[];
     childStyles: BeerStyle[];
@@ -89,8 +95,6 @@ export default function BeerStyleDetailPage({
     childStyles: [],
     siblingStyles: [],
   });
-
-  const router = useRouter();
 
   useEffect(() => {
     const fetchStyleData = async () => {
@@ -273,12 +277,26 @@ export default function BeerStyleDetailPage({
                 {style.servingTemperature && (
                   <div>
                     <h3 className="font-semibold mb-1 flex items-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4 mr-1 text-amber-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13 10V3L4 14h7v7l9-11h-7z"
+                        />
                       </svg>
                       適正温度
                     </h3>
-                    <p>{style.servingTemperature[0]}～{style.servingTemperature[1]}℃</p>
+                    <p>
+                      {style.servingTemperature[0]}～
+                      {style.servingTemperature[1]}℃
+                    </p>
                   </div>
                 )}
               </div>

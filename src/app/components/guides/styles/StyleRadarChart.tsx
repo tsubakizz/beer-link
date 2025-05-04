@@ -9,6 +9,7 @@ import {
   Filler,
   Tooltip,
   Legend,
+  ChartOptions,
 } from 'chart.js';
 import { Radar } from 'react-chartjs-2';
 
@@ -57,7 +58,7 @@ export default function StyleRadarChart({
     ],
   };
 
-  const options = {
+  const options: ChartOptions<'radar'> = {
     scales: {
       r: {
         angleLines: {
@@ -89,7 +90,7 @@ export default function StyleRadarChart({
       },
       tooltip: {
         callbacks: {
-          label: function (context: any) {
+          label: function (context: { label: string; raw: number }) {
             return `${context.label}: ${context.raw}/5`;
           },
         },
@@ -100,7 +101,7 @@ export default function StyleRadarChart({
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <Radar data={data} options={options as any} />
+      <Radar data={data} options={options} />
     </div>
   );
 }

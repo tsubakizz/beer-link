@@ -1,4 +1,6 @@
 // 共通のReview型定義
+import { Timestamp } from 'firebase/firestore';
+
 export interface Review {
   id: string;
   userId: string;
@@ -7,7 +9,7 @@ export interface Review {
   rating: number;
   comment: string;
   imageUrl?: string | null;
-  createdAt: any; // Firestoreのタイムスタンプ
+  createdAt: Timestamp; // Firestoreのタイムスタンプ
 }
 
 // ReviewForm用の簡易レビュー情報
@@ -38,7 +40,7 @@ export interface ReviewItemProps {
   onImageClick: (imageUrl: string) => void;
   onReviewSubmitted: () => void;
   onCancelEdit: () => void;
-  formatDate: (timestamp: any) => string;
+  formatDate: (timestamp: Timestamp) => string;
 }
 
 // ReviewStars コンポーネントのプロパティ

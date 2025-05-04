@@ -17,7 +17,7 @@ export const getBreweryTypeColor = (type: BreweryType) => {
       border: 'border-amber-300',
       icon: '🍻',
     },
-    major: {
+    macro: {
       bg: 'bg-blue-100',
       text: 'text-blue-900',
       border: 'border-blue-300',
@@ -35,7 +35,7 @@ export const getBreweryTypeColor = (type: BreweryType) => {
       border: 'border-purple-300',
       icon: '📝',
     },
-    special: {
+    proprietary: {
       bg: 'bg-red-100',
       text: 'text-red-900',
       border: 'border-red-300',
@@ -62,13 +62,13 @@ export default function BreweryTypeInfo() {
   const descriptions: Record<BreweryType, string> = {
     craft:
       'クラフトブルワリーは小規模で伝統的な製法を重視し、独創的で個性的なビールを製造する醸造所です。多様な原料や製法を用いて、独自のフレーバーやスタイルを追求しています。',
-    major:
+    macro:
       '大手ビールメーカーは大規模な設備を持ち、大量生産を行うビール会社です。品質の安定性に優れ、広い市場に流通させることができます。',
     brewpub:
       'ブリューパブは自家製ビールを提供するレストランやパブです。醸造設備とレストランが一体になっており、できたての新鮮なビールを食事と共に楽しむことができます。',
     contract:
       '委託醸造は自社の醸造設備を持たず、他のブルワリーの設備を借りてビールを製造するスタイルです。レシピや監修は自社で行いますが、製造は他社に委託します。',
-    special:
+    proprietary:
       '特殊/伝統的醸造所は修道院ビールなど、特殊な歴史や伝統を持つ醸造所です。何世紀にもわたる伝統的な製法でビールを作り続けているところもあります。',
   };
 

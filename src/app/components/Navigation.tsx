@@ -1,11 +1,10 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import React, { useState, useEffect, useRef } from 'react';
-import ClientSideNav from './ClientSideNav';
 import { useAuth } from '../lib/auth-context';
 import { useRouter, usePathname } from 'next/navigation';
-import Image from 'next/image';
 
 // ナビゲーションコンポーネント（ハンバーガーメニュー対応版）
 export default function Navigation() {
@@ -70,7 +69,7 @@ export default function Navigation() {
               </div>
             </div>
             <span className="text-2xl font-bold text-[#7c2d12] hover:text-amber-800 transition-colors duration-300">
-              <span className="font-montserrat mr-1">Let's</span>
+              <span className="font-montserrat mr-1">Let&apos;s</span>
               <span className="font-bold">Beer</span>
             </span>
           </Link>
@@ -149,7 +148,12 @@ export default function Navigation() {
                   {user.photoURL ? (
                     <div className="avatar">
                       <div className="w-6 h-6 rounded-full">
-                        <img src={user.photoURL} alt={user.displayName || ''} />
+                        <Image
+                          src={user.photoURL}
+                          alt={user.displayName || ''}
+                          width={24}
+                          height={24}
+                        />
                       </div>
                     </div>
                   ) : (

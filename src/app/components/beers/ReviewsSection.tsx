@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../lib/auth-context';
@@ -14,7 +14,6 @@ import {
   onSnapshot,
   deleteDoc,
   doc,
-  getCountFromServer,
 } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import LoadingSpinner from '../LoadingSpinner';
@@ -34,7 +33,6 @@ export default function ReviewsSection({
   const { user } = useAuth();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [totalReviewCount, setTotalReviewCount] = useState<number>(0);
-  const [averageRating, setAverageRating] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [showReviewForm, setShowReviewForm] = useState<boolean>(false);
@@ -48,7 +46,7 @@ export default function ReviewsSection({
   const [enlargedImage, setEnlargedImage] = useState<string | null>(null);
 
   // 全レビュー取得とレーティングの計算
-  const fetchAllReviewsAndCalculateRating = async () => {
+  const fetchAllReviewsAndCalculateRating = useCallback(async () => {
     try {
       const reviewsQuery = query(
         collection(db, 'reviews'),
@@ -72,14 +70,12 @@ export default function ReviewsSection({
           0
         );
         const avg = sum / count;
-        setAverageRating(avg);
 
         // 親コンポーネントにデータを渡す
         if (onReviewsLoaded) {
           onReviewsLoaded(count, avg);
         }
       } else {
-        setAverageRating(0);
         if (onReviewsLoaded) {
           onReviewsLoaded(0, 0);
         }
@@ -87,7 +83,7 @@ export default function ReviewsSection({
     } catch (err) {
       console.error('レーティング計算中にエラーが発生しました:', err);
     }
-  };
+  }, [beerId, onReviewsLoaded]);
 
   // レビューデータの取得
   useEffect(() => {
@@ -131,7 +127,7 @@ export default function ReviewsSection({
       setError('レビューデータの取得に失敗しました');
       setLoading(false);
     }
-  }, [beerId, maxReviews]);
+  }, [beerId, maxReviews, fetchAllReviewsAndCalculateRating]);
 
   // レビューが投稿された時の処理
   const handleReviewSubmitted = () => {
@@ -176,7 +172,9 @@ export default function ReviewsSection({
   };
 
   // 日付をフォーマット
-  const formatDate = (timestamp: any): string => {
+  const formatDate = (
+    timestamp: import('firebase/firestore').Timestamp
+  ): string => {
     if (!timestamp) return '日付不明';
 
     // FirestoreのタイムスタンプをJSのDateに変換

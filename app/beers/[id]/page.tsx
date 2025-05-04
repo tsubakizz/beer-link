@@ -50,7 +50,6 @@ export default function BeerDetailPage() {
   const [similarBeersReviewData, setSimilarBeersReviewData] = useState<{
     [beerId: string]: ReviewData;
   }>({});
-  const [loadingSimilarReviews, setLoadingSimilarReviews] = useState(false);
 
   useEffect(() => {
     // 初期データ取得処理を即時実行
@@ -81,7 +80,6 @@ export default function BeerDetailPage() {
 
   // 類似ビールのレビューデータを取得する関数
   const fetchSimilarBeersReviewData = async (similarBeers: Beer[]) => {
-    setLoadingSimilarReviews(true);
     try {
       const data: { [beerId: string]: ReviewData } = {};
 
@@ -123,8 +121,6 @@ export default function BeerDetailPage() {
         '類似ビールのレビュー情報の取得中にエラーが発生しました:',
         error
       );
-    } finally {
-      setLoadingSimilarReviews(false);
     }
   };
 

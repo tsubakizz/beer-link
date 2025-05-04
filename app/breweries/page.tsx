@@ -38,7 +38,7 @@ export default function BreweriesPage() {
     // ブルワリーデータの処理とソート
     const processBreweriesData = () => {
       // フィルタリング処理
-      let filtered = breweries.filter((brewery) => {
+      const filtered = breweries.filter((brewery) => {
         // 検索クエリでフィルタリング
         if (
           searchQuery &&

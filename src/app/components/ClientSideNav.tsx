@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '../lib/auth-context';
 
 interface ClientSideNavProps {
@@ -17,10 +18,12 @@ export default function ClientSideNav({ closeDrawer }: ClientSideNavProps) {
         <>
           <div className="flex items-center mb-2">
             {user.photoURL ? (
-              <img
+              <Image
                 src={user.photoURL}
                 alt="ユーザーアイコン"
                 className="w-10 h-10 rounded-full mr-3"
+                width={40}
+                height={40}
               />
             ) : (
               <div className="w-10 h-10 rounded-full bg-amber-600 flex items-center justify-center mr-3 text-white">

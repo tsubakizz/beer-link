@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 import { useAuth } from '../../lib/auth-context';
 import {
   collection,
@@ -34,7 +33,6 @@ export default function ReviewForm({
   onCancelEdit,
 }: ReviewFormProps) {
   const { user } = useAuth();
-  const router = useRouter();
 
   // フォーム状態
   const [rating, setRating] = useState<number>(

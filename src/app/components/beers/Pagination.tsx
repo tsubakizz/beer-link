@@ -1,5 +1,3 @@
-import { motion } from 'framer-motion';
-
 interface PaginationProps {
   hasResults?: boolean; // オプショナルに変更
   currentPage?: number; // 追加
@@ -27,7 +25,7 @@ export default function Pagination({
     const pages = [];
     // 常に現在のページを中心に表示
     let startPage = Math.max(1, currentPage - 2);
-    let endPage = Math.min(totalPages, startPage + 4);
+    const endPage = Math.min(totalPages, startPage + 4);
 
     // 表示するページ数を最大5つに調整
     if (endPage - startPage < 4) {

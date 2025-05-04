@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Beer } from '../../../../app/lib/beers-data';
 
@@ -37,10 +38,12 @@ export default function ExampleBeers({ beers }: ExampleBeersProps) {
                 }`}
               >
                 {beer.image ? (
-                  <img
+                  <Image
                     src={beer.image}
                     alt={beer.name}
-                    className="object-cover w-full h-full"
+                    className="object-cover"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
                   />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center">

@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { ImageModalProps } from './types/review.types';
 
 export default function ImageModal({ imageUrl, onClose }: ImageModalProps) {
@@ -34,12 +35,17 @@ export default function ImageModal({ imageUrl, onClose }: ImageModalProps) {
         </button>
 
         {/* 画像表示 */}
-        <img
-          src={imageUrl}
-          alt="拡大画像"
-          className="max-w-full max-h-[90vh] object-contain"
-          onClick={(e) => e.stopPropagation()}
-        />
+        <div className="relative w-full h-full max-h-[90vh]">
+          <Image
+            src={imageUrl}
+            alt="拡大画像"
+            className="object-contain"
+            onClick={(e) => e.stopPropagation()}
+            fill
+            sizes="100vw"
+            priority
+          />
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 'use client';
 
+// Firebase関連のインポート
 import {
   User as FirebaseUser,
   createUserWithEmailAndPassword,
@@ -25,13 +26,9 @@ import {
 import { FirebaseError } from 'firebase/app';
 import { auth, db } from './firebase';
 import { users, type User } from './users-data';
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from 'react';
+
+// React関連のインポート - 個別にインポートする代わりに React 全体をインポート
+import * as React from 'react';
 
 // 認証ユーザーの型定義（Firebaseと内部ユーザー情報を統合）
 export interface AuthUser {
@@ -83,15 +80,17 @@ interface AuthContextType {
   error: string | null;
 }
 
-// 認証コンテキストの作成
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+// 認証コンテキストの作成 - React.createContext() を使用
+const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
 
 // 認証プロバイダーコンポーネント
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = React.useState<AuthUser | null>(null);
+  const [firebaseUser, setFirebaseUser] = React.useState<FirebaseUser | null>(
+    null
+  );
+  const [isLoading, setIsLoading] = React.useState<boolean>(true);
+  const [error, setError] = React.useState<string | null>(null);
 
   // Firestoreからユーザーデータを取得する関数
   const fetchUserData = async (uid: string): Promise<FirestoreUser | null> => {
@@ -121,7 +120,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   // Firebase認証状態の監視
-  useEffect(() => {
+  React.useEffect(() => {
     if (!auth || !db) return;
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -537,7 +536,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 // カスタムフック
 export function useAuth() {
-  const context = useContext(AuthContext);
+  const context = React.useContext(AuthContext);
   if (context === undefined) {
     throw new Error('useAuthはAuthProviderの中で使用する必要があります');
   }

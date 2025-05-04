@@ -51,7 +51,9 @@ export default function Pagination({
   };
 
   return (
-    <div className="flex justify-center mt-12">
+    <div className="flex justify-center">
+      {' '}
+      {/* mt-12から変更 */}
       <div className="join">
         <button
           className="join-item btn btn-sm bg-white border-amber-200 text-amber-900"

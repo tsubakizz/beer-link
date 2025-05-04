@@ -149,7 +149,7 @@ export default function DrawerMenu() {
                     clipRule="evenodd"
                   />
                 </svg>
-                ビールスタイル図鑑
+                スタイル図鑑
               </Link>
             </li>
             <li>

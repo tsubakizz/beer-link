@@ -174,7 +174,7 @@ export default function BeerStyleDetail({ id }: BeerStyleDetailProps) {
               clipRule="evenodd"
             />
           </svg>
-          ビールスタイルガイドへ戻る
+          スタイル図鑑へ戻る
         </Link>
       </div>
 
@@ -369,10 +369,10 @@ export default function BeerStyleDetail({ id }: BeerStyleDetailProps) {
         className="mt-12 text-center"
       >
         <h3 className="text-xl font-bold text-amber-900 mb-6">
-          他のビールスタイルを探す
+          他のスタイルを探す
         </h3>
         <Link href="/guides/styles" className="btn btn-primary btn-lg">
-          ビールスタイルガイドへ
+          スタイル図鑑へ
         </Link>
       </motion.div>
     </div>

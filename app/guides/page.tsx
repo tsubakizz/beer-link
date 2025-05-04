@@ -6,13 +6,12 @@ import GuideCategorySection from '../../src/app/components/guides/GuideCategoryS
 import BeginnerSection from '../../src/app/components/guides/BeginnerSection';
 import FAQSection from '../../src/app/components/guides/FAQSection';
 import BeerFinderCTA from '../../src/app/components/guides/BeerFinderCTA';
-import BubbleDecoration from '../../src/app/components/BubbleDecoration';
 
 // ガイド項目のデータ
 const guideItems = [
   {
     id: 'styles',
-    title: 'ビールスタイル図鑑',
+    title: 'スタイル図鑑',
     description:
       'IPA、スタウト、ヴァイツェンなど様々なビールスタイルの特徴や味わいを解説します。',
     icon: '🍺',
@@ -105,10 +104,6 @@ export default function GuidesPage() {
           title="ビールガイド"
           description="クラフトビールの世界をより深く楽しむための情報を集めました。初心者の方も愛好家の方も、ぜひご活用ください。"
         />
-        {/* ヒーローセクションに泡の装飾を追加 */}
-        <div className="absolute top-0 left-0 w-full h-full z-0">
-          <BubbleDecoration count={6} />
-        </div>
       </div>
 
       {/* ガイド項目一覧 */}

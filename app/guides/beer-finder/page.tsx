@@ -600,7 +600,7 @@ export default function BeerFinderPage() {
                   href="/guides/styles"
                   className="text-amber-600 hover:underline"
                 >
-                  ビールスタイル図鑑
+                  スタイル図鑑
                 </Link>
                 で他のスタイルも探してみてください。
               </p>

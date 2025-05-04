@@ -107,7 +107,7 @@ export default function Navigation() {
                 href="/guides/styles"
                 className="btn btn-ghost rounded-btn text-[#7c2d12] hover:bg-amber-100/50"
               >
-                ビールスタイル図鑑
+                スタイル図鑑
               </Link>
             </li>
             <li>

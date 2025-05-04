@@ -1,9 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import GuideCard, { GuideItem } from './GuideCard';
+import FeatureCard, { FeatureItem } from '../FeatureCard';
 
 interface GuideCategorySectionProps {
-  guideItems: GuideItem[];
+  guideItems: FeatureItem[];
 }
 
 export default function GuideCategorySection({
@@ -25,7 +25,7 @@ export default function GuideCategorySection({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {guideItems.map((item, index) => (
-          <GuideCard key={item.id} item={item} index={index} />
+          <FeatureCard key={item.id} item={item} index={index} />
         ))}
       </div>
     </motion.div>

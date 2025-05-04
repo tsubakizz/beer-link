@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '../../src/app/lib/auth-context';
 
-export default function RegisterPage() {
+// SearchParamsを使用するコンポーネントを分離
+function RegisterContent() {
   const { register, loginWithGoogle, user, isLoading, error } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -216,5 +217,21 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// メインコンポーネント
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-amber-50/50">
+        <div className="text-center p-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-500 mx-auto"></div>
+          <p className="mt-4 text-amber-800">読み込み中...</p>
+        </div>
+      </div>
+    }>
+      <RegisterContent />
+    </Suspense>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -45,7 +45,8 @@ interface Beer {
   imageUrl?: string;
 }
 
-export default function ReviewsPage() {
+// useSearchParamsを使用する部分を別コンポーネントに分離
+function ReviewsContent() {
   const searchParams = useSearchParams();
   const beerId = searchParams.get('beerId');
 
@@ -553,5 +554,21 @@ export default function ReviewsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+// メインコンポーネント
+export default function ReviewsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-amber-50/50">
+        <div className="text-center p-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-500 mx-auto"></div>
+          <p className="mt-4 text-amber-800">読み込み中...</p>
+        </div>
+      </div>
+    }>
+      <ReviewsContent />
+    </Suspense>
   );
 }

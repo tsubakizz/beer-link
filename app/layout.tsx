@@ -23,9 +23,13 @@ const notoSansJP = Noto_Sans_JP({
 
 // メタデータのエクスポート
 export const metadata: Metadata = {
-  title: "Let's Beer - クラフトビールファンサイト",
+  title: 'Beer Link - クラフトビールの世界へようこそ',
   description:
-    'クラフトビールの種類や味わい、ブルワリー情報を初心者から愛好家まで楽しめるファンサイト',
+    'クラフトビールに関する情報を共有するためのコミュニティプラットフォーム',
+  colorScheme: 'light',
+  other: {
+    'color-scheme': 'light only',
+  },
 };
 
 // サーバーコンポーネントとしてのRootLayout

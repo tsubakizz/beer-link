@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 const R2_ENDPOINT_DOMAIN = process.env.NEXT_PUBLIC_R2_ENDPOINT_DOMAIN || '';
 const R2_ACCESSKEY = process.env.NEXT_PUBLIC_R2_ACCESSKEY || '';
 const R2_SECRETKEY = process.env.NEXT_PUBLIC_R2_SECRETKET || '';
-const BUCKET_NAME = process.env.NEXT_PUBLIC_R2_BUCKET || 'lets-beer'; // 環境変数からバケット名を取得
+const BUCKET_NAME = process.env.NEXT_PUBLIC_R2_BUCKET || 'beer-link'; // 環境変数からバケット名を取得
 const R2_PUBLIC_DOMAIN = process.env.NEXT_PUBLIC_R2_PUBLIC_DOMAIN || ''; // パブリックアクセス用のドメイン
 
 // R2クライアントの初期化

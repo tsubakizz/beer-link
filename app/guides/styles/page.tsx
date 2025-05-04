@@ -2,17 +2,14 @@
 
 import { useState } from 'react';
 import { beerStyles, BeerStyle } from '../../../src/app/lib/beers-data';
-import { motion } from 'framer-motion';
 
 // インポートするコンポーネント
 import HeroSection from '../../../src/app/components/HeroSection';
 import StyleFilter, {
   FilterParams,
 } from '../../../src/app/components/guides/styles/StyleFilter';
-import StyleCard from '../../../src/app/components/guides/styles/StyleCard';
-import EmptyStyleResults from '../../../src/app/components/guides/styles/EmptyStyleResults';
+import StyleResults from '../../../src/app/components/guides/styles/StyleResults';
 import StyleInformation from '../../../src/app/components/guides/styles/StyleInformation';
-import Pagination from '../../../src/app/components/beers/Pagination';
 
 // スタイルイメージのプレースホルダー
 const getStyleColorBySRM = (style: BeerStyle): string => {

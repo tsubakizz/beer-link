@@ -269,6 +269,18 @@ export default function BeerStyleDetailPage({
                       : '情報なし'}
                   </p>
                 </div>
+
+                {style.servingTemperature && (
+                  <div>
+                    <h3 className="font-semibold mb-1 flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                      適正温度
+                    </h3>
+                    <p>{style.servingTemperature[0]}～{style.servingTemperature[1]}℃</p>
+                  </div>
+                )}
               </div>
             </div>
           </motion.div>

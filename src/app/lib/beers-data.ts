@@ -19,6 +19,7 @@ export type BeerStyle = {
   siblings: string[]; // 同系統のスタイル（兄弟スタイル）
   parents: string[]; // 親スタイル（系統的に上位のスタイル）
   children: string[]; // 子スタイル（系統的に下位のスタイル）
+  servingTemperature: number[]; // 推奨飲用温度 [最小値, 最大値]（摂氏）
 };
 
 // カード表示用の簡易ビールスタイル定義
@@ -82,14 +83,15 @@ export const beerStyles: BeerStyle[] = [
     abv: [4.2, 5.8],
     ibu: [22, 45],
     srm: [2, 6],
-    siblings: ['helles', 'kolsch', 'lager', 'german-pilsner'], // 追加
-    parents: ['lager'], // 追加
+    siblings: ['helles', 'kolsch', 'lager', 'german-pilsner'],
+    parents: ['lager'],
     children: [
       'american-lager',
       'international-pale-lager',
       'japanese-rice-lager',
       'german-pilsner',
-    ], // 追加
+    ],
+    servingTemperature: [4, 7],
   },
   {
     id: 'ipa',
@@ -110,8 +112,8 @@ export const beerStyles: BeerStyle[] = [
     abv: [5.5, 7.5],
     ibu: [40, 70],
     srm: [6, 14],
-    siblings: ['pale-ale', 'double-ipa', 'hazy-ipa', 'barley-wine'], // 追加
-    parents: ['pale-ale'], // 追加
+    siblings: ['pale-ale', 'double-ipa', 'hazy-ipa', 'barley-wine'],
+    parents: ['pale-ale'],
     children: [
       'hazy-ipa',
       'double-ipa',
@@ -122,7 +124,8 @@ export const beerStyles: BeerStyle[] = [
       'rye-ipa',
       'brut-ipa',
       'cold-ipa',
-    ], // 追加 (リスト内にあるもの)
+    ],
+    servingTemperature: [7, 10],
   },
   {
     id: 'pale-ale',
@@ -142,9 +145,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [4.5, 6.2],
     ibu: [30, 50],
     srm: [5, 10],
-    siblings: ['ipa', 'amber-ale', 'esb', 'best-bitter', 'belgian-pale-ale'], // 追加
-    parents: [], // 基本的なエールスタイルとして                                   // 追加
-    children: ['ipa', 'amber-ale', 'american-wheat'], // 追加
+    siblings: ['ipa', 'amber-ale', 'esb', 'best-bitter', 'belgian-pale-ale'],
+    parents: [],
+    children: ['ipa', 'amber-ale', 'american-wheat'],
+    servingTemperature: [7, 10],
   },
   {
     id: 'stout',
@@ -164,8 +168,8 @@ export const beerStyles: BeerStyle[] = [
     abv: [4.0, 8.0],
     ibu: [25, 75],
     srm: [25, 40],
-    siblings: ['porter', 'schwarzbier', 'baltic-porter'], // 追加
-    parents: ['porter'], // 追加
+    siblings: ['porter', 'schwarzbier', 'baltic-porter'],
+    parents: ['porter'],
     children: [
       'milk-stout',
       'oatmeal-stout',
@@ -174,7 +178,8 @@ export const beerStyles: BeerStyle[] = [
       'tropical-stout',
       'oyster-stout',
       'pastry-stout',
-    ], // 追加 (リストにあるもの)
+    ],
+    servingTemperature: [8, 12],
   },
   {
     id: 'weissbier',
@@ -203,9 +208,10 @@ export const beerStyles: BeerStyle[] = [
       'american-wheat',
       'gose',
       'berliner-weisse',
-    ], // 追加
-    parents: [], // 独自の系統                                                                                                   // 追加
-    children: ['dunkelweizen', 'kristallweizen', 'weizenbock'], // 追加
+    ],
+    parents: [],
+    children: ['dunkelweizen', 'kristallweizen', 'weizenbock'],
+    servingTemperature: [4, 7],
   },
   {
     id: 'witbier',
@@ -226,9 +232,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [4.5, 5.5],
     ibu: [8, 20],
     srm: [2, 4],
-    siblings: ['weissbier', 'gose', 'saison', 'american-wheat'], // 追加
-    parents: [], // 独自の系統                                      // 追加
-    children: ['white-ipa'], // 追加
+    siblings: ['weissbier', 'gose', 'saison', 'american-wheat'],
+    parents: [],
+    children: ['white-ipa'],
+    servingTemperature: [4, 7],
   },
   {
     id: 'hazy-ipa',
@@ -249,9 +256,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [6.0, 9.0],
     ibu: [25, 60],
     srm: [3, 7],
-    siblings: ['ipa', 'double-ipa', 'session-ipa'], // 追加
-    parents: ['ipa'], // 追加
-    children: [], // 追加
+    siblings: ['ipa', 'double-ipa', 'session-ipa'],
+    parents: ['ipa'],
+    children: [],
+    servingTemperature: [7, 10],
   },
   {
     id: 'porter',
@@ -277,9 +285,10 @@ export const beerStyles: BeerStyle[] = [
       'dunkel',
       'schwarzbier',
       'baltic-porter',
-    ], // 追加
-    parents: ['english-brown-ale'], // ブラウンエールから発展した説あり                         // 追加
-    children: ['stout', 'baltic-porter'], // 追加
+    ],
+    parents: ['english-brown-ale'],
+    children: ['stout', 'baltic-porter'],
+    servingTemperature: [8, 12],
   },
   {
     id: 'lager',
@@ -299,8 +308,8 @@ export const beerStyles: BeerStyle[] = [
     abv: [4.0, 6.0],
     ibu: [8, 25],
     srm: [2, 6],
-    siblings: [], // カテゴリのため                                                                                                                   // 追加
-    parents: [], // 基本カテゴリのため                                                                                                                  // 追加
+    siblings: [],
+    parents: [],
     children: [
       'pilsner',
       'helles',
@@ -320,7 +329,8 @@ export const beerStyles: BeerStyle[] = [
       'german-pilsner',
       'czech-amber-lager',
       'czech-dark-lager',
-    ], // 追加 (リストにあるラガー系を網羅)
+    ],
+    servingTemperature: [3, 7],
   },
   {
     id: 'fruit-beer',
@@ -346,9 +356,10 @@ export const beerStyles: BeerStyle[] = [
       'framboise',
       'catharina-sour',
       'spice-herb-vegetable-beer',
-    ], // 追加
-    parents: [], // ベースは様々                                                                          // 追加
-    children: [], // カテゴリのため                                                                        // 追加
+    ],
+    parents: [],
+    children: [],
+    servingTemperature: [5, 8],
   },
   {
     id: 'saison',
@@ -373,9 +384,10 @@ export const beerStyles: BeerStyle[] = [
       'belgian-pale-ale',
       'witbier',
       'farmhouse-ale',
-    ], // Farmhouse Aleは概念として // 追加
-    parents: [], // ファームハウスエール                                                              // 追加
-    children: [], // 追加
+    ],
+    parents: [],
+    children: [],
+    servingTemperature: [7, 12],
   },
   {
     id: 'amber-ale',
@@ -403,9 +415,10 @@ export const beerStyles: BeerStyle[] = [
       'english-brown-ale',
       'altbier',
       'esb',
-    ], // 追加
-    parents: ['pale-ale'], // アメリカンアンバーの場合                                                 // 追加
-    children: [], // 追加
+    ],
+    parents: ['pale-ale'],
+    children: [],
+    servingTemperature: [8, 12],
   },
   {
     id: 'belgian-blonde-ale',
@@ -430,9 +443,10 @@ export const beerStyles: BeerStyle[] = [
       'belgian-golden-strong-ale',
       'belgian-pale-ale',
       'helles',
-    ], // 追加
-    parents: [], // モダンベルギースタイル                                                // 追加
-    children: [], // 追加
+    ],
+    parents: [],
+    children: [],
+    servingTemperature: [6, 10],
   },
   {
     id: 'tripel',
@@ -457,9 +471,10 @@ export const beerStyles: BeerStyle[] = [
       'belgian-golden-strong-ale',
       'dubbel',
       'quadrupel',
-    ], // 追加
-    parents: ['dubbel'], // 強さの段階として                                                 // 追加
-    children: ['belgian-golden-strong-ale'], // 影響関係                                    // 追加
+    ],
+    parents: ['dubbel'],
+    children: ['belgian-golden-strong-ale'],
+    servingTemperature: [8, 12],
   },
   {
     id: 'schwarzbier',
@@ -486,9 +501,10 @@ export const beerStyles: BeerStyle[] = [
       'international-dark-lager',
       'porter',
       'stout',
-    ], // 追加
-    parents: ['lager', 'dunkel'], // 追加
-    children: [], // 追加
+    ],
+    parents: ['lager', 'dunkel'],
+    children: [],
+    servingTemperature: [7, 10],
   },
   {
     id: 'kolsch',
@@ -508,9 +524,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [4.4, 5.2],
     ibu: [18, 30],
     srm: [3.5, 5],
-    siblings: ['altbier', 'pilsner', 'helles', 'cream-ale'], // 追加
-    parents: [], // 独自の地域スタイル                         // 追加
-    children: [], // 追加
+    siblings: ['altbier', 'pilsner', 'helles', 'cream-ale'],
+    parents: [],
+    children: [],
+    servingTemperature: [4, 7],
   },
   {
     id: 'barley-wine',
@@ -536,9 +553,10 @@ export const beerStyles: BeerStyle[] = [
       'imperial-stout',
       'doppelbock',
       'quadrupel',
-    ], // 追加
-    parents: ['old-ale'], // 追加
-    children: [], // 追加
+    ],
+    parents: ['old-ale'],
+    children: [],
+    servingTemperature: [10, 14],
   },
   {
     id: 'sour-ale',
@@ -567,8 +585,8 @@ export const beerStyles: BeerStyle[] = [
       'gose',
       'american-wild-ale',
       'catharina-sour',
-    ], // 追加
-    parents: [], // 自然発生的な側面も                                                                                                // 追加
+    ],
+    parents: [],
     children: [
       'gose',
       'berliner-weisse',
@@ -578,7 +596,8 @@ export const beerStyles: BeerStyle[] = [
       'gueuze',
       'american-wild-ale',
       'catharina-sour',
-    ], // カテゴリなのでサブタイプを列挙 // 追加
+    ],
+    servingTemperature: [7, 10],
   },
   {
     id: 'dunkel',
@@ -604,9 +623,10 @@ export const beerStyles: BeerStyle[] = [
       'czech-dark-lager',
       'porter',
       'amber-ale',
-    ], // 追加
-    parents: ['lager'], // 追加
-    children: ['schwarzbier'], // より濃いラガーへ                                // 追加
+    ],
+    parents: ['lager'],
+    children: ['schwarzbier'],
+    servingTemperature: [7, 10],
   },
   {
     id: 'bock',
@@ -634,9 +654,10 @@ export const beerStyles: BeerStyle[] = [
       'weizenbock',
       'dunkel',
       'biere-de-garde',
-    ], // 追加
-    parents: ['lager'], // ラガー化後                                                           // 追加
-    children: ['doppelbock', 'eisbock', 'maibock', 'weizenbock'], // 追加 (Weizenbockはハイブリッドだが)
+    ],
+    parents: ['lager'],
+    children: ['doppelbock', 'eisbock', 'maibock', 'weizenbock'],
+    servingTemperature: [7, 10],
   },
   {
     id: 'double-ipa',
@@ -657,9 +678,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [7.5, 10.0],
     ibu: [60, 120],
     srm: [6, 14],
-    siblings: ['ipa', 'hazy-ipa', 'american-barleywine'], // Triple IPA削除 // 追加
-    parents: ['ipa'], // 追加
-    children: [], // 追加
+    siblings: ['ipa', 'hazy-ipa', 'american-barleywine'],
+    parents: ['ipa'],
+    children: [],
+    servingTemperature: [8, 12],
   },
   {
     id: 'dubbel',
@@ -687,9 +709,10 @@ export const beerStyles: BeerStyle[] = [
       'old-ale',
       'english-brown-ale',
       'oud-bruin',
-    ], // 追加
-    parents: [], // ベルギー修道院の伝統                                                                    // 追加
-    children: ['tripel'], // 強さの段階として                                                             // 追加
+    ],
+    parents: [],
+    children: ['tripel'],
+    servingTemperature: [10, 13],
   },
   {
     id: 'esb',
@@ -710,9 +733,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [4.6, 6.2],
     ibu: [30, 50],
     srm: [6, 18],
-    siblings: ['best-bitter', 'pale-ale', 'amber-ale', 'altbier'], // 追加
-    parents: ['best-bitter', 'pale-ale'], // 追加
-    children: [], // 追加
+    siblings: ['best-bitter', 'pale-ale', 'amber-ale', 'altbier'],
+    parents: ['best-bitter', 'pale-ale'],
+    children: [],
+    servingTemperature: [10, 13],
   },
   {
     id: 'milk-stout',
@@ -733,9 +757,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [4.0, 6.0],
     ibu: [20, 40],
     srm: [30, 40],
-    siblings: ['stout', 'oatmeal-stout', 'pastry-stout', 'tropical-stout'], // 追加
-    parents: ['stout'], // 追加
-    children: ['pastry-stout'], // 追加 (影響を与えた可能性)
+    siblings: ['stout', 'oatmeal-stout', 'pastry-stout', 'tropical-stout'],
+    parents: ['stout'],
+    children: ['pastry-stout'],
+    servingTemperature: [8, 12],
   },
   {
     id: 'gose',
@@ -755,9 +780,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [4.2, 4.8],
     ibu: [5, 12],
     srm: [3, 4],
-    siblings: ['berliner-weisse', 'witbier', 'sour-ale', 'catharina-sour'], // 追加
-    parents: ['sour-ale', 'weissbier'], // 歴史的背景から                  // 追加
-    children: [], // 追加
+    siblings: ['berliner-weisse', 'witbier', 'sour-ale', 'catharina-sour'],
+    parents: ['sour-ale', 'weissbier'],
+    children: [],
+    servingTemperature: [5, 8],
   },
   {
     id: 'helles',
@@ -784,9 +810,10 @@ export const beerStyles: BeerStyle[] = [
       'lager',
       'dortmunder-export',
       'maibock',
-    ], // 追加
-    parents: ['lager'], // 追加
-    children: ['dortmunder-export', 'maibock'], // 追加 (関連性)
+    ],
+    parents: ['lager'],
+    children: ['dortmunder-export', 'maibock'],
+    servingTemperature: [4, 7],
   },
   {
     id: 'vienna-lager',
@@ -806,9 +833,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [4.7, 5.5],
     ibu: [18, 30],
     srm: [9, 15],
-    siblings: ['marzen', 'amber-ale', 'czech-amber-lager', 'dortmunder-export'], // 追加
-    parents: ['lager'], // 追加
-    children: [], // 追加 (メキシカンラガーは間接的)
+    siblings: ['marzen', 'amber-ale', 'czech-amber-lager', 'dortmunder-export'],
+    parents: ['lager'],
+    children: [],
+    servingTemperature: [7, 10],
   },
   {
     id: 'altbier',
@@ -828,9 +856,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [4.3, 5.5],
     ibu: [25, 50],
     srm: [11, 17],
-    siblings: ['kolsch', 'esb', 'amber-ale', 'california-common'], // 追加
-    parents: [], // 独自の地域スタイル                           // 追加
-    children: [], // 追加
+    siblings: ['kolsch', 'esb', 'amber-ale', 'california-common'],
+    parents: [],
+    children: [],
+    servingTemperature: [7, 10],
   },
   {
     id: 'session-ipa',
@@ -850,9 +879,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [3.0, 5.0],
     ibu: [40, 55],
     srm: [3, 12],
-    siblings: ['ipa', 'hazy-ipa', 'pale-ale', 'brut-ipa'], // 追加
-    parents: ['ipa'], // 追加
-    children: [], // 追加
+    siblings: ['ipa', 'hazy-ipa', 'pale-ale', 'brut-ipa'],
+    parents: ['ipa'],
+    children: [],
+    servingTemperature: [6, 10],
   },
   {
     id: 'quadrupel',
@@ -881,9 +911,10 @@ export const beerStyles: BeerStyle[] = [
       'old-ale',
       'imperial-stout',
       'wee-heavy',
-    ], // 追加
-    parents: ['dubbel', 'tripel'], // 強さの段階として                                                               // 追加
-    children: [], // 追加
+    ],
+    parents: ['dubbel', 'tripel'],
+    children: [],
+    servingTemperature: [12, 16],
   },
   {
     id: 'imperial-stout',
@@ -911,9 +942,10 @@ export const beerStyles: BeerStyle[] = [
       'quadrupel',
       'baltic-porter',
       'wee-heavy',
-    ], // 追加
-    parents: ['stout', 'porter'], // 追加
-    children: ['pastry-stout'], // 追加
+    ],
+    parents: ['stout', 'porter'],
+    children: ['pastry-stout'],
+    servingTemperature: [12, 16],
   },
   {
     id: 'marzen',
@@ -935,9 +967,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [5.8, 6.3],
     ibu: [18, 24],
     srm: [8, 17],
-    siblings: ['vienna-lager', 'amber-ale', 'bock', 'dunkel', 'rauchbier'], // 追加
-    parents: ['lager'], // 追加
-    children: [], // 追加
+    siblings: ['vienna-lager', 'amber-ale', 'bock', 'dunkel', 'rauchbier'],
+    parents: ['lager'],
+    children: [],
+    servingTemperature: [7, 10],
   },
   {
     id: 'black-ipa',
@@ -958,9 +991,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [5.5, 9.0],
     ibu: [50, 90],
     srm: [25, 40],
-    siblings: ['ipa', 'porter', 'stout', 'schwarzbier', 'rye-ipa'], // 追加
-    parents: ['ipa'], // 追加
-    children: [], // 追加
+    siblings: ['ipa', 'porter', 'stout', 'schwarzbier', 'rye-ipa'],
+    parents: ['ipa'],
+    children: [],
+    servingTemperature: [8, 12],
   },
   {
     id: 'oatmeal-stout',
@@ -980,9 +1014,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [4.2, 5.9],
     ibu: [25, 40],
     srm: [22, 40],
-    siblings: ['stout', 'milk-stout', 'porter'], // 追加
-    parents: ['stout'], // 追加
-    children: [], // 追加
+    siblings: ['stout', 'milk-stout', 'porter'],
+    parents: ['stout'],
+    children: [],
+    servingTemperature: [8, 12],
   },
   {
     id: 'berliner-weisse',
@@ -1002,9 +1037,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [2.8, 3.8],
     ibu: [3, 8],
     srm: [2, 3],
-    siblings: ['gose', 'witbier', 'sour-ale', 'weissbier'], // 追加
-    parents: ['sour-ale', 'weissbier'], // 追加
-    children: [], // 追加
+    siblings: ['gose', 'witbier', 'sour-ale', 'weissbier'],
+    parents: ['sour-ale', 'weissbier'],
+    children: [],
+    servingTemperature: [5, 8],
   },
   {
     id: 'american-wheat',
@@ -1024,9 +1060,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [4.0, 5.5],
     ibu: [15, 30],
     srm: [3, 6],
-    siblings: ['weissbier', 'witbier', 'pale-ale', 'kolsch', 'kristallweizen'], // 追加
-    parents: ['weissbier', 'pale-ale'], // 追加
-    children: [], // 追加
+    siblings: ['weissbier', 'witbier', 'pale-ale', 'kolsch', 'kristallweizen'],
+    parents: ['weissbier', 'pale-ale'],
+    children: [],
+    servingTemperature: [4, 7],
   },
   {
     id: 'doppelbock',
@@ -1053,9 +1090,10 @@ export const beerStyles: BeerStyle[] = [
       'wee-heavy',
       'quadrupel',
       'baltic-porter',
-    ], // 追加
-    parents: ['bock'], // 追加
-    children: ['eisbock'], // 追加
+    ],
+    parents: ['bock'],
+    children: ['eisbock'],
+    servingTemperature: [8, 12],
   },
   {
     id: 'flanders-red-ale',
@@ -1075,9 +1113,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [4.6, 6.5],
     ibu: [10, 25],
     srm: [10, 16],
-    siblings: ['oud-bruin', 'lambic', 'gueuze', 'sour-ale', 'wood-aged-beer'], // 追加
-    parents: ['sour-ale'], // 追加
-    children: [], // 追加
+    siblings: ['oud-bruin', 'lambic', 'gueuze', 'sour-ale', 'wood-aged-beer'],
+    parents: ['sour-ale'],
+    children: [],
+    servingTemperature: [10, 13],
   },
   {
     id: 'cream-ale',
@@ -1097,9 +1136,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [4.2, 5.6],
     ibu: [8, 20],
     srm: [2.5, 5],
-    siblings: ['kolsch', 'american-lager', 'altbier', 'kentucky-common'], // 追加
-    parents: [], // アメリカ独自スタイル                                       // 追加
-    children: ['kentucky-common'], // 歴史的関連性                           // 追加
+    siblings: ['kolsch', 'american-lager', 'altbier', 'kentucky-common'],
+    parents: [],
+    children: ['kentucky-common'],
+    servingTemperature: [4, 7],
   },
   {
     id: 'rauchbier',
@@ -1120,18 +1160,19 @@ export const beerStyles: BeerStyle[] = [
     abv: [4.8, 6.0],
     ibu: [20, 30],
     srm: [12, 22],
-    siblings: ['marzen', 'bock'], // ベースやスモーキーさの対比で // 追加
-    parents: ['lager'], // ベースがラガーのため            // 追加
-    children: [], //                                 // 追加
+    siblings: ['marzen', 'bock'],
+    parents: ['lager'],
+    children: [],
+    servingTemperature: [7, 10],
   },
   {
     id: 'lambic',
     name: 'ランビック',
     description:
       'ベルギー・パヨッテンラント地方の伝統的な自然発酵ビール。培養酵母を使わず、空気中の野生酵母とバクテリアで発酵・熟成させる。強い酸味と複雑で時にファンキーな香りが特徴。ブレンドやフルーツ添加のベースとなる。',
-    // other_name: [], // 該当なしのためコメントアウトまたは削除
+    // other_name: [],
     characteristics: {
-      bitterness: 0, // 実質的に苦味はない
+      bitterness: 0,
       sweetness: 1,
       body: 2,
       aroma: 5,
@@ -1150,18 +1191,19 @@ export const beerStyles: BeerStyle[] = [
       'oud-bruin',
       'sour-ale',
       'american-wild-ale',
-    ], // 追加
-    parents: [], // 自然発生                                                                              // 追加
-    children: ['gueuze', 'fruit-lambic', 'kriek', 'framboise'], // 追加
+    ],
+    parents: [],
+    children: ['gueuze', 'fruit-lambic', 'kriek', 'framboise'],
+    servingTemperature: [10, 13],
   },
   {
     id: 'gueuze',
     name: 'グーズ',
     description:
       '若いランビックと古いランビックをブレンドし、瓶内二次発酵させたベルギーの伝統的なサワービール。強い炭酸と複雑な酸味、ファンキーな香りが特徴。「ブリュッセルのシャンパン」とも呼ばれる。',
-    // other_name: [], // 該当なし
+    // other_name: [],
     characteristics: {
-      bitterness: 0, // 実質的に苦味はない
+      bitterness: 0,
       sweetness: 1,
       body: 2,
       aroma: 5,
@@ -1180,9 +1222,10 @@ export const beerStyles: BeerStyle[] = [
       'oud-bruin',
       'sour-ale',
       'american-wild-ale',
-    ], // 追加
-    parents: ['lambic'], // 追加
-    children: [], // 追加
+    ],
+    parents: ['lambic'],
+    children: [],
+    servingTemperature: [8, 12],
   },
   {
     id: 'dunkelweizen',
@@ -1203,16 +1246,17 @@ export const beerStyles: BeerStyle[] = [
     abv: [4.3, 5.6],
     ibu: [10, 18],
     srm: [14, 23],
-    siblings: ['weissbier', 'weizenbock', 'kristallweizen', 'dunkel'], // 追加
-    parents: ['weissbier'], // 追加
-    children: [], // 追加
+    siblings: ['weissbier', 'weizenbock', 'kristallweizen', 'dunkel'],
+    parents: ['weissbier'],
+    children: [],
+    servingTemperature: [7, 10],
   },
   {
     id: 'weizenbock',
     name: 'ヴァイツェンボック',
     description:
       'ドイツのヴァイツェンとボックを融合させたスタイル。ヴァイツェン酵母由来のフルーティーさと、ボック由来の豊かなモルト感、高いアルコール度数が特徴。濃厚で複雑な味わい。',
-    // other_name: [], // 該当なし
+    // other_name: [],
     characteristics: {
       bitterness: 2,
       sweetness: 4,
@@ -1226,9 +1270,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [6.5, 9.0],
     ibu: [15, 35],
     srm: [6, 25],
-    siblings: ['weissbier', 'dunkelweizen', 'bock', 'doppelbock'], // 追加
-    parents: ['weissbier', 'bock'], // 追加
-    children: [], // 追加
+    siblings: ['weissbier', 'dunkelweizen', 'bock', 'doppelbock'],
+    parents: ['weissbier', 'bock'],
+    children: [],
+    servingTemperature: [8, 12],
   },
   {
     id: 'maibock',
@@ -1249,9 +1294,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [6.3, 7.4],
     ibu: [23, 35],
     srm: [6, 11],
-    siblings: ['bock', 'helles', 'dortmunder-export', 'doppelbock'], // 追加
-    parents: ['bock', 'helles'], // 追加
-    children: [], // 追加
+    siblings: ['bock', 'helles', 'dortmunder-export', 'doppelbock'],
+    parents: ['bock', 'helles'],
+    children: [],
+    servingTemperature: [7, 10],
   },
   {
     id: 'california-common',
@@ -1272,16 +1318,17 @@ export const beerStyles: BeerStyle[] = [
     abv: [4.5, 5.5],
     ibu: [30, 45],
     srm: [10, 14],
-    siblings: ['altbier', 'kolsch', 'amber-ale', 'cream-ale'], // 追加
-    parents: [], // 独自の製法                                 // 追加
-    children: [], // 追加
+    siblings: ['altbier', 'kolsch', 'amber-ale', 'cream-ale'],
+    parents: [],
+    children: [],
+    servingTemperature: [7, 10],
   },
   {
     id: 'rye-ipa',
     name: 'ライIPA',
     description:
       '原料の一部にライ麦を使用したIPA。通常のIPAのホップ風味に加え、ライ麦由来のスパイシーさやドライな後味、わずかな粘性が加わるのが特徴。',
-    // other_name: [], // 該当なし
+    // other_name: [],
     characteristics: {
       bitterness: 4,
       sweetness: 2,
@@ -1295,9 +1342,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [5.5, 8.0],
     ibu: [50, 75],
     srm: [6, 15],
-    siblings: ['ipa', 'red-ipa', 'black-ipa', 'spice-herb-vegetable-beer'], // 追加
-    parents: ['ipa'], // 追加
-    children: [], // 追加
+    siblings: ['ipa', 'red-ipa', 'black-ipa', 'spice-herb-vegetable-beer'],
+    parents: ['ipa'],
+    children: [],
+    servingTemperature: [7, 10],
   },
   {
     id: 'oud-bruin',
@@ -1325,16 +1373,17 @@ export const beerStyles: BeerStyle[] = [
       'sour-ale',
       'dubbel',
       'old-ale',
-    ], // 追加
-    parents: ['sour-ale'], // 追加
-    children: [], // 追加
+    ],
+    parents: ['sour-ale'],
+    children: [],
+    servingTemperature: [10, 13],
   },
   {
     id: 'english-brown-ale',
     name: 'イングリッシュ・ブラウンエール',
     description:
       'イギリス発祥の伝統的なブラウンエール。ナッツやカラメル、ビスケットのような麦芽の風味が主体で、ホップの苦味や香りは控えめ。穏やかで飲みやすい。',
-    // other_name: [], // 一般的な別名少ない
+    // other_name: [],
     characteristics: {
       bitterness: 2,
       sweetness: 3,
@@ -1348,16 +1397,17 @@ export const beerStyles: BeerStyle[] = [
     abv: [4.0, 5.5],
     ibu: [15, 30],
     srm: [12, 22],
-    siblings: ['porter', 'mild-ale', 'amber-ale', 'dubbel'], // 追加
-    parents: [], // 古いエール                                // 追加
-    children: ['porter'], // 追加
+    siblings: ['porter', 'mild-ale', 'amber-ale', 'dubbel'],
+    parents: [],
+    children: ['porter'],
+    servingTemperature: [10, 13],
   },
   {
     id: 'baltic-porter',
     name: 'バルチックポーター',
     description:
       'バルト海周辺諸国で発展したポーター。伝統的な英国ポーターよりもアルコール度数が高く、ラガー酵母で低温発酵・熟成させることが多い。濃厚で滑らか、複雑な味わい。',
-    // other_name: [], // 該当なし
+    // other_name: [],
     characteristics: {
       bitterness: 2,
       sweetness: 4,
@@ -1377,16 +1427,17 @@ export const beerStyles: BeerStyle[] = [
       'doppelbock',
       'quadrupel',
       'schwarzbier',
-    ], // 追加
-    parents: ['porter', 'imperial-stout', 'lager'], // 追加
-    children: [], // 追加
+    ],
+    parents: ['porter', 'imperial-stout', 'lager'],
+    children: [],
+    servingTemperature: [8, 12],
   },
   {
     id: 'eisbock',
     name: 'アイスボック',
     description:
       'ボックやドッペルボックを凍結濃縮して造られる極めて強いドイツのラガー。非常にリッチなモルト風味と高いアルコール、滑らかな口当たりが特徴。',
-    // other_name: [], // 該当なし
+    // other_name: [],
     characteristics: {
       bitterness: 2,
       sweetness: 5,
@@ -1400,16 +1451,17 @@ export const beerStyles: BeerStyle[] = [
     abv: [9.0, 14.0],
     ibu: [25, 35],
     srm: [18, 30],
-    siblings: ['bock', 'doppelbock', 'barley-wine', 'wee-heavy'], // 追加
-    parents: ['doppelbock', 'bock'], // 追加
-    children: [], // 追加
+    siblings: ['bock', 'doppelbock', 'barley-wine', 'wee-heavy'],
+    parents: ['doppelbock', 'bock'],
+    children: [],
+    servingTemperature: [10, 14]
   },
   {
     id: 'kristallweizen',
     name: 'クリスタルヴァイツェン',
     description:
       'ヘフェヴァイツェンを濾過して酵母を取り除いた、透明なドイツの小麦ビール。「クリスタル」のようにクリアな外観が特徴。味わいはヘフェヴァイツェンに似るが、よりクリーンでシャープ。',
-    // other_name: [], // 該当なし
+    // other_name: [],
     characteristics: {
       bitterness: 1,
       sweetness: 2,
@@ -1423,9 +1475,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [4.3, 5.6],
     ibu: [8, 15],
     srm: [2, 4],
-    siblings: ['weissbier', 'american-wheat', 'kolsch'], // 追加
-    parents: ['weissbier'], // 追加
-    children: [], // 追加
+    siblings: ['weissbier', 'american-wheat', 'kolsch'],
+    parents: ['weissbier'],
+    children: [],
+    servingTemperature: [3, 6]
   },
   {
     id: 'foreign-extra-stout',
@@ -1446,9 +1499,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [6.0, 8.0],
     ibu: [30, 70],
     srm: [30, 40],
-    siblings: ['stout', 'imperial-stout', 'tropical-stout', 'baltic-porter'], // 追加
-    parents: ['stout'], // 追加
-    children: ['tropical-stout'], // 追加
+    siblings: ['stout', 'imperial-stout', 'tropical-stout', 'baltic-porter'],
+    parents: ['stout'],
+    children: ['tropical-stout'],
+    servingTemperature: [10, 13]
   },
   {
     id: 'mild-ale',
@@ -1469,16 +1523,17 @@ export const beerStyles: BeerStyle[] = [
     abv: [3.0, 4.5],
     ibu: [10, 25],
     srm: [6, 30],
-    siblings: ['english-brown-ale', 'best-bitter', 'scottish-ale'], // 追加
-    parents: [], // 伝統的エール                                     // 追加
-    children: [], // 追加
+    siblings: ['english-brown-ale', 'best-bitter', 'scottish-ale'],
+    parents: [],
+    children: [],
+    servingTemperature: [10, 13]
   },
   {
     id: 'red-ipa',
     name: 'レッドIPA',
     description:
       'アメリカンIPAに、より豊かなモルト風味と赤みがかった色合いを加えたスタイル。ホップの香りと苦味は健在だが、カラメルやトーストのようなモルト感が加わる。',
-    // other_name: [], // 該当なし
+    // other_name: [],
     characteristics: {
       bitterness: 4,
       sweetness: 3,
@@ -1492,16 +1547,17 @@ export const beerStyles: BeerStyle[] = [
     abv: [5.5, 7.5],
     ibu: [40, 70],
     srm: [11, 18],
-    siblings: ['ipa', 'amber-ale', 'rye-ipa'], // 追加
-    parents: ['ipa', 'amber-ale'], // 追加
-    children: [], // 追加
+    siblings: ['ipa', 'amber-ale', 'rye-ipa'],
+    parents: ['ipa', 'amber-ale'],
+    children: [],
+    servingTemperature: [8, 12]
   },
   {
     id: 'belgian-pale-ale',
     name: 'ベルジャン・ペールエール',
     description:
       'イギリスのペールエールに影響を受けつつ、ベルギー酵母で醸造されたエール。中程度の苦味と、酵母由来のフルーティー＆スパイシーな香りが特徴。比較的飲みやすい。',
-    // other_name: [], // 該当なし
+    // other_name: [],
     characteristics: {
       bitterness: 2,
       sweetness: 2,
@@ -1515,9 +1571,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [4.8, 5.5],
     ibu: [20, 30],
     srm: [8, 14],
-    siblings: ['pale-ale', 'saison', 'belgian-blonde-ale', 'best-bitter'], // 追加
-    parents: ['pale-ale'], // 追加
-    children: [], // 追加
+    siblings: ['pale-ale', 'saison', 'belgian-blonde-ale', 'best-bitter'],
+    parents: ['pale-ale'],
+    children: [],
+    servingTemperature: [7, 10]
   },
   {
     id: 'dortmunder-export',
@@ -1538,16 +1595,17 @@ export const beerStyles: BeerStyle[] = [
     abv: [4.8, 6.0],
     ibu: [20, 30],
     srm: [4, 6],
-    siblings: ['helles', 'german-pilsner', 'vienna-lager', 'marzen'], // 追加
-    parents: ['helles', 'pilsner', 'lager'], // 追加
-    children: [], // 追加
+    siblings: ['helles', 'german-pilsner', 'vienna-lager', 'marzen'],
+    parents: ['helles', 'pilsner', 'lager'],
+    children: [],
+    servingTemperature: [5, 8]
   },
   {
     id: 'biere-de-garde',
     name: 'ビエール・ド・ギャルド',
     description:
       'フランス北部発祥の「貯蔵ビール」。セゾンに似るが、よりモルトの風味が豊かでアルコール度数が高いことが多い。熟成による複雑な味わいが特徴。',
-    // other_name: [], // 該当なし
+    // other_name: [],
     characteristics: {
       bitterness: 2,
       sweetness: 3,
@@ -1561,9 +1619,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [6.0, 8.5],
     ibu: [18, 28],
     srm: [6, 19],
-    siblings: ['saison', 'bock', 'dubbel', 'old-ale'], // 追加
-    parents: [], // フランスのファームハウス伝統          // 追加
-    children: [], // 追加
+    siblings: ['saison', 'bock', 'dubbel', 'old-ale'],
+    parents: [],
+    children: [],
+    servingTemperature: [10, 13]
   },
   {
     id: 'old-ale',
@@ -1576,7 +1635,7 @@ export const beerStyles: BeerStyle[] = [
       sweetness: 4,
       body: 4,
       aroma: 4,
-      sourness: 2, // 熟成により酸味が出ることがある
+      sourness: 2,
     },
     history:
       '英伝統の高アルコール（6-9%+）熟成上面発酵エール。「オールド」は熟成の意味。「ストックエール」とも呼ばれ、若いマイルドエールとブレンドされることも。\nバーレイワインと重なるが、一般的にオールドエールは色が濃く（琥珀色～濃茶色）、麦芽由来の甘み（カラメル、糖蜜、ダークフルーツ等）がより前面に出る傾向。ホップ苦味は様々だが熟成で和らぐ。\n最大の特徴は熟成による複雑な風味。酸化熟成香（シェリー様）、革、タバコ、時にはブレタノマイセス由来のファンキーなニュアンスも。口当たり滑らかでアルコールの温かみあり。',
@@ -1590,16 +1649,17 @@ export const beerStyles: BeerStyle[] = [
       'dubbel',
       'quadrupel',
       'english-brown-ale',
-    ], // 追加
-    parents: [], // 伝統的ストロングエール                                                  // 追加
-    children: ['barley-wine'], // 追加
+    ],
+    parents: [],
+    children: ['barley-wine'],
+    servingTemperature: [12, 16]
   },
   {
     id: 'white-ipa',
     name: 'ホワイトIPA',
     description:
       'ベルギーのヴィットビア（白ビール）とアメリカンIPAを融合させたハイブリッドスタイル。ヴィットビア由来の小麦感やスパイス香と、IPA由来の強いホップ香が共存する。',
-    // other_name: [], // 該当なし
+    // other_name: [],
     characteristics: {
       bitterness: 4,
       sweetness: 2,
@@ -1613,19 +1673,20 @@ export const beerStyles: BeerStyle[] = [
     abv: [5.5, 7.0],
     ibu: [40, 70],
     srm: [5, 7],
-    siblings: ['ipa', 'witbier', 'hazy-ipa', 'american-wheat'], // 追加
-    parents: ['ipa', 'witbier'], // 追加
-    children: [], // 追加
+    siblings: ['ipa', 'witbier', 'hazy-ipa', 'american-wheat'],
+    parents: ['ipa', 'witbier'],
+    children: [],
+    servingTemperature: [7, 10]
   },
   {
     id: 'fruit-lambic',
     name: 'フルーツランビック',
     description:
       'ランビックにフルーツを加えて二次発酵させたベルギービール。チェリー(Kriek)やラズベリー(Framboise)が代表的。ベースの酸味と果実の風味が融合した複雑な味わい。',
-    // other_name: [], // カテゴリ名として使用
+    // other_name: [],
     characteristics: {
       bitterness: 0,
-      sweetness: 3, // 甘味は製品による差が大きい
+      sweetness: 3,
       body: 2,
       aroma: 5,
       sourness: 5,
@@ -1635,7 +1696,7 @@ export const beerStyles: BeerStyle[] = [
     origin: '19世紀～20世紀初頭（商業化）、ベルギー',
     abv: [5.0, 8.0],
     ibu: [0, 10],
-    srm: [3, 7], // 果物により大きく変動するため参考値
+    srm: [3, 7],
     siblings: [
       'lambic',
       'gueuze',
@@ -1643,9 +1704,10 @@ export const beerStyles: BeerStyle[] = [
       'framboise',
       'fruit-beer',
       'sour-ale',
-    ], // 追加
-    parents: ['lambic', 'fruit-beer'], // 追加
-    children: ['kriek', 'framboise'], // 追加
+    ],
+    parents: ['lambic', 'fruit-beer'],
+    children: ['kriek', 'framboise'],
+    servingTemperature: [8, 12]
   },
   {
     id: 'kriek',
@@ -1655,7 +1717,7 @@ export const beerStyles: BeerStyle[] = [
     other_name: ['Kriek Lambic'],
     characteristics: {
       bitterness: 0,
-      sweetness: 3, // 甘味は製品による
+      sweetness: 3,
       body: 2,
       aroma: 5,
       sourness: 5,
@@ -1665,10 +1727,11 @@ export const beerStyles: BeerStyle[] = [
     origin: '19世紀～20世紀初頭、ベルギー',
     abv: [5.0, 8.0],
     ibu: [0, 10],
-    srm: [10, 17], // 赤みを反映
-    siblings: ['fruit-lambic', 'framboise', 'lambic', 'gueuze', 'sour-ale'], // 追加
-    parents: ['fruit-lambic', 'lambic'], // 追加
-    children: [], // 追加
+    srm: [10, 17],
+    siblings: ['fruit-lambic', 'framboise', 'lambic', 'gueuze', 'sour-ale'],
+    parents: ['fruit-lambic', 'lambic'],
+    children: [],
+    servingTemperature: [8, 12]
   },
   {
     id: 'framboise',
@@ -1678,7 +1741,7 @@ export const beerStyles: BeerStyle[] = [
     other_name: ['Frambozen', 'Raspberry Lambic'],
     characteristics: {
       bitterness: 0,
-      sweetness: 3, // 甘味は製品による
+      sweetness: 3,
       body: 2,
       aroma: 5,
       sourness: 5,
@@ -1688,19 +1751,20 @@ export const beerStyles: BeerStyle[] = [
     origin: '20世紀初頭、ベルギー',
     abv: [5.0, 8.0],
     ibu: [0, 10],
-    srm: [3, 6], // ピンク/赤系
-    siblings: ['fruit-lambic', 'kriek', 'lambic', 'gueuze', 'sour-ale'], // 追加
-    parents: ['fruit-lambic', 'lambic'], // 追加
-    children: [], // 追加
+    srm: [3, 6],
+    siblings: ['fruit-lambic', 'kriek', 'lambic', 'gueuze', 'sour-ale'],
+    parents: ['fruit-lambic', 'lambic'],
+    children: [],
+    servingTemperature: [8, 12]
   },
   {
     id: 'brut-ipa',
     name: 'ブリュットIPA',
     description:
       'シャンパンのように極めてドライな飲み口を目指したIPA。酵素を使って糖分を完全に分解させ、強いホップアロマと高い炭酸、キレのある後味が特徴。',
-    // other_name: [], // 該当なし
+    // other_name: [],
     characteristics: {
-      bitterness: 3, // 苦味の感じ方はドライさで増すことも
+      bitterness: 3,
       sweetness: 0,
       body: 1,
       aroma: 5,
@@ -1712,9 +1776,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [6.0, 7.5],
     ibu: [20, 40],
     srm: [2, 4],
-    siblings: ['ipa', 'hazy-ipa', 'cold-ipa', 'session-ipa'], // 追加
-    parents: ['ipa'], // 追加
-    children: [], // 追加
+    siblings: ['ipa', 'hazy-ipa', 'cold-ipa', 'session-ipa'],
+    parents: ['ipa'],
+    children: [],
+    servingTemperature: [6, 9]
   },
   {
     id: 'pastry-stout',
@@ -1732,12 +1797,13 @@ export const beerStyles: BeerStyle[] = [
     history:
       '2010年代後半頃から米中心に顕著になったインペリアルスタウトの派生。\n名の通り「ペストリー（焼き菓子）」やデザートを連想させる極甘・濃厚・リッチな風味が特徴。\nベースのインペリアルスタウトに、バニラ、カカオ、ココナッツ、メープル、コーヒー、ナッツ、フルーツ、スパイス、時には実際の菓子等、多様な副原料を大量投入し意図的にデザート風味を作り出す。\nラクトース（乳糖）で甘み・ボディ強調も一般的。アルコール度数も非常に高い（10%超が多い）ことが多く、「飲むデザート」と呼ぶにふさわしい強烈な個性と飲みごたえ。',
     origin: '2010年代後半、アメリカなど',
-    abv: [8.0, 14.0], // '+' 削除
+    abv: [8.0, 14.0],
     ibu: [20, 50],
-    srm: [30, 40], // '+' 削除
-    siblings: ['imperial-stout', 'milk-stout', 'stout', 'sweet-stout'], // sweet-stout は milk-stout の別名だが含める // 追加
-    parents: ['imperial-stout', 'milk-stout'], // 追加
-    children: [], // 追加
+    srm: [30, 40],
+    siblings: ['imperial-stout', 'milk-stout', 'stout', 'sweet-stout'],
+    parents: ['imperial-stout', 'milk-stout'],
+    children: [],
+    servingTemperature: [12, 16]
   },
   {
     id: 'italian-grape-ale',
@@ -1747,20 +1813,21 @@ export const beerStyles: BeerStyle[] = [
     other_name: ['IGA'],
     characteristics: {
       bitterness: 2,
-      sweetness: 2, // 可変
-      body: 3, // 可変
+      sweetness: 2,
+      body: 3,
       aroma: 4,
-      sourness: 2, // 可変
+      sourness: 2,
     },
     history:
       '2000年代半ば以降にイタリアのクラフトブルワーによって生み出され発展した新しいスタイル。「IGA」と略される。\nワイン生産が盛んなイタリアならではの発想で、醸造過程（発酵・熟成時等）にブドウ、ブドウ果汁（マスト）、搾りかす（ヴィナッチャ）等を加えるのが最大の特徴。\n使用ブドウ品種（白/黒）、投入時期/形態、ベースビール（主にエール）により味わいは非常に多様。\n一般的に、ビール本来の風味に加え、ブドウ由来のフルーティーな香り（ワイン様アロマ）、時にはタンニンや酸味が感じられ、ビールとワインの境界にあるような複雑でユニークな飲み物に。近年BJCP等にも追加され世界的認知度向上。',
     origin: '2000年代半ば～、イタリア',
-    abv: [5.0, 10.0], // '+' 削除
+    abv: [5.0, 10.0],
     ibu: [15, 40],
-    srm: [4, 15], // '+' 削除
-    siblings: ['fruit-beer', 'saison', 'belgian-blonde-ale', 'wood-aged-beer'], // 追加
-    parents: [], // 独自発生                                                      // 追加
-    children: [], // 追加
+    srm: [4, 15],
+    siblings: ['fruit-beer', 'saison', 'belgian-blonde-ale', 'wood-aged-beer'],
+    parents: [],
+    children: [],
+    servingTemperature: [8, 12]
   },
   {
     id: 'czech-amber-lager',
@@ -1787,9 +1854,10 @@ export const beerStyles: BeerStyle[] = [
       'amber-ale',
       'czech-dark-lager',
       'pilsner',
-    ], // 追加
-    parents: ['lager', 'pilsner'], // ボヘミアンピルスナーからの派生として                  // 追加
-    children: [], // 追加
+    ],
+    parents: ['lager', 'pilsner'],
+    children: [],
+    servingTemperature: [7, 10]
   },
   {
     id: 'czech-dark-lager',
@@ -1816,16 +1884,17 @@ export const beerStyles: BeerStyle[] = [
       'international-dark-lager',
       'czech-amber-lager',
       'bock',
-    ], // 追加
-    parents: ['lager'], // 追加
-    children: [], // 追加
+    ],
+    parents: ['lager'],
+    children: [],
+    servingTemperature: [7, 10]
   },
   {
     id: 'tropical-stout',
     name: 'トロピカルスタウト',
     description:
       '熱帯地域向けに調整されたスタウト。フォーリンエクストラスタウトに似るが、より甘みが強く、ロースト感は穏やか。フルーティーなエステル香が特徴的。',
-    // other_name: [], // 該当なし
+    // other_name: [],
     characteristics: {
       bitterness: 3,
       sweetness: 4,
@@ -1838,17 +1907,18 @@ export const beerStyles: BeerStyle[] = [
     origin: '20世紀、熱帯地域（FESが起源）',
     abv: [5.5, 8.0],
     ibu: [30, 50],
-    srm: [30, 40], // '+' 削除
-    siblings: ['foreign-extra-stout', 'stout', 'milk-stout'], // sweet-stout 削除 // 追加
-    parents: ['foreign-extra-stout', 'stout'], // 追加
-    children: [], // 追加
+    srm: [30, 40],
+    siblings: ['foreign-extra-stout', 'stout', 'milk-stout'],
+    parents: ['foreign-extra-stout', 'stout'],
+    children: [],
+    servingTemperature: [8, 12]
   },
   {
     id: 'cold-ipa',
     name: 'コールドIPA',
     description:
       'IPAのようなホップ感を持ちつつ、ラガーのようなクリーンでクリスプな飲み口を目指した新しいスタイル。ラガー酵母の使用や副原料の使用が特徴的。',
-    // other_name: [], // 該当なし
+    // other_name: [],
     characteristics: {
       bitterness: 4,
       sweetness: 1,
@@ -1862,16 +1932,17 @@ export const beerStyles: BeerStyle[] = [
     abv: [6.0, 7.5],
     ibu: [50, 70],
     srm: [2, 5],
-    siblings: ['ipa', 'brut-ipa', 'lager', 'pilsner', 'hazy-ipa'], // IPL削除 // 追加
-    parents: ['ipa', 'lager'], // ハイブリッドとして // 追加
-    children: [], // 追加
+    siblings: ['ipa', 'brut-ipa', 'lager', 'pilsner', 'hazy-ipa'],
+    parents: ['ipa', 'lager'],
+    children: [],
+    servingTemperature: [5, 8]
   },
   {
     id: 'belgian-golden-strong-ale',
     name: 'ベルジャン・ゴールデンストロングエール',
     description:
       'ベルギーの強い黄金色のエール。トリペルに似るが、よりドライでホップの苦味が効き、炭酸が強い。悪魔的な飲みやすさを持つことも。',
-    // other_name: [], // 該当なし
+    // other_name: [],
     characteristics: {
       bitterness: 2,
       sweetness: 1,
@@ -1885,16 +1956,17 @@ export const beerStyles: BeerStyle[] = [
     abv: [7.5, 10.5],
     ibu: [22, 35],
     srm: [3, 6],
-    siblings: ['tripel', 'belgian-blonde-ale', 'quadrupel'], // 追加
-    parents: ['tripel'], // 追加
-    children: [], // 追加
+    siblings: ['tripel', 'belgian-blonde-ale', 'quadrupel'],
+    parents: ['tripel'],
+    children: [],
+    servingTemperature: [6, 10]
   },
   {
     id: 'oyster-stout',
     name: 'オイスタースタウト',
     description:
       '醸造過程で牡蠣（身、殻、またはエキス）を使用したスタウト。ほのかな潮の香りとミネラル感、まろやかさが加わることがある。',
-    // other_name: [], // 該当なし
+    // other_name: [],
     characteristics: {
       bitterness: 3,
       sweetness: 3,
@@ -1908,17 +1980,18 @@ export const beerStyles: BeerStyle[] = [
       '20世紀初頭、イギリス/ニュージーランド（料理との組み合わせは18世紀～）',
     abv: [4.0, 7.0],
     ibu: [25, 50],
-    srm: [30, 40], // '+' 削除
-    siblings: ['stout', 'milk-stout', 'foreign-extra-stout'], // 追加
-    parents: ['stout'], // 追加
-    children: [], // 追加
+    srm: [30, 40],
+    siblings: ['stout', 'milk-stout', 'foreign-extra-stout'],
+    parents: ['stout'],
+    children: [],
+    servingTemperature: [8, 12]
   },
   {
     id: 'international-dark-lager',
     name: 'インターナショナル・ダークラガー',
     description:
       '世界各国のマスマーケット向けダークラガー。色は濃いが、味わいは比較的軽く、甘みが感じられることが多い。ロースト感は控えめ。',
-    // other_name: [], // 該当なし
+    // other_name: [],
     characteristics: {
       bitterness: 1,
       sweetness: 3,
@@ -1931,16 +2004,17 @@ export const beerStyles: BeerStyle[] = [
     origin: '20世紀、世界各地（ヨーロピアン・ダークラガーが起源）',
     abv: [4.2, 6.0],
     ibu: [8, 20],
-    srm: [14, 22], // '+' 削除
+    srm: [14, 22],
     siblings: [
       'american-lager',
       'international-pale-lager',
       'dunkel',
       'schwarzbier',
       'czech-dark-lager',
-    ], // 追加
-    parents: ['lager'], // 追加
-    children: [], // 追加
+    ],
+    parents: ['lager'],
+    children: [],
+    servingTemperature: [4, 7]
   },
   {
     id: 'german-pilsner',
@@ -1961,9 +2035,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [4.4, 5.2],
     ibu: [22, 40],
     srm: [2, 5],
-    siblings: ['pilsner', 'helles', 'kolsch', 'lager'], // 追加
-    parents: ['pilsner'], // 追加
-    children: [], // 追加
+    siblings: ['pilsner', 'helles', 'kolsch', 'lager'],
+    parents: ['pilsner'],
+    children: [],
+    servingTemperature: [4, 7]
   },
   {
     id: 'best-bitter',
@@ -1984,9 +2059,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [3.8, 4.6],
     ibu: [25, 40],
     srm: [5, 16],
-    siblings: ['esb', 'pale-ale', 'mild-ale', 'belgian-pale-ale'], // 追加
-    parents: ['pale-ale'], // 追加 (ビター全体として)
-    children: ['esb'], // 追加
+    siblings: ['esb', 'pale-ale', 'mild-ale', 'belgian-pale-ale'],
+    parents: ['pale-ale'],
+    children: ['esb'],
+    servingTemperature: [10, 13]
   },
   {
     id: 'wee-heavy',
@@ -2004,7 +2080,7 @@ export const beerStyles: BeerStyle[] = [
     history:
       'スコットランド発祥の高アルコール(6.5%+, 10%超も)・麦芽風味豊かな上面発酵エール。「ストロング・スコッチエール」とも。「ウィーヘヴィー」の名は、かつての比重によるビールの最高ランクの呼び名(例:90/-)に由来するとされる。\nスコットランドの冷涼な気候やホップが少なかった歴史から、ホップは最小限で、麦芽の甘みと複雑な風味が最大限に引き出される。\n長い煮沸による濃厚なカラメル、トフィー等の深い甘みと香ばしさ、豊かなボディが最大の特徴。時にピート燻製麦芽でスモーキーさも。\n冬にゆっくり味わうデザートビール的存在。',
     origin: '19世紀、スコットランド',
-    abv: [6.5, 10.0], // '+' 削除
+    abv: [6.5, 10.0],
     ibu: [17, 35],
     srm: [14, 25],
     siblings: [
@@ -2013,18 +2089,19 @@ export const beerStyles: BeerStyle[] = [
       'doppelbock',
       'quadrupel',
       'scottish-ale',
-    ], // 追加
-    parents: ['scottish-ale'], // scottish-ale がリストにあれば設定              // 追加
-    children: [], // 追加
+    ],
+    parents: ['scottish-ale'],
+    children: [],
+    servingTemperature: [10, 14]
   },
   {
     id: 'catharina-sour',
     name: 'カタリナサワー',
     description:
       'ブラジル発祥の現代的なサワービール。ケトルサワー製法によるクリーンな酸味と、大量のトロピカルフルーツの使用が特徴。低アルコールで爽快。',
-    // other_name: [], // 該当なし
+    // other_name: [],
     characteristics: {
-      bitterness: 0 - 1, // 0に近い
+      bitterness: 0 - 1,
       sweetness: 3,
       body: 2,
       aroma: 5,
@@ -2042,19 +2119,20 @@ export const beerStyles: BeerStyle[] = [
       'fruit-beer',
       'american-wild-ale',
       'sour-ale',
-    ], // 追加
-    parents: ['sour-ale', 'berliner-weisse'], // ケトルサワーはベルリナーに近い手法           // 追加
-    children: [], // 追加
+    ],
+    parents: ['sour-ale', 'berliner-weisse'],
+    children: [],
+    servingTemperature: [5, 8]
   },
   {
     id: 'kvass',
     name: 'クワス',
     description:
       '東ヨーロッパ（特にロシア、ウクライナ）の伝統的な微アルコール発酵飲料。ライ麦パンをベースに作られ、軽い酸味と香ばしさを持つ。',
-    // other_name: [], // 該当なし
+    // other_name: [],
     characteristics: {
       bitterness: 0,
-      sweetness: 3, // 可変
+      sweetness: 3,
       body: 2,
       aroma: 3,
       sourness: 2,
@@ -2063,11 +2141,12 @@ export const beerStyles: BeerStyle[] = [
       'ロシア、ウクライナ等東欧/中央アジアのスラブ系民族で中世から飲まれる伝統発酵飲料。厳密にはビールと異なるが穀物(主にライ麦)原料で発酵する点で共通。\n伝統製法では乾燥ライ麦パン(黒パン)を湯に浸し糖分抽出し、酵母(時に乳酸菌も)で発酵。ミントやベリー等で風味付けも。\nアルコール度数は非常に低く(多くは0.5-1.5%)、子供から大人まで日常的に飲むソフトドリンクに近い存在。味はパン由来の香ばしさと軽い酸味、ほのかな甘みが特徴。微炭酸あり。\n現在もこれらの地域で非常にポピュラーで、家庭や路上、スーパー等で販売。',
     origin: '中世、東ヨーロッパ/中央アジア',
     abv: [0.5, 2.5],
-    ibu: [0, 0], // IBUは通常0
+    ibu: [0, 0],
     srm: [15, 30],
-    siblings: ['sahti', 'gruit', 'braggot'], // 追加
-    parents: [], // 追加
-    children: [], // 追加
+    siblings: ['sahti', 'gruit', 'braggot'],
+    parents: [],
+    children: [],
+    servingTemperature: [4, 10]
   },
   {
     id: 'kentucky-common',
@@ -2080,7 +2159,7 @@ export const beerStyles: BeerStyle[] = [
       sweetness: 2,
       body: 3,
       aroma: 2,
-      sourness: 2, // 歴史的には酸味あり
+      sourness: 2,
     },
     history:
       '19世紀後半～米禁酒法時代（1920-33）まで、特にケンタッキー州ルイビル周辺で非常に人気だった歴史的スタイル。「コモン」は「一般的」等の意味。\n記録や再現レシピによると、色はやや濃い目（アンバー～ライトブラウン）、原料は大麦麦芽に加えトウモロコシが多く（25-35%+）使われた模様。上面発酵で急速醸造・消費され、しばしば乳酸菌等による軽い酸味（サワーマッシュ製法の可能性も）を持っていたと考えられている。\nクリームエール同様、ラガー対抗のエールだが、色が濃く酸味があった点が異なる。禁酒法と共にほぼ消滅したが、近年歴史的スタイルへの関心からクラフトで再現される試みも。',
@@ -2088,16 +2167,17 @@ export const beerStyles: BeerStyle[] = [
     abv: [4.0, 5.5],
     ibu: [15, 30],
     srm: [11, 19],
-    siblings: ['cream-ale', 'altbier', 'american-lager'], // 追加
-    parents: ['cream-ale'], // 追加 (関連性)
-    children: [], // 追加
+    siblings: ['cream-ale', 'altbier', 'american-lager'],
+    parents: ['cream-ale'],
+    children: [],
+    servingTemperature: [10, 13]
   },
   {
     id: 'braggot',
     name: 'ブラゴット',
     description:
       'ビール（麦芽）とミード（蜂蜜酒）のハイブリッド。麦芽と蜂蜜の両方を発酵させて造られる。甘みとアルコール度数が高いことが多い。',
-    // other_name: [], // 該当なし
+    // other_name: [],
     characteristics: {
       bitterness: 2,
       sweetness: 4,
@@ -2111,9 +2191,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [5.0, 14.0],
     ibu: [15, 50],
     srm: [5, 30],
-    siblings: ['gruit', 'sahti', 'kvass', 'old-ale', 'barley-wine'], // 追加
-    parents: [], // 古代飲料                                        // 追加
+    siblings: ['gruit', 'sahti', 'kvass', 'old-ale', 'barley-wine'],
+    parents: [],
     children: [],
+    servingTemperature: [10, 14]
   },
   {
     id: 'low-non-alcoholic-beer',
@@ -2134,9 +2215,10 @@ export const beerStyles: BeerStyle[] = [
     abv: [0.0, 1.2],
     ibu: [5, 30],
     srm: [2, 30],
-    siblings: [], // 機能的カテゴリ                // 追加
-    parents: [], // ベースは様々                // 追加
+    siblings: [],
+    parents: [],
     children: [],
+    servingTemperature: [3, 7]
   },
 ];
 

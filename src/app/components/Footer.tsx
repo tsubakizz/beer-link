@@ -34,7 +34,7 @@ export default function Footer() {
                   </div>
                 </div>
               </div>
-              <h3 className="text-xl font-bold">Let&apos;s Beer</h3>
+              <h3 className="text-xl font-bold">Beer Link</h3>
             </div>
             <p className="text-amber-800">
               クラフトビールの魅力を初心者から愛好家まで楽しめるファンサイト
@@ -115,7 +115,7 @@ export default function Footer() {
 
         <div className="mt-10 pt-6 border-t border-amber-500/30 text-center">
           <p className="text-amber-800">
-            &copy; {new Date().getFullYear()} Let&apos;s Beer. All rights
+            &copy; {new Date().getFullYear()} Beer Link. All rights
             reserved.
           </p>
         </div>

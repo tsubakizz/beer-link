@@ -69,8 +69,8 @@ export default function Navigation() {
               </div>
             </div>
             <span className="text-2xl font-bold text-[#7c2d12] hover:text-amber-800 transition-colors duration-300">
-              <span className="font-montserrat mr-1">Let&apos;s</span>
-              <span className="font-bold">Beer</span>
+              <span className="font-montserrat mr-1">Beer</span>
+              <span className="font-bold">Link</span>
             </span>
           </Link>
         </div>
@@ -104,26 +104,18 @@ export default function Navigation() {
             </li>
             <li>
               <Link
+                href="/guides/styles"
+                className="btn btn-ghost rounded-btn text-[#7c2d12] hover:bg-amber-100/50"
+              >
+                ビールスタイル図鑑
+              </Link>
+            </li>
+            <li>
+              <Link
                 href="/breweries"
                 className="btn btn-ghost rounded-btn text-[#7c2d12] hover:bg-amber-100/50"
               >
                 ブルワリー
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/community"
-                className="btn btn-ghost rounded-btn text-[#7c2d12] hover:bg-amber-100/50"
-              >
-                コミュニティ
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/about"
-                className="btn btn-ghost rounded-btn text-[#7c2d12] hover:bg-amber-100/50"
-              >
-                サイトについて
               </Link>
             </li>
           </ul>

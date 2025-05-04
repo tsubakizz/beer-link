@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 export const metadata = {
-  title: "醸造の基礎知識 - Let's Beer",
+  title: "醸造の基礎知識 - Beer Link",
   description:
     'クラフトビールの醸造プロセスや基本的な知識を初心者にもわかりやすく解説します。',
 };

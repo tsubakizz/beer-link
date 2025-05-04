@@ -62,7 +62,7 @@ export default function DrawerMenu() {
                   </div>
                 </div>
               </div>
-              Let&apos;s Beer
+              Beer Link
             </span>
             <label
               htmlFor="beer-drawer"
@@ -133,6 +133,27 @@ export default function DrawerMenu() {
             </li>
             <li>
               <Link
+                href="/guides/styles"
+                className="beer-menu-item"
+                onClick={closeDrawer}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 01-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4zm9 1a1 1 0 110-2h4a1 1 0 011 1v4a1 1 0 11-2 0V6.414l-2.293 2.293a1 1 0 11-1.414-1.414L13.586 5H12zm-9 7a1 1 0 112 0v1.586l2.293-2.293a1 1 0 011.414 1.414L6.414 15H8a1 1 0 110 2H4a1 1 0 01-1-1v-4zm13-1a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 110-2h1.586l-2.293-2.293a1 1 0 011.414-1.414L15 13.586V12a1 1 0 011-1z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                ビールスタイル図鑑
+              </Link>
+            </li>
+            <li>
+              <Link
                 href="/breweries"
                 className="beer-menu-item"
                 onClick={closeDrawer}
@@ -150,44 +171,6 @@ export default function DrawerMenu() {
                   />
                 </svg>
                 ブルワリー
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/community"
-                className="beer-menu-item"
-                onClick={closeDrawer}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
-                </svg>
-                コミュニティ
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/about"
-                className="beer-menu-item"
-                onClick={closeDrawer}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9a1 1 0 00-1-1z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                サイトについて
               </Link>
             </li>
           </ul>

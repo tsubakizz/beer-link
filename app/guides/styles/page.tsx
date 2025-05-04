@@ -6,11 +6,13 @@ import { motion } from 'framer-motion';
 
 // インポートするコンポーネント
 import HeroSection from '../../../src/app/components/HeroSection';
-import StyleFilter from '../../../src/app/components/guides/styles/StyleFilter';
-import StyleGroupNavigation from '../../../src/app/components/guides/styles/StyleGroupNavigation';
+import StyleFilter, {
+  FilterParams,
+} from '../../../src/app/components/guides/styles/StyleFilter';
 import StyleCard from '../../../src/app/components/guides/styles/StyleCard';
 import EmptyStyleResults from '../../../src/app/components/guides/styles/EmptyStyleResults';
 import StyleInformation from '../../../src/app/components/guides/styles/StyleInformation';
+import Pagination from '../../../src/app/components/beers/Pagination';
 
 // スタイルイメージのプレースホルダー
 const getStyleColorBySRM = (style: BeerStyle): string => {
@@ -87,96 +89,138 @@ const styleGroups = [
   },
 ];
 
-// グループごとのスタイルIDのマッピング
-const styleGroupMapping: { [key: string]: string[] } = {
-  light: [
-    'pilsner',
-    'lager',
-    'weissbier',
-    'witbier',
-    'american-wheat',
-    'kolsch',
-    'cream-ale',
-    'helles',
-  ],
-  balanced: [
-    'pale-ale',
-    'amber-ale',
-    'altbier',
-    'vienna-lager',
-    'marzen',
-    'esb',
-    'english-pale-ale',
-    'american-pale-ale',
-  ],
-  hoppy: [
-    'ipa',
-    'hazy-ipa',
-    'session-ipa',
-    'double-ipa',
-    'triple-ipa',
-    'black-ipa',
-  ],
-  malty: [
-    'stout',
-    'porter',
-    'milk-stout',
-    'imperial-stout',
-    'dunkel',
-    'oatmeal-stout',
-    'bock',
-    'doppelbock',
-    'dubbel',
-    'quadrupel',
-  ],
-  special: [
-    'saison',
-    'belgian-blonde-ale',
-    'sour-ale',
-    'fruit-beer',
-    'rauchbier',
-    'gose',
-    'berliner-weisse',
-    'flanders-red-ale',
-    'tripel',
-  ],
-};
-
 export default function BeerStylesPage() {
-  const [selectedFilter, setSelectedFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  // ページネーション用の状態
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const itemsPerPage = 20; // 1ページあたり20件表示
+
+  // フィルター用の状態
+  const [filterParams, setFilterParams] = useState<FilterParams>({
+    bitterness: null,
+    sweetness: null,
+    body: null,
+    aroma: null,
+    sourness: null,
+    abvMin: null,
+    abvMax: null,
+    origin: null,
+  });
+
+  // 検索時に1ページ目に戻すための処理を追加したラッパー関数
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+    setCurrentPage(1); // 検索時は1ページ目に戻す
+  };
+
+  // フィルター変更時に1ページ目に戻すための処理を追加したラッパー関数
+  const handleFilterChange = (params: FilterParams) => {
+    setFilterParams(params);
+    setCurrentPage(1); // フィルター変更時は1ページ目に戻す
+  };
 
   // フィルターと検索に基づいてスタイルをフィルタリング
   const filteredStyles = beerStyles.filter((style) => {
-    // グループフィルター
+    // テキスト検索フィルター
+    if (searchQuery) {
+      const searchLower = searchQuery.toLowerCase();
+      const nameMatch = style.name.toLowerCase().includes(searchLower);
+      const descMatch = style.description.toLowerCase().includes(searchLower);
+      const otherNameMatch =
+        style.other_name?.some((name) =>
+          name.toLowerCase().includes(searchLower)
+        ) || false;
+      const originMatch = style.origin.toLowerCase().includes(searchLower);
+
+      if (!(nameMatch || descMatch || otherNameMatch || originMatch)) {
+        return false;
+      }
+    }
+
+    // 味わいプロファイル フィルター
     if (
-      selectedFilter !== 'all' &&
-      !styleGroupMapping[selectedFilter]?.includes(style.id)
+      filterParams.bitterness !== null &&
+      style.characteristics.bitterness !== filterParams.bitterness
+    ) {
+      return false;
+    }
+    if (
+      filterParams.sweetness !== null &&
+      style.characteristics.sweetness !== filterParams.sweetness
+    ) {
+      return false;
+    }
+    if (
+      filterParams.body !== null &&
+      style.characteristics.body !== filterParams.body
+    ) {
+      return false;
+    }
+    if (
+      filterParams.aroma !== null &&
+      style.characteristics.aroma !== filterParams.aroma
+    ) {
+      return false;
+    }
+    if (
+      filterParams.sourness !== null &&
+      style.characteristics.sourness !== filterParams.sourness
     ) {
       return false;
     }
 
-    // 検索フィルター
-    if (
-      searchQuery &&
-      !style.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-      !style.description.toLowerCase().includes(searchQuery.toLowerCase()) &&
-      !(
-        style.other_name?.some((name) =>
-          name.toLowerCase().includes(searchQuery.toLowerCase())
-        ) || false
-      )
-    ) {
+    // アルコール度数フィルター
+    const avgAbv = (style.abv[0] + style.abv[1]) / 2;
+    if (filterParams.abvMin !== null && avgAbv < filterParams.abvMin) {
       return false;
+    }
+    if (filterParams.abvMax !== null && avgAbv > filterParams.abvMax) {
+      return false;
+    }
+
+    // 原産国/地域フィルター
+    if (filterParams.origin !== null) {
+      if (!style.origin.includes(filterParams.origin)) {
+        return false;
+      }
     }
 
     return true;
   });
 
+  // 総ページ数を計算
+  const totalPages = Math.ceil(filteredStyles.length / itemsPerPage);
+
+  // 現在のページに表示する項目を取得
+  const currentItems = filteredStyles.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   // フィルターをリセットする関数
   const resetFilters = () => {
     setSearchQuery('');
-    setSelectedFilter('all');
+    setFilterParams({
+      bitterness: null,
+      sweetness: null,
+      body: null,
+      aroma: null,
+      sourness: null,
+      abvMin: null,
+      abvMax: null,
+      origin: null,
+    });
+    setCurrentPage(1); // フィルターリセット時にページもリセット
+  };
+
+  // ページ変更時の処理
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // ページトップにスクロール
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
   };
 
   return (
@@ -190,17 +234,9 @@ export default function BeerStylesPage() {
       {/* フィルターと検索 */}
       <StyleFilter
         searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        selectedFilter={selectedFilter}
-        setSelectedFilter={setSelectedFilter}
-        styleGroups={styleGroups}
-      />
-
-      {/* スタイルグループのナビゲーション */}
-      <StyleGroupNavigation
-        selectedFilter={selectedFilter}
-        setSelectedFilter={setSelectedFilter}
-        styleGroups={styleGroups}
+        setSearchQuery={handleSearchChange}
+        filterParams={filterParams}
+        setFilterParams={handleFilterChange}
       />
 
       {/* 結果の表示 */}
@@ -212,10 +248,25 @@ export default function BeerStylesPage() {
       >
         <p className="text-amber-800 font-medium">
           {filteredStyles.length} 件のビールスタイルが見つかりました
+          {filteredStyles.length > itemsPerPage &&
+            ` (${(currentPage - 1) * itemsPerPage + 1}〜${Math.min(
+              currentPage * itemsPerPage,
+              filteredStyles.length
+            )}件表示中)`}
         </p>
       </motion.div>
 
-      {/* ローディング表示 */}
+      {/* 上部ページネーション - 結果が20件以上ある場合に表示 */}
+      {filteredStyles.length > itemsPerPage && (
+        <div className="mb-8 flex justify-center">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </div>
+      )}
+
       {/* スタイル一覧 */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -223,7 +274,7 @@ export default function BeerStylesPage() {
         transition={{ duration: 0.6, delay: 0.4 }}
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
       >
-        {filteredStyles.map((style, index) => (
+        {currentItems.map((style, index) => (
           <StyleCard
             key={style.id}
             style={style}
@@ -236,6 +287,17 @@ export default function BeerStylesPage() {
       {/* 結果が0件の場合 */}
       {filteredStyles.length === 0 && (
         <EmptyStyleResults resetFilters={resetFilters} />
+      )}
+
+      {/* ページネーション */}
+      {filteredStyles.length > itemsPerPage && (
+        <div className="mt-8 flex justify-center">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </div>
       )}
 
       {/* ビールスタイルに関する説明 */}

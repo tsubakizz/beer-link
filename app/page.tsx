@@ -651,8 +651,8 @@ export default function Home() {
           </h2>
           <p className="text-amber-900 max-w-2xl mx-auto text-lg mb-10">
             お気に入りのビールやブルワリーについて、他の愛好家と情報を共有してください。
-            あなたの一言がきっと誰かの素敵な一杯につながります。Let&apos;s
-            Beerコミュニティで、ビールの新たな魅力を一緒に発見しましょう。
+            あなたの一言がきっと誰かの素敵な一杯につながります。Beer
+            Linkコミュニティで、ビールの新たな魅力を一緒に発見しましょう。
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link

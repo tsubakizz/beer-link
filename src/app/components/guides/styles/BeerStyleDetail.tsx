@@ -7,7 +7,6 @@ import { motion } from 'framer-motion';
 import { beerStyles, beers, BeerStyle, Beer } from '../../../lib/beers-data';
 
 // コンポーネントのインポート
-import HeroSection from '../../../components/HeroSection';
 import StyleRadarChart from './StyleRadarChart';
 import StyleCharacteristics from './StyleCharacteristics';
 import RelatedStyles from './RelatedStyles';
@@ -177,13 +176,6 @@ export default function BeerStyleDetail({ id }: BeerStyleDetailProps) {
           </svg>
           ビールスタイルガイドへ戻る
         </Link>
-
-        <HeroSection
-          title={style.name}
-          description={
-            style.other_name ? `${style.other_name.join('、')}とも呼ばれる` : ''
-          }
-        />
       </div>
 
       {/* スタイル情報のメイン部分 */}
@@ -198,7 +190,7 @@ export default function BeerStyleDetail({ id }: BeerStyleDetailProps) {
           >
             {/* スタイル画像（プレースホルダー） */}
             <div
-              className={`relative h-48 ${getStyleColor(
+              className={`relative h-24 ${getStyleColor(
                 style
               )} overflow-hidden`}
             >
@@ -253,7 +245,7 @@ export default function BeerStyleDetail({ id }: BeerStyleDetailProps) {
                 </div>
 
                 <div>
-                  <h3 className="font-semibold mb-1">色調（SRM）</h3>
+                  <h3 className="font-semibold mb-1">一般的な色調（SRM）</h3>
                   <p>
                     {style.srm
                       ? `${style.srm[0]}～${style.srm[1]}`
@@ -264,20 +256,6 @@ export default function BeerStyleDetail({ id }: BeerStyleDetailProps) {
                 {style.servingTemperature && (
                   <div>
                     <h3 className="font-semibold mb-1 flex items-center">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4 mr-1 text-amber-500"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M13 10V3L4 14h7v7l9-11h-7z"
-                        />
-                      </svg>
                       適正温度
                     </h3>
                     <p>

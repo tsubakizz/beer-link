@@ -116,9 +116,9 @@ export default function StyleFilter({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.2 }}
-      className="mb-8"
+      className="mb-4"
     >
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-2">
         <h2 className="text-2xl font-bold text-amber-900">探す</h2>
         <button
           onClick={() => setIsFilterOpen(!isFilterOpen)}
@@ -148,13 +148,13 @@ export default function StyleFilter({
       </div>
 
       <div
-        className={`bg-gradient-to-br from-amber-50 to-amber-100 p-6 rounded-xl shadow-sm mb-8 transition-all duration-300 ${
+        className={`bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl shadow-sm mb-4 transition-all duration-300 ${
           isFilterOpen
-            ? 'max-h-[800px] opacity-100'
-            : 'max-h-0 opacity-0 overflow-hidden p-0'
+            ? 'max-h-[800px] opacity-100 p-4 pointer-events-auto'
+            : 'max-h-0 opacity-0 overflow-hidden p-0 invisible pointer-events-none'
         }`}
       >
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {/* 検索ボックス */}
           <div>
             <label
@@ -240,7 +240,7 @@ export default function StyleFilter({
         </div>
 
         {/* 味わい特性フィルター */}
-        <div className="mt-4 grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div className="mt-3 grid grid-cols-1 md:grid-cols-5 gap-3">
           {/* 苦味 */}
           <div>
             <label
@@ -384,7 +384,7 @@ export default function StyleFilter({
         </div>
 
         {/* フィルターリセットボタン */}
-        <div className="mt-4 flex justify-end">
+        <div className="mt-3 flex justify-end">
           <button
             className="btn btn-sm bg-amber-50 border-amber-200 text-amber-900 hover:bg-amber-100"
             onClick={resetFilters}

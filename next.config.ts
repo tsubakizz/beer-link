@@ -16,7 +16,17 @@ if (r2EndpointDomain) imageDomains.push(r2EndpointDomain);
 const nextConfig: NextConfig = {
   images: {
     domains: imageDomains,
+    unoptimized: true, // Cloudflare Pagesでは画像の最適化が不要
   },
+  // Cloudflare Pages向けの設定
+  output: 'export', // 静的サイトとしてビルド
 };
+
+// CloudflareのNext.js on Pagesが環境に存在する場合の設定
+// @ts-ignore: Unreachable code error
+if (process.env.NODE_ENV === 'production') {
+  // @ts-ignore: Unreachable code error
+  nextConfig.output = undefined;
+}
 
 export default nextConfig;

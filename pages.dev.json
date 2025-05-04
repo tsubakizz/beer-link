@@ -1,0 +1,13 @@
+{
+  "buildCommand": "npm run pages:build",
+  "installCommand": "npm install",
+  "outputDirectory": ".vercel/output/static",
+  "compatibility_date": "2023-09-25",
+  "compatibility_flags": ["nodejs_compat"],
+  "routes": [
+    { "pattern": "/(.*)", "content": "<SITE_NAME>/$1" }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}

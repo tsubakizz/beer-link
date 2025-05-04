@@ -14,22 +14,53 @@ import EmptyStyleResults from '../../../src/app/components/guides/styles/EmptySt
 import StyleInformation from '../../../src/app/components/guides/styles/StyleInformation';
 
 // スタイルイメージのプレースホルダー
-const styleImagePlaceholders: { [key: string]: string } = {
-  ipa: 'bg-amber-400',
-  stout: 'bg-amber-900',
-  pilsner: 'bg-amber-200',
-  weissbier: 'bg-amber-100',
-  witbier: 'bg-amber-50',
-  'pale-ale': 'bg-amber-300',
-  porter: 'bg-amber-800',
-  'sour-ale': 'bg-amber-500',
-  saison: 'bg-amber-300',
-  'belgian-blonde-ale': 'bg-amber-200',
-  lager: 'bg-amber-100',
-  'black-ipa': 'bg-amber-900',
+const getStyleColorBySRM = (style: any): string => {
+  // SRMの範囲の中央値を計算（最小値と最大値の平均）
+  const avgSRM = style.srm ? (style.srm[0] + style.srm[1]) / 2 : 0;
+
+  // SRMの値に基づいて色を返す（実際のビールの色に近い色）
+  if (avgSRM < 2) {
+    return 'bg-yellow-50'; // 非常に淡い色（ピルスナーライト、ライトラガー等）
+  } else if (avgSRM < 4) {
+    return 'bg-yellow-100'; // 淡い黄金色（ピルスナー、ヘレス、ヴィットビア等）
+  } else if (avgSRM < 6) {
+    return 'bg-yellow-200'; // 黄金色（ブロンドエール、ケルシュ等）
+  } else if (avgSRM < 8) {
+    return 'bg-amber-100'; // 淡い琥珀色（ペールエール等）
+  } else if (avgSRM < 10) {
+    return 'bg-amber-200'; // やや濃い琥珀色（アンバーエール、ウィンナラガー等）
+  } else if (avgSRM < 14) {
+    return 'bg-amber-300'; // 琥珀色（ESB、ボック等）
+  } else if (avgSRM < 17) {
+    return 'bg-amber-400'; // 濃い琥珀色（デュッベル、アンバーエール等）
+  } else if (avgSRM < 20) {
+    return 'bg-amber-500'; // 明るい茶色（ブラウンエール等）
+  } else if (avgSRM < 25) {
+    return 'bg-amber-600'; // 茶色（ブラウンエール、デュンケル等）
+  } else if (avgSRM < 30) {
+    return 'bg-amber-700'; // 濃い茶色（ポーター等）
+  } else if (avgSRM < 35) {
+    return 'bg-amber-800'; // 暗褐色（スタウト等）
+  } else {
+    return 'bg-amber-900'; // ほぼ黒色（インペリアルスタウト、シュヴァルツビア等）
+  }
+};
+
+// 特定のスタイルには特別な色を設定（SRM以外の特徴を強調したい場合）
+const specialStyleColors: { [key: string]: string } = {
   'fruit-beer': 'bg-pink-200',
-  'hazy-ipa': 'bg-amber-300',
-  'milk-stout': 'bg-amber-900',
+  'sour-ale': 'bg-rose-300',
+  'berliner-weisse': 'bg-rose-200',
+  gose: 'bg-rose-200',
+  'flanders-red-ale': 'bg-red-300',
+  kriek: 'bg-red-400',
+  framboise: 'bg-pink-300',
+};
+
+// スタイルに対して色を決定する関数
+const getStyleColor = (style: any): string => {
+  // 特別なスタイルがあればそれを返す、なければSRMベースの色を返す
+  return specialStyleColors[style.id] || getStyleColorBySRM(style);
 };
 
 // ビールスタイルのグループ分け
@@ -206,7 +237,7 @@ export default function BeerStylesPage() {
               key={style.id}
               style={style}
               index={index}
-              styleImagePlaceholders={styleImagePlaceholders}
+              styleImagePlaceholders={getStyleColor(style)}
             />
           ))}
         </motion.div>

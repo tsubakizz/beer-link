@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { notFound, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -18,59 +18,115 @@ import RelatedStyles from '../../../../src/app/components/guides/styles/RelatedS
 import ExampleBeers from '../../../../src/app/components/guides/styles/ExampleBeers';
 import LoadingSpinner from '../../../../src/app/components/LoadingSpinner';
 
+// スタイルイメージのプレースホルダー
+const getStyleColorBySRM = (style: any): string => {
+  // SRMの範囲の中央値を計算（最小値と最大値の平均）
+  const avgSRM = style.srm ? (style.srm[0] + style.srm[1]) / 2 : 0;
+
+  // SRMの値に基づいて色を返す（実際のビールの色に近い色）
+  if (avgSRM < 2) {
+    return 'bg-yellow-50'; // 非常に淡い色（ピルスナーライト、ライトラガー等）
+  } else if (avgSRM < 4) {
+    return 'bg-yellow-100'; // 淡い黄金色（ピルスナー、ヘレス、ヴィットビア等）
+  } else if (avgSRM < 6) {
+    return 'bg-yellow-200'; // 黄金色（ブロンドエール、ケルシュ等）
+  } else if (avgSRM < 8) {
+    return 'bg-amber-100'; // 淡い琥珀色（ペールエール等）
+  } else if (avgSRM < 10) {
+    return 'bg-amber-200'; // やや濃い琥珀色（アンバーエール、ウィンナラガー等）
+  } else if (avgSRM < 14) {
+    return 'bg-amber-300'; // 琥珀色（ESB、ボック等）
+  } else if (avgSRM < 17) {
+    return 'bg-amber-400'; // 濃い琥珀色（デュッベル、アンバーエール等）
+  } else if (avgSRM < 20) {
+    return 'bg-amber-500'; // 明るい茶色（ブラウンエール等）
+  } else if (avgSRM < 25) {
+    return 'bg-amber-600'; // 茶色（ブラウンエール、デュンケル等）
+  } else if (avgSRM < 30) {
+    return 'bg-amber-700'; // 濃い茶色（ポーター等）
+  } else if (avgSRM < 35) {
+    return 'bg-amber-800'; // 暗褐色（スタウト等）
+  } else {
+    return 'bg-amber-900'; // ほぼ黒色（インペリアルスタウト、シュヴァルツビア等）
+  }
+};
+
+// 特定のスタイルには特別な色を設定（SRM以外の特徴を強調したい場合）
+const specialStyleColors: { [key: string]: string } = {
+  'fruit-beer': 'bg-pink-200',
+  'sour-ale': 'bg-rose-300',
+  'berliner-weisse': 'bg-rose-200',
+  gose: 'bg-rose-200',
+  'flanders-red-ale': 'bg-red-300',
+  kriek: 'bg-red-400',
+  framboise: 'bg-pink-300',
+};
+
 // スタイル間の関係（派生元、派生先、類似スタイル）
 const styleRelationships: {
   [key: string]: {
-    parents?: string[]; // 派生元スタイル
-    children?: string[]; // 派生したスタイル
-    siblings?: string[]; // 類似スタイル
+    parents?: string[];
+    children?: string[];
+    siblings?: string[];
   };
 } = {
   ipa: {
     parents: ['pale-ale'],
-    children: ['session-ipa', 'double-ipa', 'hazy-ipa', 'black-ipa'],
-    siblings: ['american-pale-ale', 'english-ipa'],
-  },
-  stout: {
-    parents: ['porter'],
-    children: ['milk-stout', 'imperial-stout', 'oatmeal-stout'],
-    siblings: ['porter', 'black-ipa'],
+    children: [
+      'double-ipa',
+      'session-ipa',
+      'black-ipa',
+      'new-england-ipa',
+      'hazy-ipa',
+    ],
+    siblings: ['american-pale-ale'],
   },
   'pale-ale': {
     children: ['ipa', 'american-pale-ale', 'english-pale-ale'],
-    siblings: ['amber-ale', 'esb'],
+    siblings: ['amber-ale', 'bitter'],
+  },
+  stout: {
+    parents: ['porter'],
+    children: [
+      'imperial-stout',
+      'milk-stout',
+      'oatmeal-stout',
+      'irish-dry-stout',
+    ],
+    siblings: ['porter'],
   },
   porter: {
-    children: ['stout'],
-    siblings: ['brown-ale', 'schwarzbier'],
+    children: ['stout', 'baltic-porter'],
+    siblings: ['brown-ale', 'stout'],
   },
   pilsner: {
     parents: ['lager'],
-    siblings: ['helles', 'czech-pilsner', 'german-pilsner'],
+    children: ['german-pilsner', 'czech-pilsner'],
+    siblings: ['helles', 'lager'],
+  },
+  lager: {
+    children: ['pilsner', 'helles', 'dunkel', 'schwarzbier', 'bock'],
+    siblings: ['vienna-lager', 'marzen'],
   },
   weissbier: {
-    siblings: ['witbier', 'american-wheat', 'berliner-weisse'],
+    parents: ['wheat-beer'],
+    siblings: ['witbier', 'berliner-weisse', 'gose'],
   },
-  // 他のスタイル関係も同様に追加
+  witbier: {
+    parents: ['wheat-beer'],
+    siblings: ['weissbier', 'berliner-weisse'],
+  },
+  saison: {
+    parents: ['farmhouse-ale'],
+    siblings: ['belgian-pale-ale', 'biere-de-garde'],
+  },
+  // その他のスタイルの関連性も追加可能
 };
 
-// スタイルイメージのプレースホルダー
-const styleImagePlaceholders: { [key: string]: string } = {
-  ipa: 'bg-amber-400',
-  stout: 'bg-amber-900',
-  pilsner: 'bg-amber-200',
-  weissbier: 'bg-amber-100',
-  witbier: 'bg-amber-50',
-  'pale-ale': 'bg-amber-300',
-  porter: 'bg-amber-800',
-  'sour-ale': 'bg-amber-500',
-  saison: 'bg-amber-300',
-  'belgian-blonde-ale': 'bg-amber-200',
-  lager: 'bg-amber-100',
-  'black-ipa': 'bg-amber-900',
-  'fruit-beer': 'bg-pink-200',
-  'hazy-ipa': 'bg-amber-300',
-  'milk-stout': 'bg-amber-900',
+// スタイルに対して色を決定する関数
+const getStyleColor = (style: any): string => {
+  // 特別なスタイルがあればそれを返す、なければSRMベースの色を返す
+  return specialStyleColors[style.id] || getStyleColorBySRM(style);
 };
 
 // ビールスタイル詳細ページコンポーネント
@@ -79,6 +135,9 @@ export default function BeerStyleDetailPage({
 }: {
   params: { id: string };
 }) {
+  // パラメータからIDを抽出
+  const id = params.id;
+
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [style, setStyle] = useState<BeerStyle | null>(null);
   const [exampleBeers, setExampleBeers] = useState<any[]>([]);
@@ -100,7 +159,7 @@ export default function BeerStyleDetailPage({
 
       try {
         // スタイル情報を取得
-        const foundStyle = beerStyles.find((s) => s.id === params.id);
+        const foundStyle = beerStyles.find((s) => s.id === id);
 
         if (!foundStyle) {
           notFound();
@@ -111,13 +170,13 @@ export default function BeerStyleDetailPage({
 
         // このスタイルの代表的なビールを最大3つ取得
         const styleBeers = beers
-          .filter((beer) => beer.style === params.id)
+          .filter((beer) => beer.style === id)
           .slice(0, 3);
 
         setExampleBeers(styleBeers);
 
         // 関連スタイルを取得
-        const relationship = styleRelationships[params.id] || {};
+        const relationship = styleRelationships[id] || {};
 
         const parents = relationship.parents
           ?.map((id) => beerStyles.find((s) => s.id === id))
@@ -144,7 +203,7 @@ export default function BeerStyleDetailPage({
     };
 
     fetchStyleData();
-  }, [params.id]);
+  }, [id]);
 
   if (isLoading) {
     return (
@@ -211,9 +270,9 @@ export default function BeerStyleDetailPage({
           >
             {/* スタイル画像（プレースホルダー） */}
             <div
-              className={`relative h-48 ${
-                styleImagePlaceholders[style.id] || 'bg-amber-300'
-              } overflow-hidden`}
+              className={`relative h-48 ${getStyleColor(
+                style
+              )} overflow-hidden`}
             >
               <div className="absolute inset-0 flex items-center justify-center">
                 <span className="text-6xl opacity-20">🍺</span>
@@ -248,8 +307,8 @@ export default function BeerStyleDetailPage({
                     一般的なABV（アルコール度数）
                   </h3>
                   <p>
-                    {style.abv_range
-                      ? `${style.abv_range[0]}% ~ ${style.abv_range[1]}%`
+                    {style.abv
+                      ? `${style.abv[0]}～${style.abv[1]}%`
                       : '情報なし'}
                   </p>
                 </div>
@@ -259,8 +318,8 @@ export default function BeerStyleDetailPage({
                     一般的なIBU（苦味の指標）
                   </h3>
                   <p>
-                    {style.ibu_range
-                      ? `${style.ibu_range[0]} ~ ${style.ibu_range[1]}`
+                    {style.ibu
+                      ? `${style.ibu[0]}～${style.ibu[1]}`
                       : '情報なし'}
                   </p>
                 </div>
@@ -268,32 +327,10 @@ export default function BeerStyleDetailPage({
                 <div>
                   <h3 className="font-semibold mb-1">色調（SRM）</h3>
                   <p>
-                    {style.srm_range
-                      ? `${style.srm_range[0]} ~ ${style.srm_range[1]}`
+                    {style.srm
+                      ? `${style.srm[0]}～${style.srm[1]}`
                       : '情報なし'}
                   </p>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold mb-1">代表的な風味</h3>
-                  <div className="flex flex-wrap gap-2 mt-1">
-                    {style.flavors?.map((flavor, i) => (
-                      <span key={i} className="beer-badge text-xs">
-                        {flavor}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold mb-1">主な原料</h3>
-                  <div className="flex flex-wrap gap-2 mt-1">
-                    {style.ingredients?.map((ingredient, i) => (
-                      <span key={i} className="beer-badge text-xs">
-                        {ingredient}
-                      </span>
-                    ))}
-                  </div>
                 </div>
               </div>
             </div>

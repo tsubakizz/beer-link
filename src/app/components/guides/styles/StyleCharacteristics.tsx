@@ -25,13 +25,22 @@ export default function StyleCharacteristics({
     { key: 'sourness', label: '酸味' },
   ];
 
-  // 色のマッピング
-  const colorMap: { [key: string]: string } = {
-    bitterness: 'bg-amber-700',
-    sweetness: 'bg-amber-400',
-    body: 'bg-amber-600',
-    aroma: 'bg-amber-300',
-    sourness: 'bg-amber-500',
+  // レベルに基づく色のマッピング（1が最も薄く、5が最も濃い）
+  const getLevelColor = (level: number): string => {
+    switch (level) {
+      case 1:
+        return 'bg-amber-100';
+      case 2:
+        return 'bg-amber-300';
+      case 3:
+        return 'bg-amber-500';
+      case 4:
+        return 'bg-amber-700';
+      case 5:
+        return 'bg-amber-900';
+      default:
+        return 'bg-amber-300';
+    }
   };
 
   return (
@@ -50,11 +59,9 @@ export default function StyleCharacteristics({
                 {value}/5
               </span>
             </div>
-            <div className="h-3 bg-amber-100 rounded-full overflow-hidden">
+            <div className="h-3 bg-amber-50 rounded-full overflow-hidden">
               <motion.div
-                className={`h-full ${
-                  colorMap[item.key] || 'bg-amber-500'
-                } rounded-full`}
+                className={`h-full ${getLevelColor(value)} rounded-full`}
                 initial={{ width: 0 }}
                 animate={{ width: `${percentage}%` }}
                 transition={{ duration: 1, delay: index * 0.2 }}

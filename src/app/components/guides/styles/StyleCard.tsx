@@ -2,13 +2,14 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { BeerStyle } from '../../../../app/lib/beers-data';
-import StyleCharacteristics from './StyleCharacteristics';
+import { BeerStyle, getBeerStyleCard } from '../../../../app/lib/beers-data';
+import { FaBeer, FaThermometerHalf } from 'react-icons/fa';
+import { GiHops } from 'react-icons/gi';
 
 interface StyleCardProps {
   style: BeerStyle;
   index: number;
-  styleImagePlaceholders: { [key: string]: string };
+  styleImagePlaceholders: string;
 }
 
 export default function StyleCard({
@@ -16,6 +17,9 @@ export default function StyleCard({
   index,
   styleImagePlaceholders,
 }: StyleCardProps) {
+  // ビールスタイルデータをカード表示用に変換
+  const styleCard = getBeerStyleCard(style);
+
   return (
     <Link href={`/guides/styles/${style.id}`} className="block">
       <motion.div
@@ -31,9 +35,7 @@ export default function StyleCard({
         {/* スタイル画像（プレースホルダー） */}
         <div className="card-beer-header">
           <div
-            className={`relative h-48 ${
-              styleImagePlaceholders[style.id] || 'bg-amber-300'
-            } overflow-hidden`}
+            className={`relative h-24 ${styleImagePlaceholders} overflow-hidden`}
           >
             <div className="absolute inset-0 flex items-center justify-center">
               <span className="text-6xl opacity-20">🍺</span>
@@ -41,42 +43,55 @@ export default function StyleCard({
           </div>
         </div>
 
-        <div className="card-beer-body">
-          <h2 className="card-beer-title text-amber-900">{style.name}</h2>
-          {style.other_name && (
-            <div className="flex flex-wrap gap-1 mb-2">
-              {style.other_name.map((name, i) => (
-                <span key={i} className="beer-badge text-xs">
-                  {name}
-                </span>
-              ))}
-            </div>
-          )}
-          <p className="text-amber-800 mb-4 line-clamp-3">
-            {style.description}
+        <div className="card-beer-body p-4">
+          <h2 className="card-beer-title text-amber-900 text-xl font-bold mb-2">
+            {styleCard.name}
+          </h2>
+
+          <p className="text-amber-800 mb-1 line-clamp-2 text-sm">
+            {styleCard.shortDescription}
           </p>
 
-          {/* 特性の詳細表示 */}
-          <StyleCharacteristics characteristics={style.characteristics} />
+          {/* 重要な特性だけをシンプルに表示 */}
+          <div className="flex flex-wrap gap-2 mb-1">
+            <div className="beer-stat flex items-center gap-1 text-xs bg-amber-50 px-2 py-1 rounded-full">
+              <FaThermometerHalf className="text-amber-600" />
+              <span className="whitespace-nowrap">ABV {styleCard.abv}</span>
+            </div>
 
-          <div className="card-actions justify-between mt-4">
+            <div className="beer-stat flex items-center gap-1 text-xs bg-amber-50 px-2 py-1 rounded-full">
+              <GiHops className="text-amber-600" />
+              <span>IBU {styleCard.ibu}</span>
+            </div>
+
+            {styleCard.characteristics.bitterness > 3 && (
+              <div className="beer-stat text-xs bg-amber-50 px-2 py-1 rounded-full">
+                苦め
+              </div>
+            )}
+            {styleCard.characteristics.sweetness > 3 && (
+              <div className="beer-stat text-xs bg-amber-50 px-2 py-1 rounded-full">
+                甘め
+              </div>
+            )}
+            {styleCard.characteristics.body > 3 && (
+              <div className="beer-stat text-xs bg-amber-50 px-2 py-1 rounded-full">
+                重め
+              </div>
+            )}
+          </div>
+
+          <div className="card-actions justify-end">
             <button
-              className="btn btn-primary btn-sm"
+              className="btn btn-sm btn-beer-outline"
               onClick={(e) => {
-                e.preventDefault();
-                window.location.href = `/guides/styles/${style.id}`;
+                e.stopPropagation();
+                window.location.href = `/beers?style=${style.id}`;
               }}
             >
-              詳細を見る
+              <FaBeer className="mr-1" />
+              詳しく見る
             </button>
-
-            <Link
-              href={`/beers?style=${style.id}`}
-              className="btn btn-beer-outline btn-sm"
-              onClick={(e) => e.stopPropagation()}
-            >
-              このスタイルのビールを見る
-            </Link>
           </div>
         </div>
       </motion.div>

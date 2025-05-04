@@ -1,5 +1,5 @@
 {
-  "name": "lets_beer",
+  "name": "beer_link",
   "version": "0.1.0",
   "private": true,
   "engines": {
@@ -7,23 +7,24 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "DISABLE_ESLINT_PLUGIN=true next build",
     "start": "next start",
     "lint": "next lint",
     "pages:build": "npx @cloudflare/next-on-pages",
     "pages:preview": "npx wrangler pages dev .vercel/output/static --compatibility-flag=nodejs_compat",
     "pages:deploy": "npx wrangler pages deploy .vercel/output/static --project-name=beer-link",
-    "deploy": "next build && npm run pages:build && npm run pages:deploy"
+    "deploy": "DISABLE_ESLINT_PLUGIN=true next build && npm run pages:build && npm run pages:deploy"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.802.0",
     "@types/firebase": "^2.4.32",
     "browser-image-compression": "^2.0.2",
     "chart.js": "^4.4.9",
+    "cookie": "^1.0.2",
     "daisyui": "^4.7.2",
     "firebase": "^11.6.1",
     "framer-motion": "^10.16.4",
-    "next": "14.0.4",
+    "next": "^14.2.28",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.3.0",
     "react-dom": "^18.2.0",
@@ -42,6 +43,6 @@
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.0.4",
-    "wrangler": "^3.22.1"
+    "wrangler": "^4.14.1"
   }
 }

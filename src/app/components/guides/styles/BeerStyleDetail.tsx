@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { beerStyles, beers, BeerStyle, Beer } from '../../../../lib/beers-data';
+import { beerStyles, beers, BeerStyle, Beer } from '../../../lib/beers-data';
 
 // コンポーネントのインポート
 import HeroSection from '../../../components/HeroSection';

@@ -61,31 +61,6 @@ const getStyleColor = (style: BeerStyle): string => {
   return specialStyleColors[style.id] || getStyleColorBySRM(style);
 };
 
-// ビールスタイルのグループ分け
-const styleGroups = [
-  { id: 'light', name: 'ライト', description: '軽やかで爽快な飲み口のビール' },
-  {
-    id: 'balanced',
-    name: 'バランス',
-    description: '苦味と甘みのバランスが特徴的なビール',
-  },
-  {
-    id: 'hoppy',
-    name: 'ホップ中心',
-    description: 'ホップの香りと苦味が特徴的なビール',
-  },
-  {
-    id: 'malty',
-    name: 'モルト中心',
-    description: 'モルトの風味と深みのあるビール',
-  },
-  {
-    id: 'special',
-    name: '特殊',
-    description: '酸味や特殊な製法で作られるビール',
-  },
-];
-
 export default function BeerStylesPage() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   // ページネーション用の状態
@@ -224,8 +199,8 @@ export default function BeerStylesPage() {
     <div className="container mx-auto py-8 px-4 sm:px-6 relative overflow-hidden">
       {/* ヒーローセクション */}
       <HeroSection
-        title="ビールスタイルガイド"
-        description="クラフトビールの世界を広げるスタイル図鑑。各ビールスタイルの特徴や味わいの違いを理解して、あなたの好みに合ったビールを見つけましょう。"
+        title="スタイル図鑑"
+        description="これってどんなビール？ 知りたいスタイルが見つかる検索ガイド"
       />
 
       {/* フィルターと検索 */}

@@ -5,6 +5,14 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { beerStyles, beers, BeerStyle, Beer } from '../../lib/beers-data';
+import { db } from '../../lib/firebase';
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  DocumentData,
+} from 'firebase/firestore';
 
 // コンポーネントのインポート
 import StyleRadarChart from './StyleRadarChart';
@@ -67,6 +75,51 @@ const getStyleColor = (style: BeerStyle): string => {
   return specialStyleColors[style.id] || getStyleColorBySRM(style);
 };
 
+// FirestoreのデータをBeerStyle型に変換する関数
+const convertToFirestoreBeerStyle = (doc: DocumentData): BeerStyle => {
+  const data = doc.data();
+  return {
+    id: doc.id,
+    name: data.name,
+    description: data.description,
+    abv: data.abv || null,
+    ibu: data.ibu || null,
+    srm: data.srm || null,
+    other_name: data.other_name || [],
+    origin: data.origin || null,
+    history: data.history || null,
+    servingTemperature: data.servingTemperature || null,
+    characteristics: data.characteristics || {
+      bitterness: 0,
+      sweetness: 0,
+      sourness: 0,
+      hoppiness: 0,
+      maltiness: 0,
+      fruitiness: 0,
+    },
+    parents: data.parents || [],
+    children: data.children || [],
+    siblings: data.siblings || [],
+  };
+};
+
+// FirestoreのデータをBeer型に変換する関数
+const convertToFirestoreBeer = (doc: DocumentData): Beer => {
+  const data = doc.data();
+  return {
+    id: doc.id,
+    name: data.name,
+    brewery: data.brewery,
+    style: data.style,
+    abv: data.abv,
+    ibu: data.ibu,
+    description: data.description,
+    imageUrl: data.imageUrl || null,
+    rating: data.rating || 0,
+    ratingCount: data.ratingCount || 0,
+  };
+};
+
 // ビールスタイル詳細ページコンポーネント
 export default function BeerStyleDetail({ id }: BeerStyleDetailProps) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -87,43 +140,147 @@ export default function BeerStyleDetail({ id }: BeerStyleDetailProps) {
       setIsLoading(true);
 
       try {
-        // スタイル情報を取得
-        const foundStyle = beerStyles.find((s) => s.id === id);
+        // Firestoreからスタイル情報を取得
+        const styleRef = collection(db, 'beerStyles');
+        const styleQuery = query(styleRef, where('id', '==', id));
+        const styleSnapshot = await getDocs(styleQuery);
 
-        if (!foundStyle) {
-          notFound();
-          return;
+        // スタイルが見つからない場合
+        if (styleSnapshot.empty) {
+          // バックアップとしてローカルデータを確認
+          const localStyle = beerStyles.find((s) => s.id === id);
+          if (!localStyle) {
+            notFound();
+            return;
+          }
+          setStyle(localStyle);
+
+          // このスタイルの代表的なビールを最大3つ取得（ローカルデータから）
+          const styleBeers = beers
+            .filter((beer) => beer.style === id)
+            .slice(0, 3);
+
+          setExampleBeers(styleBeers);
+
+          // 関連スタイルを取得（ローカルデータから）
+          const parents = localStyle.parents
+            ?.map((parentId) => beerStyles.find((s) => s.id === parentId))
+            .filter(Boolean) as BeerStyle[];
+
+          const children = localStyle.children
+            ?.map((childId) => beerStyles.find((s) => s.id === childId))
+            .filter(Boolean) as BeerStyle[];
+
+          const siblings = localStyle.siblings
+            ?.map((siblingId) => beerStyles.find((s) => s.id === siblingId))
+            .filter(Boolean) as BeerStyle[];
+
+          setRelatedStyles({
+            parentStyles: parents || [],
+            childStyles: children || [],
+            siblingStyles: siblings || [],
+          });
+        } else {
+          // Firestoreから取得したデータを使用
+          const styleDoc = styleSnapshot.docs[0];
+          const styleData = convertToFirestoreBeerStyle(styleDoc);
+          setStyle(styleData);
+
+          // このスタイルの代表的なビールをFirestoreから取得
+          const beerRef = collection(db, 'beers');
+          const beerQuery = query(beerRef, where('style', '==', id));
+          const beerSnapshot = await getDocs(beerQuery);
+
+          const firestoreBeers = beerSnapshot.docs
+            .map(convertToFirestoreBeer)
+            .slice(0, 3);
+
+          setExampleBeers(firestoreBeers);
+
+          // 関連スタイルを取得
+          if (
+            styleData.parents?.length ||
+            styleData.children?.length ||
+            styleData.siblings?.length
+          ) {
+            const parentIds = styleData.parents || [];
+            const childIds = styleData.children || [];
+            const siblingIds = styleData.siblings || [];
+
+            // 親スタイル取得
+            const parentStyles: BeerStyle[] = [];
+            if (parentIds.length > 0) {
+              const parentQuery = query(styleRef, where('id', 'in', parentIds));
+              const parentSnapshot = await getDocs(parentQuery);
+              parentStyles.push(
+                ...parentSnapshot.docs.map(convertToFirestoreBeerStyle)
+              );
+            }
+
+            // 子スタイル取得
+            const childStyles: BeerStyle[] = [];
+            if (childIds.length > 0) {
+              const childQuery = query(styleRef, where('id', 'in', childIds));
+              const childSnapshot = await getDocs(childQuery);
+              childStyles.push(
+                ...childSnapshot.docs.map(convertToFirestoreBeerStyle)
+              );
+            }
+
+            // 兄弟スタイル取得
+            const siblingStyles: BeerStyle[] = [];
+            if (siblingIds.length > 0) {
+              const siblingQuery = query(
+                styleRef,
+                where('id', 'in', siblingIds)
+              );
+              const siblingSnapshot = await getDocs(siblingQuery);
+              siblingStyles.push(
+                ...siblingSnapshot.docs.map(convertToFirestoreBeerStyle)
+              );
+            }
+
+            setRelatedStyles({
+              parentStyles,
+              childStyles,
+              siblingStyles,
+            });
+          }
         }
-
-        setStyle(foundStyle);
-
-        // このスタイルの代表的なビールを最大3つ取得
-        const styleBeers = beers
-          .filter((beer) => beer.style === id)
-          .slice(0, 3);
-
-        setExampleBeers(styleBeers);
-
-        // 関連スタイルを取得
-        const parents = foundStyle.parents
-          ?.map((id) => beerStyles.find((s) => s.id === id))
-          .filter(Boolean) as BeerStyle[];
-
-        const children = foundStyle.children
-          ?.map((id) => beerStyles.find((s) => s.id === id))
-          .filter(Boolean) as BeerStyle[];
-
-        const siblings = foundStyle.siblings
-          ?.map((id) => beerStyles.find((s) => s.id === id))
-          .filter(Boolean) as BeerStyle[];
-
-        setRelatedStyles({
-          parentStyles: parents || [],
-          childStyles: children || [],
-          siblingStyles: siblings || [],
-        });
       } catch (error) {
         console.error('スタイルデータの取得中にエラーが発生しました:', error);
+
+        // エラー時にはローカルデータでフォールバック
+        const localStyle = beerStyles.find((s) => s.id === id);
+        if (localStyle) {
+          setStyle(localStyle);
+
+          const styleBeers = beers
+            .filter((beer) => beer.style === id)
+            .slice(0, 3);
+
+          setExampleBeers(styleBeers);
+
+          const parents = localStyle.parents
+            ?.map((parentId) => beerStyles.find((s) => s.id === parentId))
+            .filter(Boolean) as BeerStyle[];
+
+          const children = localStyle.children
+            ?.map((childId) => beerStyles.find((s) => s.id === childId))
+            .filter(Boolean) as BeerStyle[];
+
+          const siblings = localStyle.siblings
+            ?.map((siblingId) => beerStyles.find((s) => s.id === siblingId))
+            .filter(Boolean) as BeerStyle[];
+
+          setRelatedStyles({
+            parentStyles: parents || [],
+            childStyles: children || [],
+            siblingStyles: siblings || [],
+          });
+        } else {
+          notFound();
+        }
       } finally {
         setIsLoading(false);
       }

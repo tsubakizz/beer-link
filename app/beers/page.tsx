@@ -1,268 +1,144 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Beer, beers } from '../../src/app/lib/beers-data';
-import { motion } from 'framer-motion';
-import {
-  collection,
-  query,
-  where,
-  getCountFromServer,
-  getDocs,
-} from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../src/app/lib/firebase';
-
-// インポートするコンポーネント
-import HeroSection from '../../src/app/components/HeroSection';
+import { Beer } from '../../src/app/lib/beers-data';
+import BeerList from '../../src/app/components/beers/BeerList';
 import BeerFilter from '../../src/app/components/beers/BeerFilter';
-import StyleNavigation from '../../src/app/components/beers/StyleNavigation';
-import BeerCard from '../../src/app/components/beers/BeerCard';
-import EmptyResults from '../../src/app/components/beers/EmptyResults';
-import Pagination from '../../src/app/components/beers/Pagination';
 import LoadingSpinner from '../../src/app/components/LoadingSpinner';
+import { motion } from 'framer-motion';
+import Link from 'next/link';
 
-// レビュー情報の型定義
-interface ReviewData {
-  count: number;
-  averageRating: number | null; // nullの場合はレビューがない
-}
+// FirestoreのデータをBeer型に変換する関数
+const convertToFirestoreBeer = (doc: any): Beer => {
+  const data = doc.data();
+  return {
+    id: doc.id,
+    name: data.name,
+    brewery: data.brewery,
+    style: data.style,
+    abv: data.abv,
+    ibu: data.ibu,
+    description: data.description,
+    imageUrl: data.imageUrl || null,
+    rating: data.rating || 0,
+    ratingCount: data.ratingCount || 0,
+    flavors: data.flavors || [],
+  };
+};
 
 export default function BeersPage() {
-  // State for filtering and sorting
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedStyle, setSelectedStyle] = useState<string>('');
-  const [sortOption, setSortOption] = useState<string>('rating');
-  const [filteredBeers, setFilteredBeers] = useState<Beer[]>(beers);
-  const [reviewData, setReviewData] = useState<{
-    [beerId: string]: ReviewData;
-  }>({});
-  const [loadingReviews, setLoadingReviews] = useState<boolean>(true);
+  const [beers, setBeers] = useState<Beer[]>([]);
+  const [filteredBeers, setFilteredBeers] = useState<Beer[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // レビュー情報を取得
   useEffect(() => {
-    const fetchReviewData = async () => {
-      setLoadingReviews(true);
+    const fetchBeers = async () => {
       try {
-        const data: { [beerId: string]: ReviewData } = {};
+        // Firestoreからビールデータを取得
+        const beersCollection = collection(db, 'beers');
+        const beersSnapshot = await getDocs(beersCollection);
 
-        // すべてのビールIDのレビュー件数と平均評価を取得
-        for (const beer of beers) {
-          const reviewQuery = query(
-            collection(db, 'reviews'),
-            where('beerId', '==', beer.id)
-          );
-
-          // レビュー件数を取得
-          const countSnapshot = await getCountFromServer(reviewQuery);
-          const count = countSnapshot.data().count;
-
-          // 平均評価を取得（レビューがある場合のみ）
-          let averageRating: number | null = null;
-          if (count > 0) {
-            // レビュースナップショットを取得してスコアの平均を計算
-            const reviewsSnapshot = await getDocs(reviewQuery);
-            let totalScore = 0;
-
-            reviewsSnapshot.forEach((doc) => {
-              const reviewData = doc.data();
-              totalScore += reviewData.rating || 0;
-            });
-
-            averageRating = count > 0 ? totalScore / count : null;
-          }
-
-          data[beer.id] = {
-            count,
-            averageRating,
-          };
+        if (beersSnapshot.empty) {
+          // 空の配列を設定してエラーメッセージは表示しない
+          setBeers([]);
+          setFilteredBeers([]);
+        } else {
+          // FirestoreデータをBeer型に変換
+          const beerList = beersSnapshot.docs.map(convertToFirestoreBeer);
+          setBeers(beerList);
+          setFilteredBeers(beerList);
         }
-
-        setReviewData(data);
       } catch (error) {
-        console.error('レビュー情報の取得中にエラーが発生しました:', error);
+        console.error('ビールデータの取得中にエラーが発生しました:', error);
+        // エラーが発生しても空配列を設定
+        setBeers([]);
+        setFilteredBeers([]);
       } finally {
-        setLoadingReviews(false);
+        setIsLoading(false);
       }
     };
 
-    fetchReviewData();
+    fetchBeers();
   }, []);
 
-  // Apply filters and sorting whenever dependencies change
-  useEffect(() => {
-    let result = [...beers];
-
-    // Apply style filter
-    if (selectedStyle) {
-      result = result.filter((beer) => beer.style === selectedStyle);
-    }
-
-    // Apply search query
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(
-        (beer) =>
-          beer.name.toLowerCase().includes(query) ||
-          beer.brewery.toLowerCase().includes(query) ||
-          beer.description.toLowerCase().includes(query) ||
-          beer.flavors.some((flavor) => flavor.toLowerCase().includes(query))
-      );
-    }
-
-    // Apply sorting
-    switch (sortOption) {
-      case 'name':
-        result.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      case 'rating':
-        // Firestoreの実際の評価値でソート（ない場合は評価が最も低いものとして扱う）
-        result.sort((a, b) => {
-          const aRating = reviewData[a.id]?.averageRating ?? -1;
-          const bRating = reviewData[b.id]?.averageRating ?? -1;
-          return bRating - aRating;
-        });
-        break;
-      case 'abv':
-        result.sort((a, b) => b.abv - a.abv);
-        break;
-      case 'reviews':
-        // 実際のレビュー件数でソート
-        result.sort((a, b) => {
-          const aCount = reviewData[a.id]?.count || 0;
-          const bCount = reviewData[b.id]?.count || 0;
-          return bCount - aCount;
-        });
-        break;
-    }
-
-    setFilteredBeers(result);
-  }, [searchQuery, selectedStyle, sortOption, reviewData]);
-
-  // フィルターをリセットする関数
-  const resetFilters = () => {
-    setSearchQuery('');
-    setSelectedStyle('');
-    setSortOption('rating');
+  // フィルタリング関数
+  const handleFilterChange = (filteredBeers: Beer[]) => {
+    setFilteredBeers(filteredBeers);
   };
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto py-16 px-4 sm:px-6 text-center">
+        <LoadingSpinner size="large" message="ビールデータを読み込み中..." />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto py-8 px-4 sm:px-6">
-      {/* ヒーローセクション */}
-      <HeroSection
-        title="ビール図鑑"
-        description="様々なクラフトビールの世界を探索しましょう。あなたの好みに合った一杯を見つけるための旅が、ここから始まります。"
-      />
-
-      {/* フィルターと検索セクション */}
-      <BeerFilter
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        selectedStyle={selectedStyle}
-        setSelectedStyle={setSelectedStyle}
-        sortOption={sortOption}
-        setSortOption={setSortOption}
-      />
-
-      {/* ビールスタイルのクイックナビゲーション */}
-      <StyleNavigation
-        selectedStyle={selectedStyle}
-        setSelectedStyle={setSelectedStyle}
-      />
-
-      {/* 結果の表示 */}
+      {/* ヒーローセクション - データがあってもなくても常に表示 */}
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.4 }}
-        className="mb-6 flex items-center justify-between"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="relative rounded-xl overflow-hidden mb-8 bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-300 shadow-md"
       >
-        <p className="text-amber-800 font-medium">
-          {filteredBeers.length} 件のビールが見つかりました
-        </p>
-
-        {/* 表示切り替え（将来的な拡張用） */}
-        <div className="flex gap-2">
-          <button className="btn btn-sm btn-square bg-amber-100 border-amber-200 text-amber-800">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </button>
-          <button className="btn btn-sm btn-square bg-white border-amber-200 text-amber-800">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
-              />
-            </svg>
-          </button>
+        <div className="relative z-10 px-5 py-8 md:py-10 flex flex-col md:flex-row items-center md:px-8">
+          <div className="md:w-2/3 mb-6 md:mb-0 md:pr-6">
+            <h1 className="text-3xl md:text-4xl font-bold mb-3 text-amber-900 drop-shadow-sm">
+              ビール図鑑
+            </h1>
+            <p className="text-amber-900 max-w-xl text-base mb-6">
+              世界中のビールを探索し、新しい味わいとの出会いを楽しみましょう。
+              あなたの好みに合ったビールがきっと見つかります。
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href="/styles"
+                className="btn bg-amber-100 hover:bg-amber-200 text-amber-900 border-amber-300"
+              >
+                スタイルから探す
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </Link>
+              <Link
+                href="/breweries"
+                className="btn btn-outline border-amber-300 text-amber-900 hover:bg-amber-100"
+              >
+                ブルワリーから探す
+              </Link>
+            </div>
+          </div>
+          <div className="md:w-1/3 flex justify-center">
+            <div className="relative w-32 h-32 md:w-40 md:h-40">
+              <div className="absolute inset-0 rounded-full bg-amber-200 opacity-50 blur-lg"></div>
+              <div className="relative flex items-center justify-center h-full text-5xl md:text-6xl">
+                🍺
+              </div>
+            </div>
+          </div>
         </div>
       </motion.div>
 
-      {/* レビュー数読み込み中の表示 */}
-      {loadingReviews && (
-        <div className="my-4">
-          <LoadingSpinner size="small" message="ビール情報を読み込み中..." />
-        </div>
-      )}
+      {/* 検索フィルター - データがあってもなくても常に表示 */}
+      <BeerFilter beers={beers} onFilterChange={handleFilterChange} />
 
-      {/* ビールリスト */}
-      {!loadingReviews && filteredBeers.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredBeers.map((beer, index) => (
-            <BeerCard
-              key={beer.id}
-              beer={beer}
-              index={index}
-              reviewCount={reviewData[beer.id]?.count}
-              reviewRating={reviewData[beer.id]?.averageRating}
-            />
-          ))}
-        </div>
-      )}
-
-      {/* レビューがないビールの表示 */}
-      {!loadingReviews && filteredBeers.length > 0 && (
-        <div className="my-4">
-          {filteredBeers.map((beer) => {
-            const reviewCount = reviewData[beer.id]?.count || 0;
-            if (reviewCount === 0) {
-              return (
-                <div key={beer.id} className="text-center text-gray-500">
-                  {beer.name}にはまだレビューがありません。
-                </div>
-              );
-            }
-            return null;
-          })}
-        </div>
-      )}
-
-      {/* 結果が0件の場合 */}
-      {filteredBeers.length === 0 && (
-        <EmptyResults resetFilters={resetFilters} />
-      )}
-
-      {/* ページネーション */}
-      <Pagination hasResults={filteredBeers.length > 0} />
+      {/* ビール一覧 - BeerListコンポーネントがデータなしの表示を内部で処理 */}
+      <BeerList beers={filteredBeers} />
     </div>
   );
 }

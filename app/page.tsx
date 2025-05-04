@@ -1,16 +1,42 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { beerStyles } from '../src/app/lib/beers-data';
 import { breweries } from '../src/app/lib/breweries-data';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
+  // 画面幅の状態を管理
+  const [isMobileWidth, setIsMobileWidth] = useState(false);
+
+  // 画面幅を監視するeffect
+  useEffect(() => {
+    // 初期状態の設定
+    setIsMobileWidth(window.innerWidth <= 400);
+
+    // リサイズイベントのハンドラー
+    const handleResize = () => {
+      setIsMobileWidth(window.innerWidth <= 400);
+    };
+
+    // イベントリスナーの設定
+    window.addEventListener('resize', handleResize);
+
+    // クリーンアップ関数
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   // データから値を取得
   const beerStylesCount = beerStyles.length;
   const breweriesCount = breweries.length;
   // 一意なビアスタイルカテゴリーを取得
-  const beerCategories = new Set(beerStyles.map(style => style.id.split('-')[0]));
+  const beerCategories = new Set(
+    beerStyles.map((style) => style.id.split('-')[0])
+  );
   const beerCategoriesCount = beerCategories.size;
   // レビューの総数（ダミーデータ、実際は別のデータから取得するか計算する）
   const reviewsCount = 5000;
@@ -22,53 +48,28 @@ export default function Home() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="relative rounded-xl overflow-hidden mb-6 bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-300 shadow-md"
+        className="relative rounded-xl overflow-hidden mb-6 shadow-md"
+        style={{ aspectRatio: isMobileWidth ? '3/4' : '430/200' }}
       >
-        <div className="relative z-10 px-5 py-8 md:py-10 flex flex-col md:flex-row items-center md:px-8">
-          <div className="md:w-2/3 mb-6 md:mb-0 md:pr-6">
-            <h1 className="text-3xl md:text-4xl font-bold mb-3 text-amber-900 drop-shadow-sm">
-              あなたの<span className="text-amber-700">完璧な一杯</span>を<br />
-              見つける旅に出よう
+        <div className="absolute inset-0 w-full h-full">
+          <Image
+            src="/keyvisual.png"
+            alt="ビールのキービジュアル"
+            fill
+            priority
+            className="object-cover object-right"
+          />
+        </div>
+        <div className="relative z-10 px-5 py-6 md:py-10 flex flex-col items-start md:px-10 md:w-3/5">
+          <div className="mb-2 md:mb-4">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-2 md:mb-3 text-amber-900 drop-shadow-sm">
+              Beer Link
             </h1>
-            <p className="text-amber-900 max-w-xl text-base mb-6">
-              初心者から愛好家まで、クラフトビールの多彩な味わいと物語を探求するコミュニティへようこそ。
-              あなただけの特別なビールとの出会いをお手伝いします。
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <Link
-                href="/guides/beginners"
-                className="btn bg-amber-100 hover:bg-amber-200 text-amber-900 border-amber-300"
-              >
-                クラフトビールを知る
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </Link>
-              <Link
-                href="/beers"
-                className="btn btn-outline border-amber-300 text-amber-900 hover:bg-amber-100"
-              >
-                ビールを探す
-              </Link>
-            </div>
           </div>
-          <div className="md:w-1/3 flex justify-center">
-            <div className="relative w-32 h-32 md:w-40 md:h-40">
-              <div className="absolute inset-0 rounded-full bg-amber-200 opacity-50 blur-lg"></div>
-              <div className="relative flex items-center justify-center h-full text-5xl md:text-6xl">
-                🍺
-              </div>
-            </div>
+          <div>
+            <h2 className="text-lg md:text-2xl lg:text-3xl font-bold mb-3 md:mb-4 text-amber-800 drop-shadow-sm">
+              知って繋がる、<br />ビールの楽しさ
+            </h2>
           </div>
         </div>
       </motion.div>
@@ -99,7 +100,9 @@ export default function Home() {
             </div>
             <div>
               <h3 className="text-sm font-medium text-amber-700">ビール情報</h3>
-              <p className="text-xl font-bold text-amber-900">{beerStylesCount}+</p>
+              <p className="text-xl font-bold text-amber-900">
+                {beerStylesCount}+
+              </p>
             </div>
           </div>
         </div>
@@ -123,7 +126,9 @@ export default function Home() {
             </div>
             <div>
               <h3 className="text-sm font-medium text-amber-700">ブルワリー</h3>
-              <p className="text-xl font-bold text-amber-900">{breweriesCount}+</p>
+              <p className="text-xl font-bold text-amber-900">
+                {breweriesCount}+
+              </p>
             </div>
           </div>
         </div>
@@ -149,7 +154,9 @@ export default function Home() {
               <h3 className="text-sm font-medium text-amber-700">
                 ビアスタイル
               </h3>
-              <p className="text-xl font-bold text-amber-900">{beerCategoriesCount}+</p>
+              <p className="text-xl font-bold text-amber-900">
+                {beerCategoriesCount}+
+              </p>
             </div>
           </div>
         </div>
@@ -167,13 +174,15 @@ export default function Home() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+                  d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976-2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
                 />
               </svg>
             </div>
             <div>
               <h3 className="text-sm font-medium text-amber-700">レビュー</h3>
-              <p className="text-xl font-bold text-amber-900">{reviewsCount}+</p>
+              <p className="text-xl font-bold text-amber-900">
+                {reviewsCount}+
+              </p>
             </div>
           </div>
         </div>
@@ -187,9 +196,9 @@ export default function Home() {
         className="py-8"
       >
         <div className="text-center mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold mb-3 text-amber-900">
+          <h3 className="text-2xl md:text-3xl font-bold mb-3 text-amber-900">
             クラフトビールの魅力
-          </h2>
+          </h3>
           <p className="text-amber-800 max-w-2xl mx-auto">
             大量生産のビールとは一線を画す、クラフトビールならではの特徴と体験をご紹介します。
           </p>
@@ -206,7 +215,7 @@ export default function Home() {
               <div className="text-4xl">🍺</div>
             </figure>
             <div className="card-body p-5">
-              <h3 className="card-title text-amber-900 mb-2">多様な味わい</h3>
+              <h4 className="card-title text-amber-900 mb-2">多様な味わい</h4>
               <p className="text-amber-800 mb-3">
                 フルーティーな香りから、スパイシーな刺激まで。クラフトビールは無限の味わいを提供します。あなたの好みに合う一杯が必ず見つかります。
               </p>
@@ -244,7 +253,7 @@ export default function Home() {
               <div className="text-4xl">🏭</div>
             </figure>
             <div className="card-body p-5">
-              <h3 className="card-title text-amber-900 mb-2">職人の技術</h3>
+              <h4 className="card-title text-amber-900 mb-2">職人の技術</h4>
               <p className="text-amber-800 mb-3">
                 大量生産ではなく、小規模で丁寧に。ブルワリーごとの個性と工夫が詰まった一杯です。作り手の情熱と技術を味わいましょう。
               </p>
@@ -282,9 +291,9 @@ export default function Home() {
               <div className="text-4xl">🌍</div>
             </figure>
             <div className="card-body p-5">
-              <h3 className="card-title text-amber-900 mb-2">
+              <h4 className="card-title text-amber-900 mb-2">
                 カルチャーとコミュニティ
-              </h3>
+              </h4>
               <p className="text-amber-800 mb-3">
                 クラフトビールは単なる飲み物ではなく、文化とコミュニティを形成しています。共有と発見の喜びを体験しましょう。
               </p>
@@ -326,9 +335,9 @@ export default function Home() {
             <div className="badge bg-amber-100 border-amber-200 text-amber-900 mb-3">
               初心者向け
             </div>
-            <h2 className="text-2xl font-bold mb-4 text-amber-900">
+            <h3 className="text-2xl font-bold mb-4 text-amber-900">
               初めてのクラフトビール
-            </h2>
+            </h3>
             <p className="text-amber-800 mb-5 text-base leading-relaxed">
               「どれを選べばいいのかわからない」「苦くて飲めるか心配」そんな悩みはもう終わりです。
               クラフトビールの世界は広く、誰もが楽しめるビールが必ず見つかります。
@@ -368,9 +377,9 @@ export default function Home() {
                 <div className="text-5xl">🍻</div>
               </div>
               <div className="card-body p-5">
-                <h3 className="card-title text-amber-900">
+                <h4 className="card-title text-amber-900">
                   初めてのクラフトビール選び
-                </h3>
+                </h4>
                 <p className="text-amber-800">
                   自分の味覚を理解して、好みのビールタイプを見つけるための簡単ガイド
                 </p>
@@ -409,7 +418,7 @@ export default function Home() {
         className="py-8"
       >
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-amber-900">最新のレビュー</h2>
+          <h3 className="text-2xl font-bold text-amber-900">最新のレビュー</h3>
           <Link
             href="/reviews"
             className="flex items-center gap-1 text-amber-700 hover:text-amber-900 font-medium"
@@ -440,7 +449,7 @@ export default function Home() {
               description:
                 'トロピカルなホップの香りと心地よい苦みが特徴の一杯。夕暮れのような琥珀色が美しい。',
               rating: 4.5,
-              reviews: 12
+              reviews: 12,
             },
             {
               name: '京都の和ヴァイツェン',
@@ -449,7 +458,7 @@ export default function Home() {
               description:
                 '柚子と山椒を使った和テイストのヴァイツェン。フルーティーな香りと爽やかなスパイス感が絶妙。',
               rating: 4.7,
-              reviews: 8
+              reviews: 8,
             },
             {
               name: '北海道ミルクスタウト',
@@ -458,7 +467,7 @@ export default function Home() {
               description:
                 '北海道産ミルクを使用した濃厚なスタウト。チョコレートとコーヒーのノートが広がる。',
               rating: 4.2,
-              reviews: 15
+              reviews: 15,
             },
             {
               name: '瀬戸内レモンセゾン',
@@ -467,7 +476,7 @@ export default function Home() {
               description:
                 '地元レモンを使った爽やかなセゾンビール。軽やかな飲み口で夏にぴったり。',
               rating: 4.3,
-              reviews: 10
+              reviews: 10,
             },
           ].map((beer, index) => (
             <motion.div
@@ -556,9 +565,9 @@ export default function Home() {
         className="relative rounded-lg overflow-hidden bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-300 mb-6 shadow-md"
       >
         <div className="relative z-10 px-5 py-8 md:py-10 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold mb-3 text-amber-900">
+          <h3 className="text-2xl md:text-3xl font-bold mb-3 text-amber-900">
             あなたのクラフトビール体験を共有しませんか？
-          </h2>
+          </h3>
           <p className="text-amber-900 max-w-2xl mx-auto text-base mb-6">
             お気に入りのビールやブルワリーについて、他の愛好家と情報を共有してください。
             あなたの一言がきっと誰かの素敵な一杯につながります。

@@ -23,9 +23,8 @@ const nextConfig: NextConfig = {
 };
 
 // CloudflareのNext.js on Pagesが環境に存在する場合の設定
-// @ts-ignore: Unreachable code error
-if (process.env.NODE_ENV === 'production') {
-  // @ts-ignore: Unreachable code error
+if (process.env.NODE_ENV === 'production' && process.env.CF_PAGES) {
+  // @ts-ignore: Property assignment
   nextConfig.output = undefined;
 }
 

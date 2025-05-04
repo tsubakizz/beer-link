@@ -2,48 +2,39 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { beerStyles } from '../src/app/lib/beers-data';
+import { breweries } from '../src/app/lib/breweries-data';
 
 export default function Home() {
+  // データから値を取得
+  const beerStylesCount = beerStyles.length;
+  const breweriesCount = breweries.length;
+  // 一意なビアスタイルカテゴリーを取得
+  const beerCategories = new Set(beerStyles.map(style => style.id.split('-')[0]));
+  const beerCategoriesCount = beerCategories.size;
+  // レビューの総数（ダミーデータ、実際は別のデータから取得するか計算する）
+  const reviewsCount = 5000;
+
   return (
-    <div className="container mx-auto py-8 px-4 sm:px-6 flex flex-col gap-16">
-      {/* ヒーローセクション（ビール図鑑スタイルに合わせる） */}
+    <div className="container mx-auto py-8 px-4 sm:px-6 flex flex-col gap-12">
+      {/* シンプル化したヒーローセクション */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="relative rounded-2xl overflow-hidden mb-12 bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-300"
+        className="relative rounded-xl overflow-hidden mb-6 bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-300 shadow-md"
       >
-        <div className="absolute inset-0 opacity-20">
-          <div
-            className="absolute inset-0 bg-repeat"
-            style={{
-              backgroundImage:
-                "url(\"data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.1' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E\")",
-              backgroundSize: '12px 12px',
-            }}
-          ></div>
-        </div>
-
-        <div className="relative z-10 px-6 py-12 md:py-16 flex flex-col md:flex-row items-center md:px-12">
-          <div className="md:w-2/3 mb-8 md:mb-0 md:pr-8">
-            <div className="inline-block mb-4">
-              <svg
-                className="w-12 h-12 text-amber-900"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M15 5.50002C15 5.23501 15.1054 4.98046 15.2929 4.7929C15.4804 4.60537 15.7348 4.50003 16 4.50003H19C19.2652 4.50003 19.5196 4.60537 19.7071 4.7929C19.8946 4.98046 20 5.23501 20 5.50002V7.50002C20 7.76503 19.8946 8.01958 19.7071 8.20711C19.5196 8.39464 19.2652 8.49998 19 8.49998H16C15.7348 8.49998 15.4804 8.39464 15.2929 8.20711C15.1054 8.01958 15 7.76503 15 7.50002V5.50002Z M11 4.50002C11 4.23501 11.1054 3.98046 11.2929 3.7929C11.4804 3.60537 11.7348 3.50003 12 3.50003H13C13.2652 3.50003 13.5196 3.60537 13.7071 3.7929C13.8946 3.98046 14 4.23501 14 4.50002V8.49998C14 8.76499 13.8946 9.01954 13.7071 9.20707C13.5196 9.3946 13.2652 9.49994 13 9.49994H12C11.7348 9.49994 11.4804 9.3946 11.2929 9.20707C11.1054 9.01954 11 8.76499 11 8.49998V4.50002Z" />
-              </svg>
-            </div>
-            <h1 className="text-4xl md:text-6xl font-bold mb-4 text-amber-900 drop-shadow-sm">
+        <div className="relative z-10 px-5 py-8 md:py-10 flex flex-col md:flex-row items-center md:px-8">
+          <div className="md:w-2/3 mb-6 md:mb-0 md:pr-6">
+            <h1 className="text-3xl md:text-4xl font-bold mb-3 text-amber-900 drop-shadow-sm">
               あなたの<span className="text-amber-700">完璧な一杯</span>を<br />
               見つける旅に出よう
             </h1>
-            <p className="text-amber-900 max-w-2xl text-lg mb-8">
+            <p className="text-amber-900 max-w-xl text-base mb-6">
               初心者から愛好家まで、クラフトビールの多彩な味わいと物語を探求するコミュニティへようこそ。
               あなただけの特別なビールとの出会いをお手伝いします。
             </p>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-3">
               <Link
                 href="/guides/beginners"
                 className="btn bg-amber-100 hover:bg-amber-200 text-amber-900 border-amber-300"
@@ -72,9 +63,9 @@ export default function Home() {
             </div>
           </div>
           <div className="md:w-1/3 flex justify-center">
-            <div className="relative w-48 h-48 md:w-64 md:h-64">
+            <div className="relative w-32 h-32 md:w-40 md:h-40">
               <div className="absolute inset-0 rounded-full bg-amber-200 opacity-50 blur-lg"></div>
-              <div className="relative flex items-center justify-center h-full text-6xl md:text-7xl">
+              <div className="relative flex items-center justify-center h-full text-5xl md:text-6xl">
                 🍺
               </div>
             </div>
@@ -82,18 +73,18 @@ export default function Home() {
         </div>
       </motion.div>
 
-      {/* 特徴カウンター（ビール図鑑スタイルに合わせる） */}
+      {/* 特徴カウンター - データ取得版 */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
-        className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12"
+        className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
       >
         <div className="card bg-gradient-to-br from-amber-50 to-amber-100 shadow-md hover:shadow-lg transition-all duration-300">
-          <div className="card-body p-5 flex flex-row items-center">
-            <div className="bg-amber-200 rounded-full p-3 mr-4">
+          <div className="card-body p-4 flex flex-row items-center">
+            <div className="bg-amber-200 rounded-full p-2 mr-3">
               <svg
-                className="w-8 h-8 text-amber-800"
+                className="w-6 h-6 text-amber-800"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -108,16 +99,16 @@ export default function Home() {
             </div>
             <div>
               <h3 className="text-sm font-medium text-amber-700">ビール情報</h3>
-              <p className="text-2xl font-bold text-amber-900">1,000+</p>
+              <p className="text-xl font-bold text-amber-900">{beerStylesCount}+</p>
             </div>
           </div>
         </div>
 
         <div className="card bg-gradient-to-br from-amber-50 to-amber-100 shadow-md hover:shadow-lg transition-all duration-300">
-          <div className="card-body p-5 flex flex-row items-center">
-            <div className="bg-amber-200 rounded-full p-3 mr-4">
+          <div className="card-body p-4 flex flex-row items-center">
+            <div className="bg-amber-200 rounded-full p-2 mr-3">
               <svg
-                className="w-8 h-8 text-amber-800"
+                className="w-6 h-6 text-amber-800"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -132,16 +123,16 @@ export default function Home() {
             </div>
             <div>
               <h3 className="text-sm font-medium text-amber-700">ブルワリー</h3>
-              <p className="text-2xl font-bold text-amber-900">150+</p>
+              <p className="text-xl font-bold text-amber-900">{breweriesCount}+</p>
             </div>
           </div>
         </div>
 
         <div className="card bg-gradient-to-br from-amber-50 to-amber-100 shadow-md hover:shadow-lg transition-all duration-300">
-          <div className="card-body p-5 flex flex-row items-center">
-            <div className="bg-amber-200 rounded-full p-3 mr-4">
+          <div className="card-body p-4 flex flex-row items-center">
+            <div className="bg-amber-200 rounded-full p-2 mr-3">
               <svg
-                className="w-8 h-8 text-amber-800"
+                className="w-6 h-6 text-amber-800"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -158,16 +149,16 @@ export default function Home() {
               <h3 className="text-sm font-medium text-amber-700">
                 ビアスタイル
               </h3>
-              <p className="text-2xl font-bold text-amber-900">30+</p>
+              <p className="text-xl font-bold text-amber-900">{beerCategoriesCount}+</p>
             </div>
           </div>
         </div>
 
         <div className="card bg-gradient-to-br from-amber-50 to-amber-100 shadow-md hover:shadow-lg transition-all duration-300">
-          <div className="card-body p-5 flex flex-row items-center">
-            <div className="bg-amber-200 rounded-full p-3 mr-4">
+          <div className="card-body p-4 flex flex-row items-center">
+            <div className="bg-amber-200 rounded-full p-2 mr-3">
               <svg
-                className="w-8 h-8 text-amber-800"
+                className="w-6 h-6 text-amber-800"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -182,21 +173,21 @@ export default function Home() {
             </div>
             <div>
               <h3 className="text-sm font-medium text-amber-700">レビュー</h3>
-              <p className="text-2xl font-bold text-amber-900">5,000+</p>
+              <p className="text-xl font-bold text-amber-900">{reviewsCount}+</p>
             </div>
           </div>
         </div>
       </motion.div>
 
-      {/* クラフトビールの特徴紹介 - ビール図鑑スタイルに合わせる */}
+      {/* クラフトビールの特徴紹介 - シンプル化 */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.3 }}
-        className="py-10"
+        className="py-8"
       >
-        <div className="text-center mb-10">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-amber-900">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold mb-3 text-amber-900">
             クラフトビールの魅力
           </h2>
           <p className="text-amber-800 max-w-2xl mx-auto">
@@ -204,32 +195,27 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.4 }}
-            className="card glass backdrop-blur-sm bg-white/70 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+            className="card glass backdrop-blur-sm bg-white/70 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300"
           >
-            <figure className="px-6 pt-6 h-56 bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
-              <div className="relative w-24 h-24">
-                <div className="absolute inset-0 rounded-full bg-amber-400 opacity-20 blur-md"></div>
-                <div className="relative w-full h-full flex items-center justify-center text-4xl">
-                  🍺
-                </div>
-              </div>
+            <figure className="px-5 pt-5 h-40 bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
+              <div className="text-4xl">🍺</div>
             </figure>
-            <div className="card-body p-6">
+            <div className="card-body p-5">
               <h3 className="card-title text-amber-900 mb-2">多様な味わい</h3>
-              <p className="text-amber-800 mb-4">
+              <p className="text-amber-800 mb-3">
                 フルーティーな香りから、スパイシーな刺激まで。クラフトビールは無限の味わいを提供します。あなたの好みに合う一杯が必ず見つかります。
               </p>
               <div className="card-actions justify-end mt-auto">
                 <Link
-                  href="/guides/flavors"
+                  href="/styles"
                   className="btn btn-sm bg-amber-100 hover:bg-amber-200 text-amber-900 border-amber-300"
                 >
-                  味わいを詳しく知る
+                  ビアスタイル一覧
                   <svg
                     className="w-4 h-4"
                     fill="none"
@@ -249,22 +235,17 @@ export default function Home() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.5 }}
-            className="card glass backdrop-blur-sm bg-white/70 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+            className="card glass backdrop-blur-sm bg-white/70 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300"
           >
-            <figure className="px-6 pt-6 h-56 bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
-              <div className="relative w-24 h-24">
-                <div className="absolute inset-0 rounded-full bg-amber-400 opacity-20 blur-md"></div>
-                <div className="relative w-full h-full flex items-center justify-center text-4xl">
-                  🏭
-                </div>
-              </div>
+            <figure className="px-5 pt-5 h-40 bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
+              <div className="text-4xl">🏭</div>
             </figure>
-            <div className="card-body p-6">
+            <div className="card-body p-5">
               <h3 className="card-title text-amber-900 mb-2">職人の技術</h3>
-              <p className="text-amber-800 mb-4">
+              <p className="text-amber-800 mb-3">
                 大量生産ではなく、小規模で丁寧に。ブルワリーごとの個性と工夫が詰まった一杯です。作り手の情熱と技術を味わいましょう。
               </p>
               <div className="card-actions justify-end mt-auto">
@@ -292,32 +273,27 @@ export default function Home() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.6 }}
-            className="card glass backdrop-blur-sm bg-white/70 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+            className="card glass backdrop-blur-sm bg-white/70 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300"
           >
-            <figure className="px-6 pt-6 h-56 bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
-              <div className="relative w-24 h-24">
-                <div className="absolute inset-0 rounded-full bg-amber-400 opacity-20 blur-md"></div>
-                <div className="relative w-full h-full flex items-center justify-center text-4xl">
-                  🌍
-                </div>
-              </div>
+            <figure className="px-5 pt-5 h-40 bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
+              <div className="text-4xl">🌍</div>
             </figure>
-            <div className="card-body p-6">
+            <div className="card-body p-5">
               <h3 className="card-title text-amber-900 mb-2">
                 カルチャーとコミュニティ
               </h3>
-              <p className="text-amber-800 mb-4">
+              <p className="text-amber-800 mb-3">
                 クラフトビールは単なる飲み物ではなく、文化とコミュニティを形成しています。共有と発見の喜びを体験しましょう。
               </p>
               <div className="card-actions justify-end mt-auto">
                 <Link
-                  href="/community"
+                  href="/guides"
                   className="btn btn-sm bg-amber-100 hover:bg-amber-200 text-amber-900 border-amber-300"
                 >
-                  コミュニティに参加
+                  ガイドを見る
                   <svg
                     className="w-4 h-4"
                     fill="none"
@@ -338,30 +314,27 @@ export default function Home() {
         </div>
       </motion.div>
 
-      {/* 初心者ガイドへの導線 - ビール図鑑スタイル */}
+      {/* 初心者ガイドへの導線 - シンプル化 */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.4 }}
-        className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-amber-50 to-amber-100 shadow-md"
+        className="relative rounded-lg overflow-hidden bg-gradient-to-br from-amber-50 to-amber-100 shadow-md mb-8"
       >
-        <div className="absolute top-0 right-0 w-64 h-64 bg-amber-200 rounded-full opacity-20 transform translate-x-1/3 -translate-y-1/3 blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-amber-300 rounded-full opacity-10 transform -translate-x-1/3 translate-y-1/3 blur-3xl"></div>
-
-        <div className="relative z-10 flex flex-col md:flex-row gap-8 p-8 md:p-12">
+        <div className="relative z-10 flex flex-col md:flex-row gap-6 p-6 md:p-8">
           <div className="md:w-1/2">
-            <div className="badge bg-amber-100 border-amber-200 text-amber-900 mb-4">
+            <div className="badge bg-amber-100 border-amber-200 text-amber-900 mb-3">
               初心者向け
             </div>
-            <h2 className="text-3xl font-bold mb-6 text-amber-900">
+            <h2 className="text-2xl font-bold mb-4 text-amber-900">
               初めてのクラフトビール
             </h2>
-            <p className="text-amber-800 mb-6 text-lg leading-relaxed">
+            <p className="text-amber-800 mb-5 text-base leading-relaxed">
               「どれを選べばいいのかわからない」「苦くて飲めるか心配」そんな悩みはもう終わりです。
               クラフトビールの世界は広く、誰もが楽しめるビールが必ず見つかります。
               あなたの好みに合った一杯を見つけるお手伝いをします。
             </p>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-3">
               <Link
                 href="/guides/beginners"
                 className="btn bg-amber-100 hover:bg-amber-200 text-amber-900 border-amber-300"
@@ -390,26 +363,18 @@ export default function Home() {
             </div>
           </div>
           <div className="md:w-1/2">
-            <div className="card glass backdrop-blur-sm bg-white/70 rounded-xl overflow-hidden shadow-md">
-              <figure className="relative aspect-video bg-gradient-to-br from-amber-100 to-amber-200">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="relative w-24 h-24">
-                    <div className="absolute inset-0 rounded-full bg-amber-400 opacity-20 blur-md"></div>
-                    <div className="relative w-full h-full flex items-center justify-center text-5xl">
-                      🍻
-                    </div>
-                  </div>
-                </div>
-                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-amber-200/50 to-transparent"></div>
-              </figure>
-              <div className="card-body p-6">
+            <div className="card glass backdrop-blur-sm bg-white/70 rounded-lg overflow-hidden shadow-md">
+              <div className="relative aspect-video bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
+                <div className="text-5xl">🍻</div>
+              </div>
+              <div className="card-body p-5">
                 <h3 className="card-title text-amber-900">
                   初めてのクラフトビール選び
                 </h3>
                 <p className="text-amber-800">
                   自分の味覚を理解して、好みのビールタイプを見つけるための簡単ガイド
                 </p>
-                <div className="card-actions justify-end mt-4">
+                <div className="card-actions justify-end mt-3">
                   <Link
                     href="/guides/beginners"
                     className="btn btn-sm bg-amber-100 hover:bg-amber-200 text-amber-900 border-amber-300"
@@ -436,15 +401,15 @@ export default function Home() {
         </div>
       </motion.div>
 
-      {/* 最新のレビューとおすすめ - ビール図鑑スタイル */}
+      {/* 最新のレビューセクション - データからの生成に修正 */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.5 }}
-        className="py-10"
+        className="py-8"
       >
-        <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-bold text-amber-900">最新のレビュー</h2>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-amber-900">最新のレビュー</h2>
           <Link
             href="/reviews"
             className="flex items-center gap-1 text-amber-700 hover:text-amber-900 font-medium"
@@ -466,7 +431,7 @@ export default function Home() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {[
             {
               name: '東京サンセットIPA',
@@ -475,6 +440,7 @@ export default function Home() {
               description:
                 'トロピカルなホップの香りと心地よい苦みが特徴の一杯。夕暮れのような琥珀色が美しい。',
               rating: 4.5,
+              reviews: 12
             },
             {
               name: '京都の和ヴァイツェン',
@@ -483,6 +449,7 @@ export default function Home() {
               description:
                 '柚子と山椒を使った和テイストのヴァイツェン。フルーティーな香りと爽やかなスパイス感が絶妙。',
               rating: 4.7,
+              reviews: 8
             },
             {
               name: '北海道ミルクスタウト',
@@ -491,6 +458,7 @@ export default function Home() {
               description:
                 '北海道産ミルクを使用した濃厚なスタウト。チョコレートとコーヒーのノートが広がる。',
               rating: 4.2,
+              reviews: 15
             },
             {
               name: '瀬戸内レモンセゾン',
@@ -499,29 +467,24 @@ export default function Home() {
               description:
                 '地元レモンを使った爽やかなセゾンビール。軽やかな飲み口で夏にぴったり。',
               rating: 4.3,
+              reviews: 10
             },
           ].map((beer, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.1 * (index % 8) + 0.6 }}
-              className="card glass backdrop-blur-sm bg-white/70 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+              className="card glass backdrop-blur-sm bg-white/70 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300"
             >
-              <figure className="h-52 relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-amber-200 to-amber-100"></div>
-                <div className="relative w-full h-full flex items-center justify-center">
-                  <div className="relative w-20 h-20">
-                    <div className="absolute inset-0 rounded-full bg-amber-400 opacity-20 blur-md"></div>
-                    <div className="relative w-full h-full flex items-center justify-center text-4xl">
-                      🍺
-                    </div>
-                  </div>
+              <figure className="h-36 relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-amber-200 to-amber-100 flex items-center justify-center">
+                  <div className="text-4xl">🍺</div>
                 </div>
-                <div className="absolute top-3 right-3">
-                  <div className="flex items-center gap-1 bg-amber-50/90 backdrop-blur-sm text-amber-900 rounded-full px-2 py-1 shadow-sm">
+                <div className="absolute top-2 right-2">
+                  <div className="flex items-center gap-1 bg-amber-50/90 backdrop-blur-sm text-amber-900 rounded-full px-2 py-1 shadow-sm text-sm">
                     <svg
-                      className="w-4 h-4 text-amber-500"
+                      className="w-3 h-3 text-amber-500"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -530,19 +493,19 @@ export default function Home() {
                     <span className="font-bold">{beer.rating.toFixed(1)}</span>
                   </div>
                 </div>
-                <div className="absolute top-3 left-3">
-                  <div className="badge badge-lg bg-amber-50 border-amber-200 text-amber-900 font-medium shadow-sm">
+                <div className="absolute top-2 left-2">
+                  <div className="badge badge-sm bg-amber-50 border-amber-200 text-amber-900 font-medium shadow-sm">
                     {beer.style}
                   </div>
                 </div>
               </figure>
-              <div className="card-body p-5">
-                <h3 className="card-title text-xl text-amber-900 line-clamp-1">
+              <div className="card-body p-4">
+                <h3 className="card-title text-base text-amber-900 line-clamp-1">
                   {beer.name}
                 </h3>
-                <p className="text-sm text-amber-700 mb-2 flex items-center gap-1">
+                <p className="text-xs text-amber-700 mb-2 flex items-center gap-1">
                   <svg
-                    className="w-4 h-4"
+                    className="w-3 h-3"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -556,40 +519,27 @@ export default function Home() {
                   </svg>
                   {beer.brewery}
                 </p>
-                <p className="text-sm text-gray-600 line-clamp-2 mb-3">
+                <p className="text-xs text-gray-600 line-clamp-2 mb-2">
                   {beer.description}
                 </p>
 
-                <div className="card-actions justify-end mt-auto">
-                  <div className="flex items-center gap-1 text-sm text-amber-800">
+                <div className="card-actions justify-between items-center mt-auto">
+                  <div className="flex items-center gap-1 text-xs text-amber-800">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4 text-amber-500"
+                      className="h-3 w-3 text-amber-500"
                       fill="currentColor"
                       viewBox="0 0 24 24"
                     >
                       <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
                     </svg>
-                    <span>12件</span>
+                    <span>{beer.reviews}件</span>
                   </div>
                   <Link
-                    href={`/reviews/${index + 1}`}
-                    className="btn btn-sm bg-amber-100 hover:bg-amber-200 text-amber-900 border-amber-300 transition-all duration-300"
+                    href={`/beers/${index + 1}`}
+                    className="btn btn-xs bg-amber-100 hover:bg-amber-200 text-amber-900 border-amber-300"
                   >
                     詳細を見る
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
                   </Link>
                 </div>
               </div>
@@ -598,63 +548,22 @@ export default function Home() {
         </div>
       </motion.div>
 
-      {/* コールトゥアクション - ビール図鑑スタイル */}
+      {/* シンプル化したコールトゥアクション */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.6 }}
-        className="relative rounded-2xl overflow-hidden bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-300 mb-8"
+        className="relative rounded-lg overflow-hidden bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-300 mb-6 shadow-md"
       >
-        <div className="absolute inset-0 opacity-20">
-          <div
-            className="absolute inset-0 bg-repeat"
-            style={{
-              backgroundImage:
-                "url(\"data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.1' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E\")",
-              backgroundSize: '12px 12px',
-            }}
-          ></div>
-        </div>
-
-        {/* 泡の装飾 */}
-        <div className="absolute inset-0 z-1 overflow-hidden">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div
-              key={i}
-              className="absolute rounded-full bg-white/30"
-              style={{
-                width: `${Math.random() * 6 + 2}rem`,
-                height: `${Math.random() * 6 + 2}rem`,
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                opacity: Math.random() * 0.3,
-                filter: 'blur(1px)',
-              }}
-            />
-          ))}
-        </div>
-
-        <div className="relative z-10 px-6 py-12 md:py-16 text-center">
-          <div className="inline-block mb-6">
-            <svg
-              className="w-16 h-16 mx-auto text-amber-900"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
-            </svg>
-          </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-amber-900">
-            あなたのクラフトビール体験を
-            <br className="md:hidden" />
-            共有しませんか？
+        <div className="relative z-10 px-5 py-8 md:py-10 text-center">
+          <h2 className="text-2xl md:text-3xl font-bold mb-3 text-amber-900">
+            あなたのクラフトビール体験を共有しませんか？
           </h2>
-          <p className="text-amber-900 max-w-2xl mx-auto text-lg mb-10">
+          <p className="text-amber-900 max-w-2xl mx-auto text-base mb-6">
             お気に入りのビールやブルワリーについて、他の愛好家と情報を共有してください。
-            あなたの一言がきっと誰かの素敵な一杯につながります。Beer
-            Linkコミュニティで、ビールの新たな魅力を一緒に発見しましょう。
+            あなたの一言がきっと誰かの素敵な一杯につながります。
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-wrap justify-center gap-3">
             <Link
               href="/reviews/new"
               className="btn bg-amber-100 hover:bg-amber-200 text-amber-900 border-amber-300"
@@ -675,10 +584,10 @@ export default function Home() {
               </svg>
             </Link>
             <Link
-              href="/community/join"
+              href="/guides"
               className="btn btn-outline border-amber-900 text-amber-900 hover:bg-amber-100"
             >
-              コミュニティに参加する
+              ガイドを見る
             </Link>
           </div>
         </div>

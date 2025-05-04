@@ -1,15 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { beerStyles, BeerStyle } from '../../../src/app/lib/beers-data';
+import { beerStyles, BeerStyle } from '../../src/app/lib/beers-data';
 
 // インポートするコンポーネント
-import HeroSection from '../../../src/app/components/HeroSection';
+import HeroSection from '../../src/app/components/HeroSection';
 import StyleFilter, {
   FilterParams,
-} from '../../../src/app/components/guides/styles/StyleFilter';
-import StyleResults from '../../../src/app/components/guides/styles/StyleResults';
-import StyleInformation from '../../../src/app/components/guides/styles/StyleInformation';
+} from '../../src/app/components/styles/StyleFilter';
+import StyleResults from '../../src/app/components/styles/StyleResults';
 
 // スタイルイメージのプレースホルダー
 const getStyleColorBySRM = (style: BeerStyle): string => {
@@ -222,9 +221,6 @@ export default function BeerStylesPage() {
         onPageChange={handlePageChange}
         resetFilters={resetFilters}
       />
-
-      {/* ビールスタイルに関する説明 */}
-      <StyleInformation />
     </div>
   );
 }

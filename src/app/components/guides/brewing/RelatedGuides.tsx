@@ -10,7 +10,7 @@ export default function RelatedGuides() {
     {
       title: 'ビアスタイルガイド',
       description: '代表的なビールスタイルの特徴と味わいを解説します',
-      link: '/guides/styles',
+      link: '/styles',
     },
     {
       title: '初心者ガイド',

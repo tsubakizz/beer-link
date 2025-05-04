@@ -9,6 +9,7 @@ export interface FeatureItem {
   description: string;
   icon: string;
   color: string;
+  iconBg: string;
   link: string;
 }
 
@@ -32,7 +33,7 @@ export default function FeatureCard({ item, index }: FeatureCardProps) {
           className={`bg-gradient-to-br ${item.color} p-6 relative overflow-hidden`}
         >
           <div
-            className={`w-14 h-14 flex items-center justify-center text-2xl mb-2`}
+            className={`w-14 h-14 ${item.iconBg} rounded-xl flex items-center justify-center text-2xl mb-2 shadow-sm`}
           >
             <span className="text-2xl">{item.icon}</span>
           </div>

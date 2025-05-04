@@ -1,5 +1,5 @@
-import BeerStyleDetail from '../../../../src/app/components/guides/styles/BeerStyleDetail';
-import { beerStyles } from '../../../../src/app/lib/beers-data';
+import BeerStyleDetail from '../../../src/app/components/styles/BeerStyleDetail';
+import { beerStyles } from '../../../src/app/lib/beers-data';
 
 // Cloudflare Pagesで動作させるためにEdge Runtimeを指定
 export const runtime = 'edge';

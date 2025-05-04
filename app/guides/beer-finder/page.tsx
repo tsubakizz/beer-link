@@ -596,10 +596,7 @@ export default function BeerFinderPage() {
               </p>
               <p>
                 もし提案されたビールが好みに合わなかった場合は、診断をやり直すか、
-                <Link
-                  href="/guides/styles"
-                  className="text-amber-600 hover:underline"
-                >
+                <Link href="/styles" className="text-amber-600 hover:underline">
                   スタイル図鑑
                 </Link>
                 で他のスタイルも探してみてください。

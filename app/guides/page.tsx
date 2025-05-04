@@ -10,16 +10,6 @@ import BeerFinderCTA from '../../src/app/components/guides/BeerFinderCTA';
 // ガイド項目のデータ
 const guideItems = [
   {
-    id: 'styles',
-    title: 'スタイル図鑑',
-    description:
-      'IPA、スタウト、ヴァイツェンなど様々なビールスタイルの特徴や味わいを解説します。',
-    icon: '🍺',
-    color: 'from-amber-200 to-amber-100',
-    iconBg: 'bg-amber-200',
-    link: '/guides/styles',
-  },
-  {
     id: 'tasting',
     title: 'テイスティングガイド',
     description:
@@ -38,16 +28,6 @@ const guideItems = [
     color: 'from-yellow-200 to-yellow-100',
     iconBg: 'bg-yellow-200',
     link: '/guides/brewing',
-  },
-  {
-    id: 'pairing',
-    title: 'フードペアリング',
-    description:
-      'ビールと料理の組み合わせについて。スタイルごとの相性の良い料理を紹介します。',
-    icon: '🍽️',
-    color: 'from-red-200 to-red-100',
-    iconBg: 'bg-red-200',
-    link: '/guides/pairing',
   },
   {
     id: 'beginners',

@@ -77,10 +77,7 @@ export default function GlossarySection({
             </p>
             <p className="text-xs sm:text-sm text-gray-600 mt-1">
               もっと専門的な用語や各ビアスタイルの特徴について知りたい方は、
-              <a
-                href="/guides/styles"
-                className="text-amber-600 hover:underline"
-              >
+              <a href="/styles" className="text-amber-600 hover:underline">
                 ビアスタイルガイド
               </a>
               も参考にしてみてください。

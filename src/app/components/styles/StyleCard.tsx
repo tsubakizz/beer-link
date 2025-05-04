@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { BeerStyle, getBeerStyleCard } from '../../../../app/lib/beers-data';
+import { BeerStyle, getBeerStyleCard } from '../../../app/lib/beers-data';
 import { FaBeer, FaThermometerHalf } from 'react-icons/fa';
 import { GiHops } from 'react-icons/gi';
 
@@ -21,7 +21,7 @@ export default function StyleCard({
   const styleCard = getBeerStyleCard(style);
 
   return (
-    <Link href={`/guides/styles/${style.id}`} className="block">
+    <Link href={`/styles/${style.id}`} className="block">
       <motion.div
         key={style.id}
         initial={{ opacity: 0, y: 20 }}

@@ -738,7 +738,7 @@ export default function TastingGuidePage() {
           <Link href="/beers" className="btn btn-primary">
             ビールを探す
           </Link>
-          <Link href="/guides/styles" className="btn btn-outline">
+          <Link href="/styles" className="btn btn-outline">
             ビールスタイルを学ぶ
           </Link>
         </div>

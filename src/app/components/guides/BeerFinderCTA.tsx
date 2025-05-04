@@ -8,12 +8,12 @@ export default function BeerFinderCTA() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="text-center py-12 bg-gradient-to-r from-purple-100 via-amber-100 to-yellow-100 rounded-xl shadow-sm"
+      className="text-center py-12 px-6 bg-gradient-to-r from-purple-100 via-amber-100 to-yellow-100 rounded-xl shadow-sm"
     >
       <h2 className="text-2xl md:text-3xl font-bold mb-4 text-amber-900">
         あなたにぴったりのビールを見つけよう
       </h2>
-      <p className="max-w-xl mx-auto mb-8 text-amber-800">
+      <p className="max-w-2xl mx-auto mb-8 text-amber-800">
         好みや気分に合わせて、あなたにおすすめのビールスタイルを診断します。
         数問の質問に答えるだけで、あなたの新しいお気に入りが見つかるかもしれません。
       </p>

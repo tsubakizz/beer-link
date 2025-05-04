@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { BeerStyle } from '../../../../app/lib/beers-data';
+import { BeerStyle } from '../../../app/lib/beers-data';
 
 interface RelatedStylesProps {
   parentStyles?: BeerStyle[];
@@ -58,7 +58,7 @@ export default function RelatedStyles({
                   className="bg-amber-50 p-3 rounded-lg shadow-sm hover:shadow-md transition-shadow"
                 >
                   <Link
-                    href={`/guides/styles/${style.id}`}
+                    href={`/styles/${style.id}`}
                     className="flex items-center text-amber-900 hover:text-amber-600"
                   >
                     <svg
@@ -100,7 +100,7 @@ export default function RelatedStyles({
                   className="bg-amber-50 p-3 rounded-lg shadow-sm hover:shadow-md transition-shadow"
                 >
                   <Link
-                    href={`/guides/styles/${style.id}`}
+                    href={`/styles/${style.id}`}
                     className="flex items-center text-amber-900 hover:text-amber-600"
                   >
                     <svg
@@ -142,7 +142,7 @@ export default function RelatedStyles({
                   className="bg-amber-50 p-3 rounded-lg shadow-sm hover:shadow-md transition-shadow"
                 >
                   <Link
-                    href={`/guides/styles/${style.id}`}
+                    href={`/styles/${style.id}`}
                     className="flex items-center text-amber-900 hover:text-amber-600"
                   >
                     <svg

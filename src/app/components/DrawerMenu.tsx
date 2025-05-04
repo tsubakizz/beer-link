@@ -133,7 +133,7 @@ export default function DrawerMenu() {
             </li>
             <li>
               <Link
-                href="/guides/styles"
+                href="/styles"
                 className="beer-menu-item"
                 onClick={closeDrawer}
               >

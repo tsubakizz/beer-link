@@ -113,10 +113,7 @@ const selectionTipsContent = (
       <strong>色（SRM）で選んでみる</strong>
       <p className="ml-4">
         淡い黄金色のビールはすっきり軽快、濃い色のビールはどっしりとした味わいの傾向があります。ビールの色を示す「SRM」という指標も参考にしてみましょう。
-        <Link
-          href="/guides/styles"
-          className="text-amber-600 hover:underline ml-1"
-        >
+        <Link href="/styles" className="text-amber-600 hover:underline ml-1">
           スタイル図鑑
         </Link>
         では各スタイルのSRM目安も確認できます。
@@ -126,10 +123,7 @@ const selectionTipsContent = (
       <strong>適正温度で味わいが変わる！</strong>
       <p className="ml-4">
         ビールは冷やしすぎると香りが感じにくくなり、温度が高すぎるとキレが悪くなることがあります。スタイルによって美味しく飲める温度帯は異なります。
-        <Link
-          href="/guides/styles"
-          className="text-amber-600 hover:underline ml-1"
-        >
+        <Link href="/styles" className="text-amber-600 hover:underline ml-1">
           スタイル図鑑
         </Link>
         で推奨温度をチェックして、最高の状態で楽しんでみてください。
@@ -193,7 +187,7 @@ export default function BeginnersGuidePage() {
           それぞれどんな特徴があるのでしょうか？
           スタイル図鑑で、あなたの好みに合いそうなビールを探してみましょう！
         </p>
-        <Link href="/guides/styles" className="btn btn-primary">
+        <Link href="/styles" className="btn btn-primary">
           ビールスタイル図鑑を見る
         </Link>
       </motion.div>

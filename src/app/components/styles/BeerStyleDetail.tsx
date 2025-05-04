@@ -4,14 +4,14 @@ import React, { useState, useEffect } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { beerStyles, beers, BeerStyle, Beer } from '../../../lib/beers-data';
+import { beerStyles, beers, BeerStyle, Beer } from '../../lib/beers-data';
 
 // コンポーネントのインポート
 import StyleRadarChart from './StyleRadarChart';
 import StyleCharacteristics from './StyleCharacteristics';
 import RelatedStyles from './RelatedStyles';
 import ExampleBeers from './ExampleBeers';
-import LoadingSpinner from '../../../components/LoadingSpinner';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 interface BeerStyleDetailProps {
   id: string;
@@ -159,7 +159,7 @@ export default function BeerStyleDetail({ id }: BeerStyleDetailProps) {
       {/* ヒーローセクション */}
       <div className="mb-6">
         <Link
-          href="/guides/styles"
+          href="/styles"
           className="text-amber-700 hover:text-amber-500 flex items-center mb-4"
         >
           <svg
@@ -371,7 +371,7 @@ export default function BeerStyleDetail({ id }: BeerStyleDetailProps) {
         <h3 className="text-xl font-bold text-amber-900 mb-6">
           他のスタイルを探す
         </h3>
-        <Link href="/guides/styles" className="btn btn-primary btn-lg">
+        <Link href="/styles" className="btn btn-primary btn-lg">
           スタイル図鑑へ
         </Link>
       </motion.div>

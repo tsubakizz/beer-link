@@ -104,7 +104,7 @@ export default function Navigation() {
             </li>
             <li>
               <Link
-                href="/guides/styles"
+                href="/styles"
                 className="btn btn-ghost rounded-btn text-[#7c2d12] hover:bg-amber-100/50"
               >
                 スタイル図鑑

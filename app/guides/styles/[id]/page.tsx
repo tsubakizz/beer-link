@@ -62,67 +62,6 @@ const specialStyleColors: { [key: string]: string } = {
   framboise: 'bg-pink-300',
 };
 
-// スタイル間の関係（派生元、派生先、類似スタイル）
-const styleRelationships: {
-  [key: string]: {
-    parents?: string[];
-    children?: string[];
-    siblings?: string[];
-  };
-} = {
-  ipa: {
-    parents: ['pale-ale'],
-    children: [
-      'double-ipa',
-      'session-ipa',
-      'black-ipa',
-      'new-england-ipa',
-      'hazy-ipa',
-    ],
-    siblings: ['american-pale-ale'],
-  },
-  'pale-ale': {
-    children: ['ipa', 'american-pale-ale', 'english-pale-ale'],
-    siblings: ['amber-ale', 'bitter'],
-  },
-  stout: {
-    parents: ['porter'],
-    children: [
-      'imperial-stout',
-      'milk-stout',
-      'oatmeal-stout',
-      'irish-dry-stout',
-    ],
-    siblings: ['porter'],
-  },
-  porter: {
-    children: ['stout', 'baltic-porter'],
-    siblings: ['brown-ale', 'stout'],
-  },
-  pilsner: {
-    parents: ['lager'],
-    children: ['german-pilsner', 'czech-pilsner'],
-    siblings: ['helles', 'lager'],
-  },
-  lager: {
-    children: ['pilsner', 'helles', 'dunkel', 'schwarzbier', 'bock'],
-    siblings: ['vienna-lager', 'marzen'],
-  },
-  weissbier: {
-    parents: ['wheat-beer'],
-    siblings: ['witbier', 'berliner-weisse', 'gose'],
-  },
-  witbier: {
-    parents: ['wheat-beer'],
-    siblings: ['weissbier', 'berliner-weisse'],
-  },
-  saison: {
-    parents: ['farmhouse-ale'],
-    siblings: ['belgian-pale-ale', 'biere-de-garde'],
-  },
-  // その他のスタイルの関連性も追加可能
-};
-
 // スタイルに対して色を決定する関数
 const getStyleColor = (style: any): string => {
   // 特別なスタイルがあればそれを返す、なければSRMベースの色を返す
@@ -176,17 +115,15 @@ export default function BeerStyleDetailPage({
         setExampleBeers(styleBeers);
 
         // 関連スタイルを取得
-        const relationship = styleRelationships[id] || {};
-
-        const parents = relationship.parents
+        const parents = foundStyle.parents
           ?.map((id) => beerStyles.find((s) => s.id === id))
           .filter(Boolean) as BeerStyle[];
 
-        const children = relationship.children
+        const children = foundStyle.children
           ?.map((id) => beerStyles.find((s) => s.id === id))
           .filter(Boolean) as BeerStyle[];
 
-        const siblings = relationship.siblings
+        const siblings = foundStyle.siblings
           ?.map((id) => beerStyles.find((s) => s.id === id))
           .filter(Boolean) as BeerStyle[];
 
@@ -391,33 +328,41 @@ export default function BeerStyleDetailPage({
               歴史
             </h3>
             <div className="prose max-w-none text-amber-800">
-              <p>{styleHistory.history}</p>
+              {styleHistory.history.split('\n').map((paragraph, index) => (
+                <p key={index}>{paragraph}</p>
+              ))}
             </div>
           </motion.div>
 
-          {/* 関連スタイル */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-white rounded-xl shadow-lg p-6 mb-6"
-          >
-            <RelatedStyles
-              parentStyles={relatedStyles.parentStyles}
-              childStyles={relatedStyles.childStyles}
-              siblingStyles={relatedStyles.siblingStyles}
-            />
-          </motion.div>
+          {/* 関連スタイル - 関連スタイルがない場合は表示しない */}
+          {(relatedStyles.parentStyles.length > 0 ||
+            relatedStyles.childStyles.length > 0 ||
+            relatedStyles.siblingStyles.length > 0) && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="bg-white rounded-xl shadow-lg p-6 mb-6"
+            >
+              <RelatedStyles
+                parentStyles={relatedStyles.parentStyles}
+                childStyles={relatedStyles.childStyles}
+                siblingStyles={relatedStyles.siblingStyles}
+              />
+            </motion.div>
+          )}
 
-          {/* 代表的なビール */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="bg-white rounded-xl shadow-lg p-6"
-          >
-            <ExampleBeers beers={exampleBeers} />
-          </motion.div>
+          {/* 代表的なビール - リストが空の場合は表示しない */}
+          {exampleBeers.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="bg-white rounded-xl shadow-lg p-6"
+            >
+              <ExampleBeers beers={exampleBeers} />
+            </motion.div>
+          )}
         </div>
       </div>
 

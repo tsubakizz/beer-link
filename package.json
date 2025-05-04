@@ -7,13 +7,13 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "DISABLE_ESLINT_PLUGIN=true next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "pages:build": "npx @cloudflare/next-on-pages",
     "pages:preview": "npx wrangler pages dev .vercel/output/static --compatibility-flag=nodejs_compat",
     "pages:deploy": "npx wrangler pages deploy .vercel/output/static --project-name=beer-link",
-    "deploy": "DISABLE_ESLINT_PLUGIN=true next build && npm run pages:build && npm run pages:deploy"
+    "deploy": "next build && npm run pages:build && npm run pages:deploy"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.802.0",

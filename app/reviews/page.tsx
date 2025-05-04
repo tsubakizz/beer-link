@@ -1,7 +1,12 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import React, {
+  useState,
+  useEffect,
+  Suspense,
+  createContext,
+  useContext,
+} from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
@@ -24,6 +29,7 @@ import LoadingSpinner from '../../src/app/components/LoadingSpinner';
 import ReviewForm from '../../src/app/components/beers/ReviewForm';
 import Pagination from '../../src/app/components/beers/Pagination';
 import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
 
 // レビュータイプの定義
 interface Review {
@@ -45,11 +51,23 @@ interface Beer {
   imageUrl?: string;
 }
 
-// useSearchParamsを使用する部分を別コンポーネントに分離
-function ReviewsContent() {
+// BeerIdコンテキストの作成
+const BeerIdContext = createContext<string | null>(null);
+
+// SearchParamsを取得するコンポーネント
+function SearchParamsHandler() {
   const searchParams = useSearchParams();
   const beerId = searchParams.get('beerId');
+  return (
+    <BeerIdContext.Provider value={beerId}>
+      <></>
+    </BeerIdContext.Provider>
+  );
+}
 
+// メインのレビューコンテンツコンポーネント
+function ReviewsContent() {
+  const beerId = useContext(BeerIdContext);
   const [beer, setBeer] = useState<Beer | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
@@ -560,15 +578,20 @@ function ReviewsContent() {
 // メインコンポーネント
 export default function ReviewsPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-amber-50/50">
-        <div className="text-center p-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-500 mx-auto"></div>
-          <p className="mt-4 text-amber-800">読み込み中...</p>
-        </div>
-      </div>
-    }>
+    <>
+      <Suspense
+        fallback={
+          <div className="min-h-screen flex items-center justify-center bg-amber-50/50">
+            <div className="text-center p-4">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-500 mx-auto"></div>
+              <p className="mt-4 text-amber-800">読み込み中...</p>
+            </div>
+          </div>
+        }
+      >
+        <SearchParamsHandler />
+      </Suspense>
       <ReviewsContent />
-    </Suspense>
+    </>
   );
 }

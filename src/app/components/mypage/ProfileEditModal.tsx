@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { AuthUser } from '../../lib/auth-context';
-import { auth, db, storage } from '../../lib/firebase';
+import { AuthUser } from '@/src/app/lib/auth-context';
+import { auth, db, storage } from '@/src/app/lib/firebase';
 import { updateProfile } from 'firebase/auth';
 import { doc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';

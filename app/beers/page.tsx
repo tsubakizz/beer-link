@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
-import BeerList from '../../src/app/components/beers/BeerList';
-import BeerFilter from '../../src/app/components/beers/BeerFilter';
-import LoadingSpinner from '../../src/app/components/LoadingSpinner';
+import React, { useState, Suspense } from 'react';
+import BeerList from '@/src/app/components/beers/BeerList';
+import BeerFilter from '@/src/app/components/beers/BeerFilter';
+import LoadingSpinner from '@/src/app/components/LoadingSpinner';
 
 // クライアントコンポーネントの内容
 function BeerPageContent() {

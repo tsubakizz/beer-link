@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Beer } from '../../../app/lib/beers-data';
+import { Beer } from '@/src/app/lib/beers-data';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { useAuth } from '../../lib/auth-context';
-import AuthModal from '../AuthModal';
+import { useAuth } from '@/src/app/lib/auth-context';
+import AuthModal from '@/src/app/components/AuthModal';
 
 interface BeerDetailCardProps {
   beer: Beer;

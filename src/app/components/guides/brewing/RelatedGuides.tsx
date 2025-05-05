@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import BubbleDecoration from '../../BubbleDecoration';
+import BubbleDecoration from '@/BubbleDecoration';
 import { motion } from 'framer-motion';
 
 export default function RelatedGuides() {

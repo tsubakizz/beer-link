@@ -13,10 +13,10 @@ import {
   where,
   getDocs,
 } from 'firebase/firestore';
-import { db } from '../../../src/app/lib/firebase';
-import { Beer, BeerStyle } from '../../../src/app/lib/beers-data';
-import BeerDetailClient from '../../../src/app/components/beers/BeerDetailClient';
-import LoadingSpinner from '../../../src/app/components/LoadingSpinner';
+import { db } from '@/src/app/lib/firebase';
+import { Beer, BeerStyle } from '@/src/app/lib/beers-data';
+import BeerDetailClient from '@/src/app/components/beers/BeerDetailClient';
+import LoadingSpinner from '@/src/app/components/LoadingSpinner';
 
 interface BeerPageProps {
   params: {

@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { useAuth } from '../../lib/auth-context';
+import { useAuth } from '@/src/app/lib/auth-context';
 import {
   collection,
   query,
@@ -15,15 +15,18 @@ import {
   deleteDoc,
   doc,
 } from 'firebase/firestore';
-import { db } from '../../lib/firebase';
-import { updateBeerRatingStatistics } from '../../lib/review-utils';
-import LoadingSpinner from '../LoadingSpinner';
-import AuthModal from '../AuthModal';
-import ReviewItem from './ReviewItem';
-import ImageModal from './ImageModal';
-import DeleteConfirmationModal from './DeleteConfirmationModal';
-import ReviewActions from './ReviewActions';
-import { Review, ReviewsSectionProps } from './types/review.types';
+import { db } from '@/src/app/lib/firebase';
+import { updateBeerRatingStatistics } from '@/src/app/lib/review-utils';
+import LoadingSpinner from '@/src/app/components/LoadingSpinner';
+import AuthModal from '@/src/app/components/AuthModal';
+import ReviewItem from '@/src/app/components/beers/ReviewItem';
+import ImageModal from '@/src/app/components/beers/ImageModal';
+import DeleteConfirmationModal from '@/src/app/components/beers/DeleteConfirmationModal';
+import ReviewActions from '@/src/app/components/beers/ReviewActions';
+import {
+  Review,
+  ReviewsSectionProps,
+} from '@/src/app/components/beers/types/review.types';
 
 export default function ReviewsSection({
   beerId,

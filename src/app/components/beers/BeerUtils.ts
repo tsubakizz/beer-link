@@ -1,4 +1,4 @@
-import { beerStyles } from '../../../app/lib/beers-data';
+import { beerStyles } from '@/src/app/lib/beers-data';
 
 // ビールスタイル名を取得する関数
 export const getBeerStyleName = (styleId: string): string => {

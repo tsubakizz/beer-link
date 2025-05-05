@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Beer } from '../../../app/lib/beers-data';
+import { Beer } from '@/src/app/lib/beers-data';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 

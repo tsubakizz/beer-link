@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import FeatureCard, { FeatureItem } from '../FeatureCard';
+import FeatureCard, { FeatureItem } from '@/FeatureCard';
 
 interface GuideCategorySectionProps {
   guideItems: FeatureItem[];

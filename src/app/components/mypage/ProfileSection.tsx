@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { AuthUser } from '../../lib/auth-context';
-import { useAuth } from '../../lib/auth-context';
+import { AuthUser } from '@/src/app/lib/auth-context';
+import { useAuth } from '@/src/app/lib/auth-context';
 import ProfileEditModal from '@/src/app/components/mypage/ProfileEditModal';
 import { motion, AnimatePresence } from 'framer-motion';
 

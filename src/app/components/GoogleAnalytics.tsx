@@ -2,7 +2,7 @@
 
 import { useEffect, Suspense } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { analytics } from '../lib/firebase';
+import { analytics } from '@/src/app/lib/firebase';
 import { logEvent } from 'firebase/analytics';
 
 // SearchParamsを使用するコンポーネント

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Beer, beers as allBeers } from '../../lib/beers-data';
+import { Beer, beers as allBeers } from '@/src/app/lib/beers-data';
 import Image from 'next/image';
 
 interface FavoriteBeersProps {

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import React, { useState, useEffect, useRef } from 'react';
-import { useAuth } from '../lib/auth-context';
+import { useAuth } from '@/src/app/lib/auth-context';
 import { useRouter, usePathname } from 'next/navigation';
 import Logo from './Logo';
 

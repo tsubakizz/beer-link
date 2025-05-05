@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { beerStyles, beers } from '../../../src/app/lib/beers-data';
+import { beerStyles, beers } from '@/src/app/lib/beers-data';
 import Link from 'next/link';
 import {
   collection,
@@ -10,7 +10,7 @@ import {
   getCountFromServer,
   getDocs,
 } from 'firebase/firestore';
-import { db } from '../../../src/app/lib/firebase';
+import { db } from '@/src/app/lib/firebase';
 
 // レビュー情報の型定義
 interface ReviewData {

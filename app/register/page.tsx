@@ -3,8 +3,8 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { useAuth } from '../../src/app/lib/auth-context';
-import LoadingSpinner from '../../src/app/components/LoadingSpinner';
+import { useAuth } from '@/src/app/lib/auth-context';
+import LoadingSpinner from '@/src/app/components/LoadingSpinner';
 
 // SearchParamsを使用するコンポーネント
 function RegisterContent() {

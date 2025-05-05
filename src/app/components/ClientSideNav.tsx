@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useAuth } from '../lib/auth-context';
+import { useAuth } from '@/src/app/lib/auth-context';
 
 interface ClientSideNavProps {
   closeDrawer?: () => void;

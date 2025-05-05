@@ -1,15 +1,15 @@
 'use client';
 
 import { useState, Suspense } from 'react';
-import { beerStyles, BeerStyle } from '../../src/app/lib/beers-data';
-import LoadingSpinner from '../../src/app/components/LoadingSpinner';
+import { beerStyles, BeerStyle } from '@/src/app/lib/beers-data';
+import LoadingSpinner from '@/src/app/components/LoadingSpinner';
 
 // インポートするコンポーネント
-import HeroSection from '../../src/app/components/HeroSection';
+import HeroSection from '@/src/app/components/HeroSection';
 import StyleFilter, {
   FilterParams,
-} from '../../src/app/components/styles/StyleFilter';
-import StyleResults from '../../src/app/components/styles/StyleResults';
+} from '@/src/app/components/styles/StyleFilter';
+import StyleResults from '@/src/app/components/styles/StyleResults';
 
 // スタイルイメージのプレースホルダー
 const getStyleColorBySRM = (style: BeerStyle): string => {

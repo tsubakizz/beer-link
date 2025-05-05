@@ -1,13 +1,13 @@
 import type { Metadata } from 'next';
 import { Montserrat, Noto_Sans_JP } from 'next/font/google';
 import './globals.css';
-import { AuthProvider } from '../src/app/lib/auth-context';
-import BubbleAnimation from '../src/app/components/BubbleAnimation';
-import BackgroundBubbles from '../src/app/components/BackgroundBubbles';
-import Navigation from '../src/app/components/Navigation';
-import Footer from '../src/app/components/Footer';
-import DrawerMenu from '../src/app/components/DrawerMenu';
-import GoogleAnalytics from '../src/app/components/GoogleAnalytics';
+import { AuthProvider } from '@/src/app/lib/auth-context';
+import BubbleAnimation from '@/src/app/components/BubbleAnimation';
+import BackgroundBubbles from '@/src/app/components/BackgroundBubbles';
+import Navigation from '@/src/app/components/Navigation';
+import Footer from '@/src/app/components/Footer';
+import DrawerMenu from '@/src/app/components/DrawerMenu';
+import GoogleAnalytics from '@/src/app/components/GoogleAnalytics';
 
 // Montserrat(英語)とNoto Sans JP(日本語)のフォントを組み合わせて使用
 const montserrat = Montserrat({

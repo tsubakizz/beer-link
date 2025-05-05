@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { db } from '../../lib/firebase';
+import { db } from '@/src/app/lib/firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 
 interface Review {

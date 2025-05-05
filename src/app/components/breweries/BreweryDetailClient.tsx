@@ -7,8 +7,8 @@ import {
   breweries,
   breweryTypeNames,
   regionNames,
-} from '../../lib/breweries-data';
-import { beers, beerStyles } from '../../lib/beers-data';
+} from '@/src/app/lib/breweries-data';
+import { beers, beerStyles } from '@/src/app/lib/beers-data';
 import {
   collection,
   query,
@@ -16,7 +16,7 @@ import {
   getCountFromServer,
   getDocs,
 } from 'firebase/firestore';
-import { db } from '../../lib/firebase';
+import { db } from '@/src/app/lib/firebase';
 
 // レビュー情報の型定義
 interface ReviewData {

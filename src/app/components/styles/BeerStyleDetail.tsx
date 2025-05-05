@@ -4,8 +4,8 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { beerStyles, beers, BeerStyle, Beer } from '../../lib/beers-data';
-import { db } from '../../lib/firebase';
+import { beerStyles, beers, BeerStyle, Beer } from '@/src/app/lib/beers-data';
+import { db } from '@/src/app/lib/firebase';
 import {
   collection,
   getDocs,
@@ -19,7 +19,7 @@ import StyleRadarChart from './StyleRadarChart';
 import StyleCharacteristics from './StyleCharacteristics';
 import RelatedStyles from './RelatedStyles';
 import ExampleBeers from './ExampleBeers';
-import LoadingSpinner from '../../components/LoadingSpinner';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 interface BeerStyleDetailProps {
   id: string;

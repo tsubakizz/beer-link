@@ -1,14 +1,14 @@
 import React from 'react';
-import HeroSection from '../../../src/app/components/HeroSection';
-import BrewingIntroduction from '../../../src/app/components/guides/brewing/BrewingIntroduction';
-import TableOfContents from '../../../src/app/components/guides/brewing/TableOfContents';
-import BrewingIngredients from '../../../src/app/components/guides/brewing/BrewingIngredients';
-import BrewingProcess from '../../../src/app/components/guides/brewing/BrewingProcess';
-import FlavorFactors from '../../../src/app/components/guides/brewing/FlavorFactors';
-import BrewingComparison from '../../../src/app/components/guides/brewing/BrewingComparison';
-import BrewingGlossary from '../../../src/app/components/guides/brewing/BrewingGlossary';
-import RelatedGuides from '../../../src/app/components/guides/brewing/RelatedGuides';
-import BubbleDecoration from '../../../src/app/components/BubbleDecoration';
+import HeroSection from '@/src/app/components/HeroSection';
+import BrewingIntroduction from '@/src/app/components/guides/brewing/BrewingIntroduction';
+import TableOfContents from '@/src/app/components/guides/brewing/TableOfContents';
+import BrewingIngredients from '@/src/app/components/guides/brewing/BrewingIngredients';
+import BrewingProcess from '@/src/app/components/guides/brewing/BrewingProcess';
+import FlavorFactors from '@/src/app/components/guides/brewing/FlavorFactors';
+import BrewingComparison from '@/src/app/components/guides/brewing/BrewingComparison';
+import BrewingGlossary from '@/src/app/components/guides/brewing/BrewingGlossary';
+import RelatedGuides from '@/src/app/components/guides/brewing/RelatedGuides';
+import BubbleDecoration from '@/src/app/components/BubbleDecoration';
 
 export const metadata = {
   title: '醸造の基礎知識 - Beer Link',

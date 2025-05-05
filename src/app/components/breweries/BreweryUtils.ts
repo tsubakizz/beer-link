@@ -1,5 +1,5 @@
-import { Brewery } from '../../../app/lib/breweries-data';
-import { Beer } from '../../../app/lib/beers-data';
+import { Brewery } from '@/src/app/lib/breweries-data';
+import { Beer } from '@/src/app/lib/beers-data';
 
 // ブルワリーのフィルタリング処理
 export function filterBreweries(

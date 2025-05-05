@@ -1,8 +1,8 @@
 import React, { useRef } from 'react';
 import Image from 'next/image';
 import { ImageUploaderProps } from './types/review-form.types';
-import LoadingSpinner from '../LoadingSpinner';
-import { compressImage } from '../../lib/image-compressor';
+import LoadingSpinner from '@/LoadingSpinner';
+import { compressImage } from '@/src/app/lib/image-compressor';
 
 export default function ImageUploader({
   initialImageUrl = null,

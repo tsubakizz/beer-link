@@ -7,16 +7,16 @@ import {
   regionNames,
   type BreweryType,
   type Region,
-} from '../../src/app/lib/breweries-data';
-import { beers } from '../../src/app/lib/beers-data';
+} from '@/src/app/lib/breweries-data';
+import { beers } from '@/src/app/lib/beers-data';
 import { motion } from 'framer-motion';
-import HeroSection from '../../src/app/components/HeroSection';
-import BreweryFilter from '../../src/app/components/breweries/BreweryFilter';
-import QuickTypeFilter from '../../src/app/components/breweries/QuickTypeFilter';
-import BreweryList from '../../src/app/components/breweries/BreweryList';
-import BreweryTypeInfo from '../../src/app/components/breweries/BreweryTypeInfo';
-import EmptyResults from '../../src/app/components/beers/EmptyResults';
-import LoadingSpinner from '../../src/app/components/LoadingSpinner';
+import HeroSection from '@/src/app/components/HeroSection';
+import BreweryFilter from '@/src/app/components/breweries/BreweryFilter';
+import QuickTypeFilter from '@/src/app/components/breweries/QuickTypeFilter';
+import BreweryList from '@/src/app/components/breweries/BreweryList';
+import BreweryTypeInfo from '@/src/app/components/breweries/BreweryTypeInfo';
+import EmptyResults from '@/src/app/components/beers/EmptyResults';
+import LoadingSpinner from '@/src/app/components/LoadingSpinner';
 
 // 内部コンポーネントをSuspenseで囲むためのラッパーコンポーネント
 function BreweriesContent() {

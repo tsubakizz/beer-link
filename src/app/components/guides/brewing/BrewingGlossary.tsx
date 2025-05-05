@@ -1,5 +1,5 @@
 import React from 'react';
-import BubbleDecoration from '../../BubbleDecoration';
+import BubbleDecoration from '@/BubbleDecoration';
 
 export default function BrewingGlossary() {
   return (

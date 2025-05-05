@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import {
   breweryTypeNames,
   type BreweryType,
-} from '../../../app/lib/breweries-data';
+} from '@/src/app/lib/breweries-data';
 
 // ブルワリータイプに基づく色を返す関数
 export const getBreweryTypeColor = (type: BreweryType) => {

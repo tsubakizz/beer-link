@@ -4,7 +4,7 @@ import {
   Region,
   regionNames,
   breweryTypeNames,
-} from '../../../app/lib/breweries-data';
+} from '@/src/app/lib/breweries-data';
 
 interface BreweryFilterProps {
   isOpen: boolean;

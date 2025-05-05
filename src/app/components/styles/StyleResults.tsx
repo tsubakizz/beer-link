@@ -1,10 +1,10 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { BeerStyle } from '../../../app/lib/beers-data';
+import { BeerStyle } from '@/src/app/lib/beers-data';
 import StyleCard from './StyleCard';
 import EmptyStyleResults from './EmptyStyleResults';
-import Pagination from '../beers/Pagination';
+import Pagination from '@/beers/Pagination';
 
 interface StyleResultsProps {
   filteredStyles: BeerStyle[];

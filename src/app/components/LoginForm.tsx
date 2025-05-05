@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useAuth } from '../lib/auth-context';
+import { useAuth } from '@/src/app/lib/auth-context';
 import { motion } from 'framer-motion';
 
 interface LoginFormProps {

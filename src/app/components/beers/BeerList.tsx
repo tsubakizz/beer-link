@@ -1,5 +1,5 @@
 import React from 'react';
-import { Beer } from '../../lib/beers-data';
+import { Beer } from '@/src/app/lib/beers-data';
 import BeerCard from './BeerCard';
 import EmptyResults from './EmptyResults';
 import Pagination from './Pagination';

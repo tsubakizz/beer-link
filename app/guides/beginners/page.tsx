@@ -5,11 +5,11 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 
 // 共通コンポーネントのインポート
-import HeroSection from '../../../src/app/components/HeroSection';
-import IntroductionSection from '../../../src/app/components/guides/IntroductionSection';
-import GlossaryCard from '../../../src/app/components/guides/GlossaryCard'; // 用語解説カード
-import SelectionTipsSection from '../../../src/app/components/guides/SelectionTipsSection'; // ビール選びのヒント
-import BeerFinderCTA from '../../../src/app/components/guides/BeerFinderCTA';
+import HeroSection from '@/src/app/components/HeroSection';
+import IntroductionSection from '@/src/app/components/guides/IntroductionSection';
+import GlossaryCard from '@/src/app/components/guides/GlossaryCard'; // 用語解説カード
+import SelectionTipsSection from '@/src/app/components/guides/SelectionTipsSection'; // ビール選びのヒント
+import BeerFinderCTA from '@/src/app/components/guides/BeerFinderCTA';
 
 // イントロダクションのコンテンツ (変更なし)
 const introductionContent = (

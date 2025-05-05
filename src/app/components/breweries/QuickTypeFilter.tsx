@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { BreweryType } from '../../../app/lib/breweries-data';
+import { BreweryType } from '@/src/app/lib/breweries-data';
 
 interface QuickTypeFilterProps {
   selectedType: BreweryType | null;

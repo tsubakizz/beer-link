@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
-import BeerStyleDetail from '../../../src/app/components/styles/BeerStyleDetail';
-import { beerStyles } from '../../../src/app/lib/beers-data';
-import LoadingSpinner from '../../../src/app/components/LoadingSpinner';
+import BeerStyleDetail from '@/src/app/components/styles/BeerStyleDetail';
+import { beerStyles } from '@/src/app/lib/beers-data';
+import LoadingSpinner from '@/src/app/components/LoadingSpinner';
 
 // 静的ページ生成のためのパラメータを指定
 export async function generateStaticParams() {

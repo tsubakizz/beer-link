@@ -3,12 +3,12 @@
 import React from 'react';
 
 // インポートするコンポーネント
-import HeroSection from '../../../src/app/components/HeroSection';
-import IntroductionSection from '../../../src/app/components/guides/IntroductionSection';
-import GlossarySection from '../../../src/app/components/guides/GlossarySection';
+import HeroSection from '@/src/app/components/HeroSection';
+import IntroductionSection from '@/src/app/components/guides/IntroductionSection';
+import GlossarySection from '@/src/app/components/guides/GlossarySection';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import BeerFinderCTA from '../../../src/app/components/guides/BeerFinderCTA';
+import BeerFinderCTA from '@/src/app/components/guides/BeerFinderCTA';
 
 // テイスティング用語の定義
 const tastingGlossaryItems = [

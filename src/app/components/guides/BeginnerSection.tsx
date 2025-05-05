@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import BubbleDecoration from '../BubbleDecoration';
+import BubbleDecoration from '@/BubbleDecoration';
 
 export default function BeginnerSection() {
   return (

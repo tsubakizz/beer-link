@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import FAQAccordion from '../FAQAccordion';
+import FAQAccordion from '@/FAQAccordion';
 
 export interface FAQItem {
   question: string;

@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Beer } from '../../../app/lib/beers-data';
+import { Beer } from '@/src/app/lib/beers-data';
 import { getBeerStyleName, getStyleColor } from './BeerUtils';
 
 interface BeerCardProps {

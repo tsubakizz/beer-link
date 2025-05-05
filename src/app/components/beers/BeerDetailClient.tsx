@@ -3,12 +3,12 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { beers, beerStyles } from '../../lib/beers-data';
-import { breweries } from '../../lib/breweries-data';
-import BeerDetailCard from './BeerDetailCard';
-import FlavorProfileCard from './FlavorProfileCard';
-import ReviewsSection from './ReviewsSection';
-import SimilarBeersCard from './SimilarBeersCard';
+import { beers, beerStyles } from '@/src/app/lib/beers-data';
+import { breweries } from '@/src/app/lib/breweries-data';
+import BeerDetailCard from '@/src/app/components/beers/BeerDetailCard';
+import FlavorProfileCard from '@/src/app/components/beers/FlavorProfileCard';
+import ReviewsSection from '@/src/app/components/beers/ReviewsSection';
+import SimilarBeersCard from '@/src/app/components/beers/SimilarBeersCard';
 
 interface BeerDetailClientProps {
   id: string;

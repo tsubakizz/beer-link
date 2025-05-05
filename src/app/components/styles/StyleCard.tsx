@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { BeerStyle, getBeerStyleCard } from '../../../app/lib/beers-data';
+import { BeerStyle, getBeerStyleCard } from '@/src/app/lib/beers-data';
 import { FaBeer, FaThermometerHalf } from 'react-icons/fa';
 import { GiHops } from 'react-icons/gi';
 

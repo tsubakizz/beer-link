@@ -1,8 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { BreweryType, Region } from '../../../app/lib/breweries-data';
-import { beerStyles } from '../../../app/lib/beers-data';
+import { BreweryType, Region } from '@/src/app/lib/breweries-data';
+import { beerStyles } from '@/src/app/lib/beers-data';
 
 interface BreweryCardProps {
   brewery: {

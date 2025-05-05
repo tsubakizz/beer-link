@@ -1,6 +1,6 @@
 import React from 'react';
 import { SubmitButtonGroupProps } from './types/review-form.types';
-import LoadingSpinner from '../LoadingSpinner';
+import LoadingSpinner from '@/LoadingSpinner';
 
 export default function SubmitButtonGroup({
   isSubmitting,

@@ -1,12 +1,12 @@
 'use client';
 
 import React, { Suspense } from 'react';
-import HeroSection from '../../src/app/components/HeroSection';
-import GuideCategorySection from '../../src/app/components/guides/GuideCategorySection';
-import BeginnerSection from '../../src/app/components/guides/BeginnerSection';
-import FAQSection from '../../src/app/components/guides/FAQSection';
-import BeerFinderCTA from '../../src/app/components/guides/BeerFinderCTA';
-import LoadingSpinner from '../../src/app/components/LoadingSpinner';
+import HeroSection from '@/src/app/components/HeroSection';
+import GuideCategorySection from '@/src/app/components/guides/GuideCategorySection';
+import BeginnerSection from '@/src/app/components/guides/BeginnerSection';
+import FAQSection from '@/src/app/components/guides/FAQSection';
+import BeerFinderCTA from '@/src/app/components/guides/BeerFinderCTA';
+import LoadingSpinner from '@/src/app/components/LoadingSpinner';
 
 // ガイド項目のデータ
 const guideItems = [

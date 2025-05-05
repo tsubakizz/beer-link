@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { Beer } from '../../../../app/lib/beers-data';
+import { Beer } from '@/src/app/lib/beers-data';
 
 interface ExampleBeersProps {
   beers: Beer[];

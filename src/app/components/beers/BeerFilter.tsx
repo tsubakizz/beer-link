@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { beerStyles } from '../../../app/lib/beers-data';
+import { beerStyles } from '@/src/app/lib/beers-data';
 
 // 新しい型定義
 interface BeerFilterProps {

@@ -23,11 +23,11 @@ import {
   doc,
   Timestamp,
 } from 'firebase/firestore';
-import { db } from '../../src/app/lib/firebase';
-import { beers } from '../../src/app/lib/beers-data';
-import LoadingSpinner from '../../src/app/components/LoadingSpinner';
-import ReviewForm from '../../src/app/components/beers/ReviewForm';
-import Pagination from '../../src/app/components/beers/Pagination';
+import { db } from '@/src/app/lib/firebase';
+import { beers } from '@/src/app/lib/beers-data';
+import LoadingSpinner from '@/src/app/components/LoadingSpinner';
+import ReviewForm from '@/src/app/components/beers/ReviewForm';
+import Pagination from '@/src/app/components/beers/Pagination';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 

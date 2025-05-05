@@ -7,6 +7,7 @@ import BackgroundBubbles from '../src/app/components/BackgroundBubbles';
 import Navigation from '../src/app/components/Navigation';
 import Footer from '../src/app/components/Footer';
 import DrawerMenu from '../src/app/components/DrawerMenu';
+import GoogleAnalytics from '../src/app/components/GoogleAnalytics';
 
 // Montserrat(英語)とNoto Sans JP(日本語)のフォントを組み合わせて使用
 const montserrat = Montserrat({
@@ -60,6 +61,9 @@ export default function RootLayout({
       <body
         className={`${montserrat.variable} ${notoSansJP.variable} font-noto-sans-jp antialiased min-h-screen flex flex-col`}
       >
+        {/* GA4によるページビュー計測 */}
+        <GoogleAnalytics />
+
         {/* 全ページ共通の背景泡アニメーション */}
         <BubbleAnimation
           type="background"

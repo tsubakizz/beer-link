@@ -3,6 +3,49 @@ import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
+import {
+  getAnalytics,
+  isSupported,
+  setAnalyticsCollectionEnabled,
+} from 'firebase/analytics';
+
+// ボット検出用のユーザーエージェントパターン
+const BOT_UA_PATTERNS = [
+  /bot/i,
+  /spider/i,
+  /crawl/i,
+  /API-Services/i,
+  /AdsBot/i,
+  /Googlebot/i,
+  /mediapartners/i,
+  /AdsBot-Google/i,
+  /bingbot/i,
+  /Slurp/i,
+  /DuckDuckBot/i,
+  /Baiduspider/i,
+  /YandexBot/i,
+  /Sogou/i,
+  /exabot/i,
+  /facebot/i,
+  /ia_archiver/i,
+  /semrush/i,
+  /seznambot/i,
+  /Bytespider/i,
+  /applebot/i,
+  /Screaming Frog/i,
+  /Pingdom/i,
+  /PhantomJS/i,
+  /headless/i,
+];
+
+// ボットかどうかを判定する関数
+const isBot = (userAgent: string): boolean => {
+  // User-Agentがない場合はボットとみなす
+  if (!userAgent) return true;
+
+  // ボットパターンに一致するかチェック
+  return BOT_UA_PATTERNS.some((pattern) => pattern.test(userAgent));
+};
 
 // Firebase設定オブジェクト
 const firebaseConfig = {
@@ -23,4 +66,36 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
-export { auth, db, storage };
+// Analytics インスタンス
+let analytics: any = null;
+
+// クライアントサイドでのみAnalyticsを初期化
+if (typeof window !== 'undefined') {
+  // Analytics サポートの確認と初期化（ボットでない場合のみ）
+  const initAnalytics = async () => {
+    try {
+      const isAnalyticsSupported = await isSupported();
+
+      if (isAnalyticsSupported) {
+        analytics = getAnalytics(app);
+
+        // ボットチェック
+        const userAgent = window.navigator.userAgent;
+        const botDetected = isBot(userAgent);
+
+        // ボットの場合はアナリティクスの収集を無効化
+        setAnalyticsCollectionEnabled(analytics, !botDetected);
+
+        if (botDetected) {
+          console.log('Bot detected, analytics disabled');
+        }
+      }
+    } catch (error) {
+      console.error('Analytics initialization error:', error);
+    }
+  };
+
+  initAnalytics();
+}
+
+export { auth, db, storage, analytics };

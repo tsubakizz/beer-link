@@ -16,6 +16,7 @@ import {
   doc,
 } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
+import { updateBeerRatingStatistics } from '../../lib/review-utils';
 import LoadingSpinner from '../LoadingSpinner';
 import AuthModal from '../AuthModal';
 import ReviewItem from './ReviewItem';
@@ -75,10 +76,16 @@ export default function ReviewsSection({
         if (onReviewsLoaded) {
           onReviewsLoaded(count, avg);
         }
+
+        // ビールの評価統計を更新
+        await updateBeerRatingStatistics(beerId, count, avg);
       } else {
         if (onReviewsLoaded) {
           onReviewsLoaded(0, 0);
         }
+
+        // ビールの評価統計を更新
+        await updateBeerRatingStatistics(beerId, 0, 0);
       }
     } catch (err) {
       console.error('レーティング計算中にエラーが発生しました:', err);

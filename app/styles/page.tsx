@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, Suspense } from 'react';
-import { beerStyles, BeerStyle } from '@/src/app/lib/beers-data';
+import { beerStyles, BeerStyle } from '@/src/app/lib/beer-styles-data';
 import LoadingSpinner from '@/src/app/components/LoadingSpinner';
 
 // インポートするコンポーネント

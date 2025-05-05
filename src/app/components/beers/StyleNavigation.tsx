@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { beerStyles } from '@/src/app/lib/beers-data';
+import { beerStyles } from '@/src/app/lib/beer-styles-data';
 import { getStyleColor } from './BeerUtils';
 
 interface StyleNavigationProps {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BeerStyle } from '@/src/app/lib/beers-data';
+import { BeerStyle } from '@/src/app/lib/beer-styles-data';
 import { motion } from 'framer-motion';
 
 interface FlavorProfileCardProps {

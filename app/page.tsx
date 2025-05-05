@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { beerStyles } from '@/src/app/lib/beers-data';
+import { beerStyles } from '@/src/app/lib/beer-styles-data';
 import { breweries } from '@/src/app/lib/breweries-data';
 import { useEffect, useState, Suspense } from 'react';
 import LoadingSpinner from '@/src/app/components/LoadingSpinner';

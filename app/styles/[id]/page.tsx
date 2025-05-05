@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import BeerStyleDetail from '@/src/app/components/styles/BeerStyleDetail';
-import { beerStyles } from '@/src/app/lib/beers-data';
+import { beerStyles } from '@/src/app/lib/beer-styles-data';
 import LoadingSpinner from '@/src/app/components/LoadingSpinner';
 
 // 静的ページ生成のためのパラメータを指定

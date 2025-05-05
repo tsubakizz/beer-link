@@ -8,7 +8,8 @@ import {
   breweryTypeNames,
   regionNames,
 } from '@/src/app/lib/breweries-data';
-import { beers, beerStyles } from '@/src/app/lib/beers-data';
+import { beers } from '@/src/app/lib/beers-data';
+import { beerStyles } from '@/src/app/lib/beer-styles-data';
 import {
   collection,
   query,

@@ -14,7 +14,8 @@ import {
   getDocs,
 } from 'firebase/firestore';
 import { db } from '@/src/app/lib/firebase';
-import { Beer, BeerStyle } from '@/src/app/lib/beers-data';
+import { Beer } from '@/src/app/lib/beers-data';
+import { BeerStyle } from '@/src/app/lib/beer-styles-data';
 import BeerDetailClient from '@/src/app/components/beers/BeerDetailClient';
 import LoadingSpinner from '@/src/app/components/LoadingSpinner';
 

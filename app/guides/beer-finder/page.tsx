@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { beerStyles, beers } from '@/src/app/lib/beers-data';
+import { beers } from '@/src/app/lib/beers-data';
+import { beerStyles } from '@/src/app/lib/beer-styles-data';
 import Link from 'next/link';
 import {
   collection,

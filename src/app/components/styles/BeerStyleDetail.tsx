@@ -4,7 +4,8 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { beerStyles, beers, BeerStyle, Beer } from '@/src/app/lib/beers-data';
+import { beers, Beer } from '@/src/app/lib/beers-data';
+import { beerStyles, BeerStyle } from '@/src/app/lib/beer-styles-data';
 import { db } from '@/src/app/lib/firebase';
 import {
   collection,

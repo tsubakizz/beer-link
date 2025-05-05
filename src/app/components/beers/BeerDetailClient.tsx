@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { beers, beerStyles } from '@/src/app/lib/beers-data';
+import { beers } from '@/src/app/lib/beers-data';
+import { beerStyles } from '@/src/app/lib/beer-styles-data';
 import { breweries } from '@/src/app/lib/breweries-data';
 import BeerDetailCard from '@/src/app/components/beers/BeerDetailCard';
 import FlavorProfileCard from '@/src/app/components/beers/FlavorProfileCard';

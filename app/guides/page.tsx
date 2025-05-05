@@ -105,7 +105,11 @@ function GuidesContent() {
 
 export default function GuidesPage() {
   return (
-    <Suspense fallback={<LoadingSpinner size="large" message="ガイドページを読み込み中..." />}>
+    <Suspense
+      fallback={
+        <LoadingSpinner size="large" message="ガイドページを読み込み中..." />
+      }
+    >
       <GuidesContent />
     </Suspense>
   );

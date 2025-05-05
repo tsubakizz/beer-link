@@ -272,7 +272,14 @@ function BreweriesContent() {
 // メインコンポーネント
 export default function BreweriesPage() {
   return (
-    <Suspense fallback={<LoadingSpinner size="large" message="ブルワリーページを読み込み中..." />}>
+    <Suspense
+      fallback={
+        <LoadingSpinner
+          size="large"
+          message="ブルワリーページを読み込み中..."
+        />
+      }
+    >
       <BreweriesContent />
     </Suspense>
   );

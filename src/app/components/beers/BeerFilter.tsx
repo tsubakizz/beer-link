@@ -36,7 +36,7 @@ export default function BeerFilter({
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onFilterChange({
       ...filters,
-      search: e.target.value
+      search: e.target.value,
     });
   };
 
@@ -44,12 +44,12 @@ export default function BeerFilter({
   const handleStyleChange = (style: string) => {
     // スタイルが既に選択されている場合は解除、そうでなければ追加
     const updatedTypes = filters.beerTypes.includes(style)
-      ? filters.beerTypes.filter(t => t !== style)
+      ? filters.beerTypes.filter((t) => t !== style)
       : [...filters.beerTypes, style];
-    
+
     onFilterChange({
       ...filters,
-      beerTypes: updatedTypes
+      beerTypes: updatedTypes,
     });
   };
 

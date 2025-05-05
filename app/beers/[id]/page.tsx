@@ -150,7 +150,5 @@ export default function BeerDetailPage({ params }: BeerPageProps) {
     return notFound();
   }
 
-  return (
-    <BeerDetailClient beer={beer} style={style} similarBeers={similarBeers} />
-  );
+  return <BeerDetailClient id={id} />;
 }

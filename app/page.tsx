@@ -70,7 +70,9 @@ function HomePageContent() {
           </div>
           <div>
             <h2 className="text-lg md:text-2xl lg:text-3xl font-bold mb-3 md:mb-4 text-amber-800 drop-shadow-sm">
-              知って繋がる、<br />ビールの楽しさ
+              知って繋がる、
+              <br />
+              ビールの楽しさ
             </h2>
           </div>
         </div>
@@ -613,10 +615,7 @@ export default function Home() {
     <Suspense
       fallback={
         <div className="container mx-auto py-16 px-4 sm:px-6 text-center">
-          <LoadingSpinner
-            size="large"
-            message="ページを読み込み中..."
-          />
+          <LoadingSpinner size="large" message="ページを読み込み中..." />
         </div>
       }
     >

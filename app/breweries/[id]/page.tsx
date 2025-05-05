@@ -19,7 +19,9 @@ export default function BreweryDetailPage({
 }) {
   // クライアントコンポーネントをSuspenseで囲む
   return (
-    <Suspense fallback={<LoadingSpinner size="large" message="読み込み中..." />}>
+    <Suspense
+      fallback={<LoadingSpinner size="large" message="読み込み中..." />}
+    >
       <BreweryDetailClient id={params.id} />
     </Suspense>
   );

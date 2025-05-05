@@ -540,7 +540,7 @@ function BeerStyleDetailContent({ id }: BeerStyleDetailProps) {
 export default function BeerStyleDetail({ id }: BeerStyleDetailProps) {
   // メインのコンテンツコンポーネントをSuspenseで囲む
   return (
-    <Suspense 
+    <Suspense
       fallback={
         <div className="container mx-auto py-16 px-4 sm:px-6 text-center">
           <LoadingSpinner

@@ -204,7 +204,11 @@ export default function BeerStylesPage() {
       />
 
       {/* フィルターと検索 - Suspenseで囲む */}
-      <Suspense fallback={<LoadingSpinner size="medium" message="フィルターを読み込み中..." />}>
+      <Suspense
+        fallback={
+          <LoadingSpinner size="medium" message="フィルターを読み込み中..." />
+        }
+      >
         <StyleFilter
           searchQuery={searchQuery}
           setSearchQuery={handleSearchChange}
@@ -214,7 +218,14 @@ export default function BeerStylesPage() {
       </Suspense>
 
       {/* 結果の表示 - Suspenseで囲む */}
-      <Suspense fallback={<LoadingSpinner size="large" message="ビールスタイルを読み込み中..." />}>
+      <Suspense
+        fallback={
+          <LoadingSpinner
+            size="large"
+            message="ビールスタイルを読み込み中..."
+          />
+        }
+      >
         <StyleResults
           filteredStyles={filteredStyles}
           currentItems={currentItems}

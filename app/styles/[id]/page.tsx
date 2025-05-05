@@ -19,7 +19,11 @@ export default function BeerStyleDetailPage({
 }) {
   // クライアントコンポーネントをSuspenseで囲む
   return (
-    <Suspense fallback={<LoadingSpinner size="large" message="ビールスタイルを読み込み中..." />}>
+    <Suspense
+      fallback={
+        <LoadingSpinner size="large" message="ビールスタイルを読み込み中..." />
+      }
+    >
       <BeerStyleDetail id={params.id} />
     </Suspense>
   );

@@ -17,14 +17,14 @@ interface BeerListProps {
   itemsPerPage?: number;
 }
 
-export default function BeerList({ 
-  filters, 
-  filteredBeerIds, 
+export default function BeerList({
+  filters,
+  filteredBeerIds,
   beers = [], // デフォルト値として空の配列を設定
-  itemsPerPage = 12 
+  itemsPerPage = 12,
 }: BeerListProps) {
   const [currentPage, setCurrentPage] = React.useState(1);
-  
+
   // 表示するビールの配列
   // filtersとfilteredBeerIdsから適切なビールを取得する処理が必要
   // または親コンポーネントから完全なリストを受け取る

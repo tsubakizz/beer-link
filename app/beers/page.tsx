@@ -34,17 +34,14 @@ function BeerPageContent() {
       <h1 className="text-3xl font-bold text-amber-900 mb-6">ビール一覧</h1>
       <div className="flex flex-col lg:flex-row gap-6">
         <div className="w-full lg:w-1/4 order-2 lg:order-1">
-          <BeerFilter 
-            filters={filters} 
-            onFilterChange={handleFilterChange} 
+          <BeerFilter
+            filters={filters}
+            onFilterChange={handleFilterChange}
             onFilteredBeersChange={handleFilteredBeersChange}
           />
         </div>
         <div className="w-full lg:w-3/4 order-1 lg:order-2">
-          <BeerList 
-            filteredBeerIds={filteredBeerIds}
-            filters={filters}
-          />
+          <BeerList filteredBeerIds={filteredBeerIds} filters={filters} />
         </div>
       </div>
     </div>
@@ -54,13 +51,10 @@ function BeerPageContent() {
 // ページコンポーネント
 export default function BeersPage() {
   return (
-    <Suspense 
+    <Suspense
       fallback={
         <div className="container mx-auto py-16 px-4 sm:px-6 text-center">
-          <LoadingSpinner 
-            size="large"
-            message="ビール一覧を読み込み中..."
-          />
+          <LoadingSpinner size="large" message="ビール一覧を読み込み中..." />
         </div>
       }
     >

@@ -28,6 +28,11 @@ export default function BeerDetailClient({ id }: BeerDetailClientProps) {
   // ブルワリー情報を取得
   const brewery = breweries.find((b) => b.name === beer.brewery);
 
+  // 類似のビールを取得（同じスタイルのビール）
+  const similarBeers = beers
+    .filter((b) => b.style === beer.style && b.id !== beer.id)
+    .slice(0, 3);
+
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="mb-6">
@@ -54,21 +59,19 @@ export default function BeerDetailClient({ id }: BeerDetailClientProps) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* メイン情報 */}
         <div className="lg:col-span-2 space-y-8">
-          <BeerDetailCard beer={beer} style={style} brewery={brewery} />
+          <BeerDetailCard beer={beer} styleName={style?.name || beer.style} />
 
           {/* フレーバープロファイル */}
-          {beer.flavor && Object.keys(beer.flavor).length > 0 && (
-            <FlavorProfileCard flavor={beer.flavor} />
-          )}
+          {style && <FlavorProfileCard beerStyle={style} />}
 
           {/* レビューセクション */}
-          <ReviewsSection beerId={beer.id} />
+          <ReviewsSection beerId={beer.id} beerName={beer.name} />
         </div>
 
         {/* サイドバー */}
         <div className="space-y-8">
           {/* 似たビール */}
-          <SimilarBeersCard currentBeer={beer} />
+          <SimilarBeersCard beers={similarBeers} />
         </div>
       </div>
     </div>

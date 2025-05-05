@@ -185,7 +185,7 @@ export default function ReviewsSection({
     if (!timestamp) return '日付不明';
 
     // FirestoreのタイムスタンプをJSのDateに変換
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    const date = timestamp.toDate ? timestamp.toDate() : new Date();
 
     return new Intl.DateTimeFormat('ja-JP', {
       year: 'numeric',

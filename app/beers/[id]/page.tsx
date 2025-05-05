@@ -1,5 +1,8 @@
 'use client';
 
+// Edge Runtimeを明示的に指定
+export const runtime = 'edge';
+
 import React, { useState, useEffect } from 'react';
 import { notFound } from 'next/navigation';
 import {

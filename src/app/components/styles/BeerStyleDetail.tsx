@@ -118,6 +118,8 @@ const convertToFirestoreBeer = (doc: DocumentData): Beer => {
     imageUrl: data.imageUrl || null,
     rating: data.rating || 0,
     reviewCount: data.reviewCount || 0,
+    flavors: data.flavors || [],
+    country: data.country || null,
   };
 };
 

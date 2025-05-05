@@ -34,12 +34,12 @@ export default function ExampleBeers({ beers }: ExampleBeersProps) {
             <div className="card-beer-header">
               <div
                 className={`relative h-48 overflow-hidden ${
-                  beer.image ? '' : 'bg-amber-200'
+                  beer.imageUrl ? '' : 'bg-amber-200'
                 }`}
               >
-                {beer.image ? (
+                {beer.imageUrl ? (
                   <Image
-                    src={beer.image}
+                    src={beer.imageUrl}
                     alt={beer.name}
                     className="object-cover"
                     fill

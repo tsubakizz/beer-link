@@ -38,14 +38,14 @@ export default function BubbleAnimation({
       {[...Array(count)].map((_, i) => {
         // タイプごとにカスタマイズされた泡のスタイル
         const randomSize = Math.random() * (maxSize - minSize) + minSize;
-        const bubbleStyle: React.CSSProperties = {
+        const bubbleStyle = {
           ...bubbleBaseStyle,
           '--size': `${randomSize}rem`,
           '--distance': `${Math.random() * 6 + 4}rem`,
           '--position': `${Math.random() * 100}%`,
           '--time': `${Math.random() * 10 + (type === 'background' ? 20 : 2)}s`,
           '--delay': `${Math.random() * (type === 'background' ? 10 : 2)}s`,
-        };
+        } as React.CSSProperties;
 
         if (type === 'background') {
           Object.assign(bubbleStyle, {

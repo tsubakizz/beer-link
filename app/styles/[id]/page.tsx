@@ -1,15 +1,9 @@
 import { Suspense } from 'react';
 import BeerStyleDetail from '@/src/app/components/styles/BeerStyleDetail';
-import { beerStyles } from '@/src/app/lib/beer-styles-data';
 import LoadingSpinner from '@/src/app/components/LoadingSpinner';
 
-// 静的ページ生成のためのパラメータを指定
-export async function generateStaticParams() {
-  // すべてのビールスタイルIDのパスを生成
-  return beerStyles.map((style) => ({
-    id: style.id,
-  }));
-}
+// Cloudflare Pagesデプロイのために必要なEdge Runtime設定
+export const runtime = 'edge';
 
 // ページコンポーネント（サーバーサイド）
 export default function BeerStyleDetailPage({

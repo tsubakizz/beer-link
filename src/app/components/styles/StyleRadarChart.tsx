@@ -10,6 +10,7 @@ import {
   Tooltip,
   Legend,
   ChartOptions,
+  TooltipItem,
 } from 'chart.js';
 import { Radar } from 'react-chartjs-2';
 
@@ -90,7 +91,7 @@ export default function StyleRadarChart({
       },
       tooltip: {
         callbacks: {
-          label: function (context: { label: string; raw: number }) {
+          label: function (context: TooltipItem<'radar'>) {
             return `${context.label}: ${context.raw}/5`;
           },
         },

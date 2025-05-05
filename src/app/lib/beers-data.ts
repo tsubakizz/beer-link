@@ -1454,7 +1454,7 @@ export const beerStyles: BeerStyle[] = [
     siblings: ['bock', 'doppelbock', 'barley-wine', 'wee-heavy'],
     parents: ['doppelbock', 'bock'],
     children: [],
-    servingTemperature: [10, 14]
+    servingTemperature: [10, 14],
   },
   {
     id: 'kristallweizen',
@@ -1478,7 +1478,7 @@ export const beerStyles: BeerStyle[] = [
     siblings: ['weissbier', 'american-wheat', 'kolsch'],
     parents: ['weissbier'],
     children: [],
-    servingTemperature: [3, 6]
+    servingTemperature: [3, 6],
   },
   {
     id: 'foreign-extra-stout',
@@ -1502,7 +1502,7 @@ export const beerStyles: BeerStyle[] = [
     siblings: ['stout', 'imperial-stout', 'tropical-stout', 'baltic-porter'],
     parents: ['stout'],
     children: ['tropical-stout'],
-    servingTemperature: [10, 13]
+    servingTemperature: [10, 13],
   },
   {
     id: 'mild-ale',
@@ -1526,7 +1526,7 @@ export const beerStyles: BeerStyle[] = [
     siblings: ['english-brown-ale', 'best-bitter', 'scottish-ale'],
     parents: [],
     children: [],
-    servingTemperature: [10, 13]
+    servingTemperature: [10, 13],
   },
   {
     id: 'red-ipa',
@@ -1550,7 +1550,7 @@ export const beerStyles: BeerStyle[] = [
     siblings: ['ipa', 'amber-ale', 'rye-ipa'],
     parents: ['ipa', 'amber-ale'],
     children: [],
-    servingTemperature: [8, 12]
+    servingTemperature: [8, 12],
   },
   {
     id: 'belgian-pale-ale',
@@ -1574,7 +1574,7 @@ export const beerStyles: BeerStyle[] = [
     siblings: ['pale-ale', 'saison', 'belgian-blonde-ale', 'best-bitter'],
     parents: ['pale-ale'],
     children: [],
-    servingTemperature: [7, 10]
+    servingTemperature: [7, 10],
   },
   {
     id: 'dortmunder-export',
@@ -1598,7 +1598,7 @@ export const beerStyles: BeerStyle[] = [
     siblings: ['helles', 'german-pilsner', 'vienna-lager', 'marzen'],
     parents: ['helles', 'pilsner', 'lager'],
     children: [],
-    servingTemperature: [5, 8]
+    servingTemperature: [5, 8],
   },
   {
     id: 'biere-de-garde',
@@ -1622,7 +1622,7 @@ export const beerStyles: BeerStyle[] = [
     siblings: ['saison', 'bock', 'dubbel', 'old-ale'],
     parents: [],
     children: [],
-    servingTemperature: [10, 13]
+    servingTemperature: [10, 13],
   },
   {
     id: 'old-ale',
@@ -1652,7 +1652,7 @@ export const beerStyles: BeerStyle[] = [
     ],
     parents: [],
     children: ['barley-wine'],
-    servingTemperature: [12, 16]
+    servingTemperature: [12, 16],
   },
   {
     id: 'white-ipa',
@@ -1676,7 +1676,7 @@ export const beerStyles: BeerStyle[] = [
     siblings: ['ipa', 'witbier', 'hazy-ipa', 'american-wheat'],
     parents: ['ipa', 'witbier'],
     children: [],
-    servingTemperature: [7, 10]
+    servingTemperature: [7, 10],
   },
   {
     id: 'fruit-lambic',
@@ -1707,7 +1707,7 @@ export const beerStyles: BeerStyle[] = [
     ],
     parents: ['lambic', 'fruit-beer'],
     children: ['kriek', 'framboise'],
-    servingTemperature: [8, 12]
+    servingTemperature: [8, 12],
   },
   {
     id: 'kriek',
@@ -1731,7 +1731,7 @@ export const beerStyles: BeerStyle[] = [
     siblings: ['fruit-lambic', 'framboise', 'lambic', 'gueuze', 'sour-ale'],
     parents: ['fruit-lambic', 'lambic'],
     children: [],
-    servingTemperature: [8, 12]
+    servingTemperature: [8, 12],
   },
   {
     id: 'framboise',
@@ -1755,7 +1755,7 @@ export const beerStyles: BeerStyle[] = [
     siblings: ['fruit-lambic', 'kriek', 'lambic', 'gueuze', 'sour-ale'],
     parents: ['fruit-lambic', 'lambic'],
     children: [],
-    servingTemperature: [8, 12]
+    servingTemperature: [8, 12],
   },
   {
     id: 'brut-ipa',
@@ -1779,7 +1779,7 @@ export const beerStyles: BeerStyle[] = [
     siblings: ['ipa', 'hazy-ipa', 'cold-ipa', 'session-ipa'],
     parents: ['ipa'],
     children: [],
-    servingTemperature: [6, 9]
+    servingTemperature: [6, 9],
   },
   {
     id: 'pastry-stout',
@@ -1803,7 +1803,7 @@ export const beerStyles: BeerStyle[] = [
     siblings: ['imperial-stout', 'milk-stout', 'stout', 'sweet-stout'],
     parents: ['imperial-stout', 'milk-stout'],
     children: [],
-    servingTemperature: [12, 16]
+    servingTemperature: [12, 16],
   },
   {
     id: 'italian-grape-ale',
@@ -1827,7 +1827,7 @@ export const beerStyles: BeerStyle[] = [
     siblings: ['fruit-beer', 'saison', 'belgian-blonde-ale', 'wood-aged-beer'],
     parents: [],
     children: [],
-    servingTemperature: [8, 12]
+    servingTemperature: [8, 12],
   },
   {
     id: 'czech-amber-lager',
@@ -1857,7 +1857,7 @@ export const beerStyles: BeerStyle[] = [
     ],
     parents: ['lager', 'pilsner'],
     children: [],
-    servingTemperature: [7, 10]
+    servingTemperature: [7, 10],
   },
   {
     id: 'czech-dark-lager',
@@ -1887,7 +1887,7 @@ export const beerStyles: BeerStyle[] = [
     ],
     parents: ['lager'],
     children: [],
-    servingTemperature: [7, 10]
+    servingTemperature: [7, 10],
   },
   {
     id: 'tropical-stout',
@@ -1911,7 +1911,7 @@ export const beerStyles: BeerStyle[] = [
     siblings: ['foreign-extra-stout', 'stout', 'milk-stout'],
     parents: ['foreign-extra-stout', 'stout'],
     children: [],
-    servingTemperature: [8, 12]
+    servingTemperature: [8, 12],
   },
   {
     id: 'cold-ipa',
@@ -1935,7 +1935,7 @@ export const beerStyles: BeerStyle[] = [
     siblings: ['ipa', 'brut-ipa', 'lager', 'pilsner', 'hazy-ipa'],
     parents: ['ipa', 'lager'],
     children: [],
-    servingTemperature: [5, 8]
+    servingTemperature: [5, 8],
   },
   {
     id: 'belgian-golden-strong-ale',
@@ -1959,7 +1959,7 @@ export const beerStyles: BeerStyle[] = [
     siblings: ['tripel', 'belgian-blonde-ale', 'quadrupel'],
     parents: ['tripel'],
     children: [],
-    servingTemperature: [6, 10]
+    servingTemperature: [6, 10],
   },
   {
     id: 'oyster-stout',
@@ -1984,7 +1984,7 @@ export const beerStyles: BeerStyle[] = [
     siblings: ['stout', 'milk-stout', 'foreign-extra-stout'],
     parents: ['stout'],
     children: [],
-    servingTemperature: [8, 12]
+    servingTemperature: [8, 12],
   },
   {
     id: 'international-dark-lager',
@@ -2014,7 +2014,7 @@ export const beerStyles: BeerStyle[] = [
     ],
     parents: ['lager'],
     children: [],
-    servingTemperature: [4, 7]
+    servingTemperature: [4, 7],
   },
   {
     id: 'german-pilsner',
@@ -2038,7 +2038,7 @@ export const beerStyles: BeerStyle[] = [
     siblings: ['pilsner', 'helles', 'kolsch', 'lager'],
     parents: ['pilsner'],
     children: [],
-    servingTemperature: [4, 7]
+    servingTemperature: [4, 7],
   },
   {
     id: 'best-bitter',
@@ -2062,7 +2062,7 @@ export const beerStyles: BeerStyle[] = [
     siblings: ['esb', 'pale-ale', 'mild-ale', 'belgian-pale-ale'],
     parents: ['pale-ale'],
     children: ['esb'],
-    servingTemperature: [10, 13]
+    servingTemperature: [10, 13],
   },
   {
     id: 'wee-heavy',
@@ -2092,7 +2092,7 @@ export const beerStyles: BeerStyle[] = [
     ],
     parents: ['scottish-ale'],
     children: [],
-    servingTemperature: [10, 14]
+    servingTemperature: [10, 14],
   },
   {
     id: 'catharina-sour',
@@ -2122,7 +2122,7 @@ export const beerStyles: BeerStyle[] = [
     ],
     parents: ['sour-ale', 'berliner-weisse'],
     children: [],
-    servingTemperature: [5, 8]
+    servingTemperature: [5, 8],
   },
   {
     id: 'kvass',
@@ -2146,7 +2146,7 @@ export const beerStyles: BeerStyle[] = [
     siblings: ['sahti', 'gruit', 'braggot'],
     parents: [],
     children: [],
-    servingTemperature: [4, 10]
+    servingTemperature: [4, 10],
   },
   {
     id: 'kentucky-common',
@@ -2170,7 +2170,7 @@ export const beerStyles: BeerStyle[] = [
     siblings: ['cream-ale', 'altbier', 'american-lager'],
     parents: ['cream-ale'],
     children: [],
-    servingTemperature: [10, 13]
+    servingTemperature: [10, 13],
   },
   {
     id: 'braggot',
@@ -2194,7 +2194,7 @@ export const beerStyles: BeerStyle[] = [
     siblings: ['gruit', 'sahti', 'kvass', 'old-ale', 'barley-wine'],
     parents: [],
     children: [],
-    servingTemperature: [10, 14]
+    servingTemperature: [10, 14],
   },
   {
     id: 'low-non-alcoholic-beer',
@@ -2218,7 +2218,7 @@ export const beerStyles: BeerStyle[] = [
     siblings: [],
     parents: [],
     children: [],
-    servingTemperature: [3, 7]
+    servingTemperature: [3, 7],
   },
 ];
 
@@ -2231,10 +2231,9 @@ export type Beer = {
   abv: number; // アルコール度数
   ibu?: number; // 苦味指数（オプショナル）
   description: string;
-  reviewCount: number; // レビュー数
   imageUrl?: string; // 画像URL（オプショナル）
-  flavors: string[]; // 風味タグ
-  country?: string; // 原産国（オプショナル）
+  rating: number | null; // 平均評価（レビューがない場合はnull）
+  ratingCount: number; // レビュー数
 };
 
 // モックビールデータ

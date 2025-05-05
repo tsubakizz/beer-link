@@ -13,6 +13,7 @@ import { db } from '../../lib/firebase';
 import AuthModal from '../AuthModal';
 import { uploadImageToR2 } from '../../lib/r2-storage';
 import { ReviewFormProps } from './types/review-form.types';
+import { updateBeerRatingStatistics } from '../../lib/review-utils';
 
 // インポートしたサブコンポーネント
 import RatingInput from './RatingInput';
@@ -100,6 +101,9 @@ export default function ReviewForm({
             ? { imageUrl: null }
             : {}),
         });
+
+        // ビール評価統計の更新
+        await updateBeerRatingStatistics(beerId);
       } else {
         // 新規レビューの登録
         const reviewData = {
@@ -116,6 +120,9 @@ export default function ReviewForm({
         };
 
         await addDoc(collection(db, 'reviews'), reviewData);
+
+        // ビール評価統計の更新
+        await updateBeerRatingStatistics(beerId);
       }
 
       // 成功時の処理

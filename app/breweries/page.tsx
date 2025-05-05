@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import {
   breweries,
   breweryTypeNames,
@@ -18,7 +18,8 @@ import BreweryTypeInfo from '../../src/app/components/breweries/BreweryTypeInfo'
 import EmptyResults from '../../src/app/components/beers/EmptyResults';
 import LoadingSpinner from '../../src/app/components/LoadingSpinner';
 
-export default function BreweriesPage() {
+// 内部コンポーネントをSuspenseで囲むためのラッパーコンポーネント
+function BreweriesContent() {
   // フィルターステート
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedRegion, setSelectedRegion] = useState<string>('all');
@@ -265,5 +266,14 @@ export default function BreweriesPage() {
       {/* ブルワリータイプの説明セクション */}
       <BreweryTypeInfo />
     </div>
+  );
+}
+
+// メインコンポーネント
+export default function BreweriesPage() {
+  return (
+    <Suspense fallback={<LoadingSpinner size="large" message="ブルワリーページを読み込み中..." />}>
+      <BreweriesContent />
+    </Suspense>
   );
 }

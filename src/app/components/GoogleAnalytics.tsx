@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { analytics } from '../lib/firebase';
 import { logEvent } from 'firebase/analytics';
 
-export const GoogleAnalytics = () => {
+// SearchParamsを使用するコンポーネント
+function AnalyticsContent() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -24,8 +25,16 @@ export const GoogleAnalytics = () => {
     });
   }, [pathname, searchParams]);
 
-  // このコンポーネントはUIをレンダリングしない
   return null;
+}
+
+export const GoogleAnalytics = () => {
+  // useSearchParamsを使用するコンポーネントをSuspenseでラップ
+  return (
+    <Suspense fallback={null}>
+      <AnalyticsContent />
+    </Suspense>
+  );
 };
 
 export default GoogleAnalytics;

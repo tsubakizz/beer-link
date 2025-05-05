@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -120,8 +120,8 @@ const convertToFirestoreBeer = (doc: DocumentData): Beer => {
   };
 };
 
-// ビールスタイル詳細ページコンポーネント
-export default function BeerStyleDetail({ id }: BeerStyleDetailProps) {
+// スタイル詳細のメインコンテンツコンポーネント - Suspenseのターゲットにするため分離
+function BeerStyleDetailContent({ id }: BeerStyleDetailProps) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [style, setStyle] = useState<BeerStyle | null>(null);
   const [exampleBeers, setExampleBeers] = useState<Beer[]>([]);
@@ -533,5 +533,24 @@ export default function BeerStyleDetail({ id }: BeerStyleDetailProps) {
         </Link>
       </motion.div>
     </div>
+  );
+}
+
+// ビールスタイル詳細ページコンポーネント
+export default function BeerStyleDetail({ id }: BeerStyleDetailProps) {
+  // メインのコンテンツコンポーネントをSuspenseで囲む
+  return (
+    <Suspense 
+      fallback={
+        <div className="container mx-auto py-16 px-4 sm:px-6 text-center">
+          <LoadingSpinner
+            size="large"
+            message="ビールスタイル情報を読み込み中..."
+          />
+        </div>
+      }
+    >
+      <BeerStyleDetailContent id={id} />
+    </Suspense>
   );
 }

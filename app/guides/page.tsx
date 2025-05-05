@@ -1,11 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import HeroSection from '../../src/app/components/HeroSection';
 import GuideCategorySection from '../../src/app/components/guides/GuideCategorySection';
 import BeginnerSection from '../../src/app/components/guides/BeginnerSection';
 import FAQSection from '../../src/app/components/guides/FAQSection';
 import BeerFinderCTA from '../../src/app/components/guides/BeerFinderCTA';
+import LoadingSpinner from '../../src/app/components/LoadingSpinner';
 
 // ガイド項目のデータ
 const guideItems = [
@@ -75,7 +76,8 @@ const faqItems = [
   },
 ];
 
-export default function GuidesPage() {
+// 内部コンポーネントをSuspenseで囲むためのラッパーコンポーネント
+function GuidesContent() {
   return (
     <div className="container mx-auto py-8 px-4 sm:px-6">
       {/* ヒーローセクション */}
@@ -98,5 +100,13 @@ export default function GuidesPage() {
       {/* ビールスタイル診断へのCTA */}
       <BeerFinderCTA />
     </div>
+  );
+}
+
+export default function GuidesPage() {
+  return (
+    <Suspense fallback={<LoadingSpinner size="large" message="ガイドページを読み込み中..." />}>
+      <GuidesContent />
+    </Suspense>
   );
 }

@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { beerStyles, BeerStyle } from '../../src/app/lib/beers-data';
+import LoadingSpinner from '../../src/app/components/LoadingSpinner';
 
 // インポートするコンポーネント
 import HeroSection from '../../src/app/components/HeroSection';
@@ -202,25 +203,29 @@ export default function BeerStylesPage() {
         description="これってどんなビール？ 知りたいスタイルが見つかる検索ガイド"
       />
 
-      {/* フィルターと検索 */}
-      <StyleFilter
-        searchQuery={searchQuery}
-        setSearchQuery={handleSearchChange}
-        filterParams={filterParams}
-        setFilterParams={handleFilterChange}
-      />
+      {/* フィルターと検索 - Suspenseで囲む */}
+      <Suspense fallback={<LoadingSpinner size="medium" message="フィルターを読み込み中..." />}>
+        <StyleFilter
+          searchQuery={searchQuery}
+          setSearchQuery={handleSearchChange}
+          filterParams={filterParams}
+          setFilterParams={handleFilterChange}
+        />
+      </Suspense>
 
-      {/* 結果の表示（コンポーネント化） */}
-      <StyleResults
-        filteredStyles={filteredStyles}
-        currentItems={currentItems}
-        getStyleColor={getStyleColor}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        itemsPerPage={itemsPerPage}
-        onPageChange={handlePageChange}
-        resetFilters={resetFilters}
-      />
+      {/* 結果の表示 - Suspenseで囲む */}
+      <Suspense fallback={<LoadingSpinner size="large" message="ビールスタイルを読み込み中..." />}>
+        <StyleResults
+          filteredStyles={filteredStyles}
+          currentItems={currentItems}
+          getStyleColor={getStyleColor}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          itemsPerPage={itemsPerPage}
+          onPageChange={handlePageChange}
+          resetFilters={resetFilters}
+        />
+      </Suspense>
     </div>
   );
 }

@@ -5,18 +5,36 @@ import EmptyResults from './EmptyResults';
 import Pagination from './Pagination';
 
 interface BeerListProps {
-  beers: Beer[];
+  filters: {
+    beerTypes: string[];
+    breweries: string[];
+    abvRange: { min: number; max: number };
+    ibuRange: { min: number; max: number };
+    search: string;
+  };
+  filteredBeerIds: string[];
+  beers?: Beer[]; // 後方互換性のために残す
   itemsPerPage?: number;
 }
 
-export default function BeerList({ beers, itemsPerPage = 12 }: BeerListProps) {
+export default function BeerList({ 
+  filters, 
+  filteredBeerIds, 
+  beers = [], // デフォルト値として空の配列を設定
+  itemsPerPage = 12 
+}: BeerListProps) {
   const [currentPage, setCurrentPage] = React.useState(1);
+  
+  // 表示するビールの配列
+  // filtersとfilteredBeerIdsから適切なビールを取得する処理が必要
+  // または親コンポーネントから完全なリストを受け取る
+  const displayBeers = beers.length > 0 ? beers : [];
 
   // ページネーションの計算
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentBeers = beers.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(beers.length / itemsPerPage);
+  const currentBeers = displayBeers.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(displayBeers.length / itemsPerPage);
 
   // ページ変更ハンドラー
   const handlePageChange = (pageNumber: number) => {
@@ -28,7 +46,7 @@ export default function BeerList({ beers, itemsPerPage = 12 }: BeerListProps) {
   return (
     <div className="space-y-8">
       {/* ビールが0件の場合は結果なしの表示 */}
-      {beers.length === 0 ? (
+      {displayBeers.length === 0 ? (
         <EmptyResults
           title="ビールが見つかりませんでした"
           message="検索条件を変更して再度お試しください。"

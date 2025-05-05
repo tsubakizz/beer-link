@@ -5,9 +5,11 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { beerStyles } from '../src/app/lib/beers-data';
 import { breweries } from '../src/app/lib/breweries-data';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
+import LoadingSpinner from '../src/app/components/LoadingSpinner';
 
-export default function Home() {
+// メインのページコンテンツをラップするコンポーネント
+function HomePageContent() {
   // 画面幅の状態を管理
   const [isMobileWidth, setIsMobileWidth] = useState(false);
 
@@ -602,5 +604,23 @@ export default function Home() {
         </div>
       </motion.div>
     </div>
+  );
+}
+
+// トップページコンポーネント
+export default function Home() {
+  return (
+    <Suspense
+      fallback={
+        <div className="container mx-auto py-16 px-4 sm:px-6 text-center">
+          <LoadingSpinner
+            size="large"
+            message="ページを読み込み中..."
+          />
+        </div>
+      }
+    >
+      <HomePageContent />
+    </Suspense>
   );
 }

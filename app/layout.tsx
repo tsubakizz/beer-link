@@ -27,7 +27,6 @@ export const metadata: Metadata = {
   title: 'Beer Link - クラフトビールの世界へようこそ',
   description:
     'クラフトビールに関する情報を共有するためのコミュニティプラットフォーム',
-  colorScheme: 'light',
   other: {
     'color-scheme': 'light only',
   },

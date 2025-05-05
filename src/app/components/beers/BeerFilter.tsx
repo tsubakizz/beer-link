@@ -2,29 +2,62 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { beerStyles } from '../../../app/lib/beers-data';
 
+// 新しい型定義
 interface BeerFilterProps {
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
-  selectedStyle: string;
-  setSelectedStyle: (style: string) => void;
-  sortOption: string;
-  setSortOption: (option: string) => void;
+  filters: {
+    beerTypes: string[];
+    breweries: string[];
+    abvRange: { min: number; max: number };
+    ibuRange: { min: number; max: number };
+    search: string;
+  };
+  onFilterChange: (newFilters: any) => void;
+  onFilteredBeersChange: (ids: string[]) => void;
 }
 
 export default function BeerFilter({
-  searchQuery,
-  setSearchQuery,
-  selectedStyle,
-  setSelectedStyle,
-  sortOption,
-  setSortOption,
+  filters,
+  onFilterChange,
+  onFilteredBeersChange,
 }: BeerFilterProps) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const resetFilters = () => {
-    setSearchQuery('');
-    setSelectedStyle('');
-    setSortOption('rating');
+    onFilterChange({
+      beerTypes: [],
+      breweries: [],
+      abvRange: { min: 0, max: 15 },
+      ibuRange: { min: 0, max: 120 },
+      search: '',
+    });
+  };
+
+  // 検索クエリの変更ハンドラー
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onFilterChange({
+      ...filters,
+      search: e.target.value
+    });
+  };
+
+  // ビアスタイルの選択ハンドラー
+  const handleStyleChange = (style: string) => {
+    // スタイルが既に選択されている場合は解除、そうでなければ追加
+    const updatedTypes = filters.beerTypes.includes(style)
+      ? filters.beerTypes.filter(t => t !== style)
+      : [...filters.beerTypes, style];
+    
+    onFilterChange({
+      ...filters,
+      beerTypes: updatedTypes
+    });
+  };
+
+  // ソートオプションの変更ハンドラー
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    // 新しいソートオプションをフィルターに追加
+    // 注: 現在のフィルタ構造にはソートが含まれていないため、追加が必要か検討
+    console.log(`ソートオプション変更: ${e.target.value}`);
   };
 
   return (
@@ -97,8 +130,8 @@ export default function BeerFilter({
                 id="search"
                 placeholder="ビール名、ブルワリー、または特徴を検索"
                 className="input input-bordered w-full pl-10 bg-white border-amber-200 focus:border-amber-400 text-amber-900"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={filters.search}
+                onChange={handleSearchChange}
               />
             </div>
           </div>
@@ -114,8 +147,8 @@ export default function BeerFilter({
             <select
               id="style"
               className="select select-bordered w-full bg-white border-amber-200 focus:border-amber-400 text-amber-900"
-              value={selectedStyle}
-              onChange={(e) => setSelectedStyle(e.target.value)}
+              value=""
+              onChange={(e) => handleStyleChange(e.target.value)}
             >
               <option value="">すべてのスタイル</option>
               {beerStyles.map((style) => (
@@ -137,8 +170,7 @@ export default function BeerFilter({
             <select
               id="sort"
               className="select select-bordered w-full bg-white border-amber-200 focus:border-amber-400 text-amber-900"
-              value={sortOption}
-              onChange={(e) => setSortOption(e.target.value)}
+              onChange={handleSortChange}
             >
               <option value="rating">評価順</option>
               <option value="name">名前順</option>

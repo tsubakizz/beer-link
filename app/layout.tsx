@@ -31,6 +31,12 @@ export const metadata: Metadata = {
   other: {
     'color-scheme': 'light only',
   },
+  // ファビコン設定を追加
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico',
+  },
 };
 
 // サーバーコンポーネントとしてのRootLayout

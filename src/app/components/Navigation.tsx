@@ -5,6 +5,7 @@ import Image from 'next/image';
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../lib/auth-context';
 import { useRouter, usePathname } from 'next/navigation';
+import Logo from './Logo';
 
 // ナビゲーションコンポーネント（ハンバーガーメニュー対応版）
 export default function Navigation() {
@@ -60,19 +61,8 @@ export default function Navigation() {
       {/* デスクトップとタブレット向けナビゲーション（lg以上のサイズ） */}
       <div className="navbar bg-transparent">
         <div className="navbar-start">
-          <Link href="/" className="flex items-center">
-            <div className="avatar mr-3">
-              <div className="w-10 rounded-full ring ring-primary ring-offset-2 ring-offset-base-100">
-                <div className="flex items-center justify-center bg-amber-300 text-amber-900 w-full h-full">
-                  <span className="text-lg">🍻</span>
-                </div>
-              </div>
-            </div>
-            <span className="text-2xl font-bold text-[#7c2d12] hover:text-amber-800 transition-colors duration-300">
-              <span className="font-montserrat mr-1">Beer</span>
-              <span className="font-bold">Link</span>
-            </span>
-          </Link>
+          {/* ロゴコンポーネントを使用 */}
+          <Logo size="large" showText={true} withLink={true} />
         </div>
 
         {/* モバイルでは非表示、lg以上で表示 */}

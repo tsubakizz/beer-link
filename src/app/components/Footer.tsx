@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import React from 'react';
+import Logo from './Logo';
 
 export default function Footer() {
   return (
@@ -26,15 +27,9 @@ export default function Footer() {
       <div className="container mx-auto px-5 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           <div>
-            <div className="flex items-center mb-5">
-              <div className="avatar mr-3">
-                <div className="w-8 rounded-full ring ring-primary ring-offset-1 ring-offset-base-100">
-                  <div className="bg-amber-300 text-amber-900 flex items-center justify-center h-full">
-                    <span className="text-sm">🍻</span>
-                  </div>
-                </div>
-              </div>
-              <h3 className="text-xl font-bold">Beer Link</h3>
+            <div className="mb-5">
+              {/* 共通ロゴコンポーネントを使用 */}
+              <Logo size="medium" showText={true} withLink={true} />
             </div>
             <p className="text-amber-800">
               クラフトビールの魅力を初心者から愛好家まで楽しめるファンサイト
@@ -114,9 +109,12 @@ export default function Footer() {
         </div>
 
         <div className="mt-10 pt-6 border-t border-amber-500/30 text-center">
+          {/* フッター下部にも小さいロゴを配置 */}
+          <div className="flex justify-center mb-4">
+            <Logo size="small" showText={false} withLink={false} />
+          </div>
           <p className="text-amber-800">
-            &copy; {new Date().getFullYear()} Beer Link. All rights
-            reserved.
+            &copy; {new Date().getFullYear()} Beer Link. All rights reserved.
           </p>
         </div>
       </div>

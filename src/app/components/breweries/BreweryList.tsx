@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import BreweryCard from './BreweryCard';
 import { Brewery, BreweryType } from '@/src/app/lib/breweries-data';
-import EmptyResults from '@/beers/EmptyResults';
+import EmptyResults from '@/src/app/components/beers/EmptyResults';
 
 interface BreweryListProps {
   breweries: Brewery[];

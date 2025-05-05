@@ -1,6 +1,6 @@
 import React from 'react';
 import { DeleteConfirmationModalProps } from './types/review.types';
-import LoadingSpinner from '@/LoadingSpinner';
+import LoadingSpinner from '@/src/app/components/LoadingSpinner';
 
 export default function DeleteConfirmationModal({
   isOpen,

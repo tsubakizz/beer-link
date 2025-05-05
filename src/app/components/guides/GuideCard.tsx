@@ -1,5 +1,5 @@
 import React from 'react';
-import FeatureCard, { FeatureItem } from '@/FeatureCard';
+import FeatureCard, { FeatureItem } from '@/src/app/components/FeatureCard';
 
 // 既存のインターフェイスは互換性のために維持
 export interface GuideItem extends FeatureItem {}

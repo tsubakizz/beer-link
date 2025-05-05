@@ -20,7 +20,7 @@ import StyleRadarChart from './StyleRadarChart';
 import StyleCharacteristics from './StyleCharacteristics';
 import RelatedStyles from './RelatedStyles';
 import ExampleBeers from './ExampleBeers';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import LoadingSpinner from '@/src/app/components/LoadingSpinner';
 
 interface BeerStyleDetailProps {
   id: string;

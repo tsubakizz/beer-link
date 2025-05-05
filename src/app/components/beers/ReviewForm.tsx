@@ -10,7 +10,7 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 import { db } from '@/src/app/lib/firebase';
-import AuthModal from '@/AuthModal';
+import AuthModal from '@/src/app/components/AuthModal';
 import { uploadImageToR2 } from '@/src/app/lib/r2-storage';
 import { ReviewFormProps } from './types/review-form.types';
 import { updateBeerRatingStatistics } from '@/src/app/lib/review-utils';

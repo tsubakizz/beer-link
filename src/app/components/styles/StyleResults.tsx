@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { BeerStyle } from '@/src/app/lib/beer-styles-data';
 import StyleCard from './StyleCard';
 import EmptyStyleResults from './EmptyStyleResults';
-import Pagination from '@/beers/Pagination';
+import Pagination from '@/src/app/components/beers/Pagination';
 
 interface StyleResultsProps {
   filteredStyles: BeerStyle[];

@@ -58,7 +58,7 @@ export default function BeerList({
               key={beer.id}
               beer={beer}
               index={index}
-              reviewCount={beer.ratingCount}
+              reviewCount={beer.reviewCount}
               reviewRating={beer.rating}
             />
           ))}

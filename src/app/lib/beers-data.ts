@@ -13,7 +13,7 @@ export type Beer = {
   description: string;
   imageUrl?: string; // 画像URL（オプショナル）
   rating: number | null; // 平均評価（レビューがない場合はnull）
-  ratingCount: number; // レビュー数
+  reviewCount: number; // レビュー数
   flavors: string[]; // フレーバーのリスト
   country: string; // 原産国
 };

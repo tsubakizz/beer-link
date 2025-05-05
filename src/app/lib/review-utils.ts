@@ -59,7 +59,7 @@ export async function updateBeerRatingStatistics(
     await updateDoc(beerRef, {
       rating:
         averageRating !== null ? parseFloat(averageRating.toFixed(1)) : null, // レビューがある場合のみ小数点第1位で丸める
-      ratingCount: reviewCount,
+      reviewCount: reviewCount,
     });
 
     console.log(

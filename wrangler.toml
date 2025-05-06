@@ -2,7 +2,7 @@
 name = "beer-link"
 compatibility_date = "2023-05-18"
 compatibility_flags = ["nodejs_compat"]
-pages_build_output_dir = ".next/server/app"
+pages_build_output_dir = ".vercel/output/static"
 
 # KV 名前空間を定義
 kv_namespaces = [

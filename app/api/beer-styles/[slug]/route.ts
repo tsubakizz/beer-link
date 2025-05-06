@@ -16,7 +16,7 @@ export async function GET(
   request: Request,
   context: {
     params: { slug: string };
-    env?: { BEER_STYLES_CACHE?: KVNamespace };
+    env?: { BEER_STYLES_CACHE?: KVNamespace, BEER_LINK_DB: D1Database };
   }
 ) {
   try {
@@ -51,10 +51,8 @@ export async function GET(
 
     try {
       // beer-styles-data から共通関数を使用してスタイル情報を取得
-      const { env } = getRequestContext();
-      const d1 = env?.BEER_LINK_DB as D1Database;
+      const d1 = context.env?.BEER_LINK_DB as D1Database;
       const formattedStyle = await getBeerStyleBySlugFromDb(slug, d1);
-
       // スタイルが見つからない場合は404を返す
       if (!formattedStyle) {
         return NextResponse.json(

@@ -91,53 +91,53 @@ export const beerStyles: BeerStyle[] = [];
  * - 開発/本番共通: D1データベースを使用
  * @returns ビールスタイルの配列
  */
-export async function getAllBeerStyles(): Promise<BeerStyle[]> {
-  try {
-    // すでにメモリにデータが読み込まれている場合は再取得しない
-    if (beerStyles.length > 0) {
-      return beerStyles;
-    }
+// export async function getAllBeerStyles(): Promise<BeerStyle[]> {
+//   try {
+//     // すでにメモリにデータが読み込まれている場合は再取得しない
+//     if (beerStyles.length > 0) {
+//       return beerStyles;
+//     }
 
-    // サーバーサイドの場合、DBから直接取得
-    if (typeof window === 'undefined') {
-      return getAllBeerStylesFromDb();
-    }
+//     // サーバーサイドの場合、DBから直接取得
+//     if (typeof window === 'undefined') {
+//       return getAllBeerStylesFromDb();
+//     }
 
-    // クライアントサイドの場合、APIから取得
-    return getAllBeerStylesFromAPI();
-  } catch (error) {
-    console.error('Failed to load beer styles:', error);
-    return [];
-  }
-}
+//     // クライアントサイドの場合、APIから取得
+//     return getAllBeerStylesFromAPI();
+//   } catch (error) {
+//     console.error('Failed to load beer styles:', error);
+//     return [];
+//   }
+// }
 
 /**
  * 環境に応じたデータソースからスラッグでビールスタイルを取得
  * @param slug スタイルのスラッグ
  * @returns ビールスタイル情報、存在しない場合はnull
  */
-export async function getBeerStyleBySlug(
-  slug: string
-): Promise<BeerStyle | null> {
-  try {
-    // まずメモリキャッシュから検索
-    const cachedStyle = beerStyles.find((style) => style.slug === slug);
-    if (cachedStyle) {
-      return cachedStyle;
-    }
+// export async function getBeerStyleBySlug(
+//   slug: string
+// ): Promise<BeerStyle | null> {
+//   try {
+//     // まずメモリキャッシュから検索
+//     const cachedStyle = beerStyles.find((style) => style.slug === slug);
+//     if (cachedStyle) {
+//       return cachedStyle;
+//     }
 
-    // サーバーサイドの場合、DBから直接取得
-    if (typeof window === 'undefined') {
-      return getBeerStyleBySlugFromDb(slug);
-    }
+//     // サーバーサイドの場合、DBから直接取得
+//     if (typeof window === 'undefined') {
+//       return getBeerStyleBySlugFromDb(slug);
+//     }
 
-    // クライアントサイドの場合、APIから取得
-    return getBeerStyleBySlugFromAPI(slug);
-  } catch (error) {
-    console.error(`Error in getBeerStyleBySlug for ${slug}:`, error);
-    return null;
-  }
-}
+//     // クライアントサイドの場合、APIから取得
+//     return getBeerStyleBySlugFromAPI(slug);
+//   } catch (error) {
+//     console.error(`Error in getBeerStyleBySlug for ${slug}:`, error);
+//     return null;
+//   }
+// }
 
 /**
  * APIからすべてのビールスタイルを取得する関数
@@ -245,7 +245,9 @@ export async function getBeerStyleBySlugFromAPI(
  * すべてのビールスタイルをデータベースから直接取得する
  * @returns ビールスタイルの配列
  */
-export async function getAllBeerStylesFromDb(): Promise<BeerStyle[]> {
+export async function getAllBeerStylesFromDb(
+  d1: D1Database
+): Promise<BeerStyle[]> {
   try {
     // サーバーサイドでない場合は空の配列を返す
     if (typeof window !== 'undefined') {
@@ -261,7 +263,7 @@ export async function getAllBeerStylesFromDb(): Promise<BeerStyle[]> {
 
     try {
       // 非同期でデータベース接続を取得
-      const { db, sqlite } = await getDb();
+      const { db, sqlite } = await getDb(d1);
 
       // スタイルとリレーションを取得
       const stylesData = await db.query.beerStyles.findMany({
@@ -307,7 +309,8 @@ export async function getAllBeerStylesFromDb(): Promise<BeerStyle[]> {
  * @returns ビールスタイル情報、存在しない場合はnull
  */
 export async function getBeerStyleBySlugFromDb(
-  slug: string
+  slug: string,
+  d1: D1Database
 ): Promise<BeerStyle | null> {
   try {
     // サーバーサイドでない場合はnullを返す
@@ -326,7 +329,7 @@ export async function getBeerStyleBySlugFromDb(
 
     try {
       // 非同期でデータベース接続を取得
-      const { db, sqlite } = await getDb();
+      const { db, sqlite } = await getDb(d1);
 
       console.log('Fetching beer style from DB:', slug);
       // スタイルとリレーションを取得

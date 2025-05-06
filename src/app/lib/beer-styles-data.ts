@@ -119,7 +119,7 @@ export async function getAllBeerStylesFromFunction(): Promise<BeerStyle[]> {
     // Cloudflare Functions 経由でデータを取得
     const baseUrl = getApiBaseUrl();
     // URL を /api/beer-styles から /beer-styles に変更（Cloudflare Functions のパス）
-    const functionUrl = `${baseUrl}/api/beer-styles`;
+    const functionUrl = `${baseUrl}/beer-styles`;
 
     console.log('Fetching beer styles from Cloudflare Function:', functionUrl);
 
@@ -188,7 +188,7 @@ export async function getBeerStyleBySlugFromFunction(
     // それでも見つからない場合は個別に取得
     const baseUrl = getApiBaseUrl();
     // URL を /api/beer-styles/${slug} から /beer-styles/${slug} に変更（Cloudflare Functions のパス）
-    const functionUrl = `${baseUrl}/api/beer-styles/${slug}`;
+    const functionUrl = `${baseUrl}/beer-styles/${slug}`;
 
     console.log(
       `Fetching beer style ${slug} from Cloudflare Function:`,

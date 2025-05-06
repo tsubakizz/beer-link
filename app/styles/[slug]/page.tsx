@@ -2,25 +2,15 @@ import React from 'react';
 import type { Metadata, ResolvingMetadata } from 'next';
 import BeerStyleDetail from '@/src/app/components/styles/BeerStyleDetail';
 import {
-  getAllBeerStylesFromDb,
-  getBeerStyleBySlugFromDb,
+  getBeerStyleBySlugFromAPI,
 } from '@/src/app/lib/beer-styles-data';
-
-// 静的パスの生成
-export async function generateStaticParams() {
-  const styles = await getAllBeerStylesFromDb();
-
-  return styles.map((style) => ({
-    slug: style.slug,
-  }));
-}
 
 // メタデータの生成
 export async function generateMetadata(
   { params }: { params: { slug: string } },
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const style = await getBeerStyleBySlugFromDb(params.slug);
+  const style = await getBeerStyleBySlugFromAPI(params.slug);
 
   if (!style) {
     return {
@@ -40,6 +30,13 @@ export async function generateMetadata(
   };
 }
 
+// ISR設定を使用
+export const dynamic = 'force-dynamic'; // SSRを強制
+// ISRを希望する場合は以下をコメント解除
+// export const dynamic = 'auto'; // 動的レンダリングを許可
+export const revalidate = 3600; // 1時間ごとに再検証（ISRモード）
+export const runtime = 'edge';
+
 // ページコンポーネント
 export default async function StyleDetailPage({
   params,
@@ -48,7 +45,3 @@ export default async function StyleDetailPage({
 }) {
   return <BeerStyleDetail slug={params.slug} />;
 }
-
-// ページがSSGとして生成されるよう設定
-export const dynamic = 'force-static';
-export const revalidate = 86400; // 1日ごとに再検証

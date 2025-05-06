@@ -1,4 +1,4 @@
-import { getAllBeerStylesFromDb } from '@/src/app/lib/beer-styles-data';
+import { getAllBeerStylesFromAPI } from '@/src/app/lib/beer-styles-data';
 import HeroSection from '@/src/app/components/HeroSection';
 import { Metadata } from 'next';
 import BeerStyleClient from '@/src/app/components/styles/BeerStyleClient';
@@ -10,9 +10,10 @@ export const metadata: Metadata = {
     'ビールスタイルの知識を深めよう。さまざまなビールスタイルの特徴、歴史、味わいを知ることができる図鑑です。',
 };
 
-// 静的データ生成を有効化
-export const dynamic = 'force-static';
-export const revalidate = 3600; // 1時間ごとにデータを再検証
+// SSR設定を維持
+export const dynamic = 'force-dynamic'; // SSRを強制
+// ISRを希望する場合は以下の設定も可能
+// export const revalidate = 3600; // 1時間ごとにデータを再検証
 
 // 本番環境ではエッジランタイム、開発環境ではNodeJSランタイムを使用
 export const runtime = 'edge';
@@ -30,10 +31,10 @@ function getSpecialStyleColors() {
   };
 }
 
-// メインコンポーネント（SSG対応）
+// メインコンポーネント（SSR対応、APIからデータ取得）
 export default async function BeerStylesPage() {
-  // サーバーサイドで直接DBからスタイルデータを取得
-  const styles = await getAllBeerStylesFromDb();
+  // APIからスタイルデータを取得
+  const styles = await getAllBeerStylesFromAPI();
   const specialStyleColors = getSpecialStyleColors();
 
   return (

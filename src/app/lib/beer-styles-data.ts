@@ -1,11 +1,12 @@
 // クライアントでも使用できる型定義を別ファイルからインポート
 import { BeerStyle, ApiStyle } from '@/src/app/types/beer-style';
 import { createShortDescription } from '@/src/app/lib/beer-styles-decorator';
-import { getDb } from './db-utils';
 import { eq } from 'drizzle-orm';
 import { beerStyles as beerStylesTable } from '../../../db/schema/beer-styles';
 import { RelationType } from '../../../db/schema/beer-style-relations';
 import { getApiBaseUrl } from './api-utils';
+// fs/pathモジュールを削除し、必要な場合はビルド時のみ使用するように修正
+import { getDb } from './db-utils';
 
 /**
  * スタイルの関連情報（親子関係など）を抽出する共通関数
@@ -84,6 +85,59 @@ function formatBeerStyleData(
 
 // ビールスタイルのデータを保持する配列（メモリキャッシュ用）
 export const beerStyles: BeerStyle[] = [];
+
+/**
+ * 環境に応じたデータソースからすべてのビールスタイルを取得
+ * - 開発/本番共通: D1データベースを使用
+ * @returns ビールスタイルの配列
+ */
+export async function getAllBeerStyles(): Promise<BeerStyle[]> {
+  try {
+    // すでにメモリにデータが読み込まれている場合は再取得しない
+    if (beerStyles.length > 0) {
+      return beerStyles;
+    }
+
+    // サーバーサイドの場合、DBから直接取得
+    if (typeof window === 'undefined') {
+      return getAllBeerStylesFromDb();
+    }
+
+    // クライアントサイドの場合、APIから取得
+    return getAllBeerStylesFromAPI();
+  } catch (error) {
+    console.error('Failed to load beer styles:', error);
+    return [];
+  }
+}
+
+/**
+ * 環境に応じたデータソースからスラッグでビールスタイルを取得
+ * @param slug スタイルのスラッグ
+ * @returns ビールスタイル情報、存在しない場合はnull
+ */
+export async function getBeerStyleBySlug(
+  slug: string
+): Promise<BeerStyle | null> {
+  try {
+    // まずメモリキャッシュから検索
+    const cachedStyle = beerStyles.find((style) => style.slug === slug);
+    if (cachedStyle) {
+      return cachedStyle;
+    }
+
+    // サーバーサイドの場合、DBから直接取得
+    if (typeof window === 'undefined') {
+      return getBeerStyleBySlugFromDb(slug);
+    }
+
+    // クライアントサイドの場合、APIから取得
+    return getBeerStyleBySlugFromAPI(slug);
+  } catch (error) {
+    console.error(`Error in getBeerStyleBySlug for ${slug}:`, error);
+    return null;
+  }
+}
 
 /**
  * APIからすべてのビールスタイルを取得する関数
@@ -193,38 +247,54 @@ export async function getBeerStyleBySlugFromAPI(
  */
 export async function getAllBeerStylesFromDb(): Promise<BeerStyle[]> {
   try {
+    // サーバーサイドでない場合は空の配列を返す
+    if (typeof window !== 'undefined') {
+      console.warn('getAllBeerStylesFromDb はサーバーサイドでのみ使用可能です');
+      return [];
+    }
+
     // すでにメモリにデータが読み込まれている場合は再取得しない
     if (beerStyles.length > 0) {
       console.log('Using in-memory cached beer styles');
       return beerStyles;
     }
-    // データベース接続
-    const { db, sqlite } = getDb();
 
-    // スタイルとリレーションを取得
-    const stylesData = await db.query.beerStyles.findMany({
-      with: {
-        otherNames: true,
-        styleRelations: {
-          with: {
-            relatedStyle: true,
+    try {
+      // 非同期でデータベース接続を取得
+      const { db, sqlite } = await getDb();
+
+      // スタイルとリレーションを取得
+      const stylesData = await db.query.beerStyles.findMany({
+        with: {
+          otherNames: true,
+          styleRelations: {
+            with: {
+              relatedStyle: true,
+            },
           },
         },
-      },
-    });
+      });
 
-    // DBを閉じる
-    sqlite.close();
+      // DBを閉じる（互換性のための空の実装）
+      sqlite.close();
 
-    // データを整形
-    const formattedStyles = stylesData.map((style) => {
-      const relations = extractStyleRelations(style.styleRelations);
-      const otherNames = style.otherNames.map((o) => o.name);
+      // データを整形
+      const formattedStyles = stylesData.map((style) => {
+        const relations = extractStyleRelations(style.styleRelations);
+        const otherNames = style.otherNames.map((o) => o.name);
 
-      return formatBeerStyleData(style, relations, otherNames);
-    });
+        return formatBeerStyleData(style, relations, otherNames);
+      });
 
-    return formattedStyles;
+      // メモリキャッシュに保存
+      beerStyles.length = 0;
+      beerStyles.push(...formattedStyles);
+
+      return formattedStyles;
+    } catch (error) {
+      console.error('Error loading database:', error);
+      throw error; // エラーを上位に伝播
+    }
   } catch (error) {
     console.error('Error fetching beer styles from DB:', error);
     return [];
@@ -240,40 +310,59 @@ export async function getBeerStyleBySlugFromDb(
   slug: string
 ): Promise<BeerStyle | null> {
   try {
+    // サーバーサイドでない場合はnullを返す
+    if (typeof window !== 'undefined') {
+      console.warn(
+        'getBeerStyleBySlugFromDb はサーバーサイドでのみ使用可能です'
+      );
+      return null;
+    }
+
     // まずメモリキャッシュから検索
     const cachedStyle = beerStyles.find((style) => style.slug === slug);
     if (cachedStyle) {
       return cachedStyle;
     }
-    // データベース接続
-    const { db, sqlite } = getDb();
 
-    // スタイルとリレーションを取得
-    const style = await db.query.beerStyles.findFirst({
-      where: eq(beerStylesTable.slug, slug),
-      with: {
-        otherNames: true,
-        styleRelations: {
-          with: {
-            relatedStyle: true,
+    try {
+      // 非同期でデータベース接続を取得
+      const { db, sqlite } = await getDb();
+
+      // スタイルとリレーションを取得
+      const style = await db.query.beerStyles.findFirst({
+        where: eq(beerStylesTable.slug, slug),
+        with: {
+          otherNames: true,
+          styleRelations: {
+            with: {
+              relatedStyle: true,
+            },
           },
         },
-      },
-    });
+      });
 
-    // DBを閉じる
-    sqlite.close();
+      // DBを閉じる（互換性のための空の実装）
+      sqlite.close();
 
-    if (!style) {
+      if (!style) {
+        return null;
+      }
+
+      // styleRelationsからrelationTypeに基づいて分類
+      const relations = extractStyleRelations(style.styleRelations);
+      const otherNames = style.otherNames.map((o) => o.name);
+
+      // データを整形して返す
+      const formattedStyle = formatBeerStyleData(style, relations, otherNames);
+
+      // キャッシュに追加
+      beerStyles.push(formattedStyle);
+
+      return formattedStyle;
+    } catch (error) {
+      console.error('Error accessing database:', error);
       return null;
     }
-
-    // styleRelationsからrelationTypeに基づいて分類
-    const relations = extractStyleRelations(style.styleRelations);
-    const otherNames = style.otherNames.map((o) => o.name);
-
-    // データを整形して返す
-    return formatBeerStyleData(style, relations, otherNames);
   } catch (error) {
     console.error(
       `Error fetching beer style with slug ${slug} from DB:`,

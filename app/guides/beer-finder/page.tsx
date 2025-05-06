@@ -3,9 +3,9 @@ import BeerFinderQuiz, {
   BeerStyle,
 } from '@/src/app/components/guides/BeerFinderQuiz';
 
-// SSG用の設定
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic'; // SSRを強制
 export const revalidate = 3600; // 1時間ごとに再検証
+export const runtime = 'edge';
 
 // ビールスタイルデータをサーバー側で処理するための型変換関数
 function transformBeerStyleData(styles: any[]): BeerStyle[] {

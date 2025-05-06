@@ -88,7 +88,8 @@ export const beerStyles: BeerStyle[] = [];
 
 /**
  * 環境に応じたデータソースからすべてのビールスタイルを取得
- * - 開発/本番共通: D1データベースを使用
+ * - クライアント: APIから取得
+ * - サーバー: DBから直接取得
  * @returns ビールスタイルの配列
  */
 export async function getAllBeerStyles(): Promise<BeerStyle[]> {
@@ -151,8 +152,14 @@ export async function getAllBeerStylesFromAPI(): Promise<BeerStyle[]> {
       return beerStyles;
     }
 
-    // API経由でデータを取得
-    const apiUrl = `${getApiBaseUrl()}/api/beer-styles`;
+    // サーバーサイドでAPIを呼び出している場合はDBから直接取得
+    // これにより循環参照を防止
+    if (typeof window === 'undefined') {
+      return getAllBeerStylesFromDb();
+    }
+
+    // API経由でデータを取得（クライアント側のみ）
+    const apiUrl = '/api/beer-styles'; // 相対パスを使用
     console.log('Fetching beer styles from:', apiUrl);
 
     const response = await fetch(apiUrl);
@@ -179,7 +186,7 @@ export async function getAllBeerStylesFromAPI(): Promise<BeerStyle[]> {
     beerStyles.length = 0;
     beerStyles.push(...formattedStyles);
 
-    console.log(`Loaded ${beerStyles.length} beer styles from database`);
+    console.log(`Loaded ${beerStyles.length} beer styles from API`);
     return beerStyles;
   } catch (error) {
     console.error('Error in getAllBeerStylesFromAPI:', error);
@@ -202,6 +209,12 @@ export async function getBeerStyleBySlugFromAPI(
     if (cachedStyle) {
       return cachedStyle;
     }
+    
+    // サーバーサイドでAPIを呼び出している場合はDBから直接取得
+    // これにより循環参照を防止
+    if (typeof window === 'undefined') {
+      return getBeerStyleBySlugFromDb(slug);
+    }
 
     // スタイルリストをロードしてから再検索
     try {
@@ -216,7 +229,7 @@ export async function getBeerStyleBySlugFromAPI(
     }
 
     // それでも見つからない場合は個別に取得
-    const apiUrl = `${getApiBaseUrl()}/api/beer-styles/${slug}`;
+    const apiUrl = `/api/beer-styles/${slug}`; // 相対パスを使用
     const response = await fetch(apiUrl);
 
     if (!response.ok) {

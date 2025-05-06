@@ -119,7 +119,7 @@ export async function getAllBeerStylesFromFunction(): Promise<BeerStyle[]> {
     // Cloudflare Functions 経由でデータを取得
     const baseUrl = getApiBaseUrl();
     // URL を /api/beer-styles から /beer-styles に変更（Cloudflare Functions のパス）
-    const functionUrl = `${baseUrl}/beer-styles`;
+    const functionUrl = `${baseUrl}/api/beer-styles`;
 
     console.log('Fetching beer styles from Cloudflare Function:', functionUrl);
 
@@ -129,6 +129,9 @@ export async function getAllBeerStylesFromFunction(): Promise<BeerStyle[]> {
       console.error(
         `Function returned status: ${response.status} - ${response.statusText}`
       );
+      if (response.status === 404) {
+        return [];
+      }
       throw new Error(`データの取得に失敗しました (${response.status})`);
     }
 
@@ -188,7 +191,7 @@ export async function getBeerStyleBySlugFromFunction(
     // それでも見つからない場合は個別に取得
     const baseUrl = getApiBaseUrl();
     // URL を /api/beer-styles/${slug} から /beer-styles/${slug} に変更（Cloudflare Functions のパス）
-    const functionUrl = `${baseUrl}/beer-styles/${slug}`;
+    const functionUrl = `${baseUrl}/api/beer-styles/${slug}`;
 
     console.log(
       `Fetching beer style ${slug} from Cloudflare Function:`,

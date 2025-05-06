@@ -4,6 +4,7 @@ import BeerFinderQuiz, {
 } from '@/src/app/components/guides/BeerFinderQuiz';
 
 export const dynamic = 'force-static';
+export const dynamicParams = false;
 export const revalidate = 86400; // 1時間ごとに再検証
 
 // ビールスタイルデータをサーバー側で処理するための型変換関数

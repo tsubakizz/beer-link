@@ -12,6 +12,7 @@ export const metadata: Metadata = {
 
 // 静的データ生成を有効化
 export const dynamic = 'force-static'; // SSGを強制
+export const dynamicParams = false;
 export const revalidate = 86400; // 1日ごとに再検証
 
 // サーバーサイドでビアスタイルの色を決定する関数

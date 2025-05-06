@@ -4,7 +4,6 @@ import * as schema from '@/db/schema';
 // キャッシュの有効期間（1週間 = 604800秒）
 const CACHE_TTL = 604800;
 const STYLES_CACHE_KEY = 'all-beer-styles';
-const STYLE_PREFIX_CACHE_KEY = 'beer-style-';
 
 export interface Env {
   BEER_LINK_DB: D1Database;
@@ -14,7 +13,7 @@ export interface Env {
 /**
  * すべてのビールスタイルを取得する関数
  */
-export async function onRequest(context: { env: Env }) {
+export const onRequest: PagesFunction<Env> = async (context) => {
   try {
     const { BEER_LINK_DB, BEER_STYLES_CACHE } = context.env;
     let cachedData;
@@ -108,4 +107,4 @@ export async function onRequest(context: { env: Env }) {
       }
     );
   }
-}
+};

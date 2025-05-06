@@ -3,6 +3,7 @@ import type { Metadata, ResolvingMetadata } from 'next';
 import BeerStyleDetail from '@/src/app/components/styles/BeerStyleDetail';
 import {
   getBeerStyleBySlug,
+  getAllBeerStyles,
 } from '@/src/app/lib/beer-styles-data';
 
 // メタデータの生成
@@ -31,9 +32,17 @@ export async function generateMetadata(
 }
 
 // 静的データ生成を有効化
-export const dynamic = 'force-dynamic'; // SSRを強制
+export const dynamic = 'force-static'; // SSGを強制
 export const revalidate = 86400; // 1日ごとに再検証
-export const runtime = 'edge';
+
+// 静的生成するパスを定義
+export async function generateStaticParams() {
+  const styles = await getAllBeerStyles();
+
+  return styles.map((style) => ({
+    slug: style.slug,
+  }));
+}
 
 // ページコンポーネント
 export default async function StyleDetailPage({

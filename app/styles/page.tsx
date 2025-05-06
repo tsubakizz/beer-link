@@ -11,11 +11,8 @@ export const metadata: Metadata = {
 };
 
 // 静的データ生成を有効化
-export const dynamic = 'force-dynamic'; // SSRを強制
-export const revalidate = 3600; // 1時間ごとにデータを再検証
-
-// 本番環境ではエッジランタイム、開発環境ではNodeJSランタイムを使用
-export const runtime = 'edge';
+export const dynamic = 'force-static'; // SSGを強制
+export const revalidate = 86400; // 1日ごとに再検証
 
 // サーバーサイドでビアスタイルの色を決定する関数
 function getSpecialStyleColors() {

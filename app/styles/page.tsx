@@ -10,10 +10,9 @@ export const metadata: Metadata = {
     'ビールスタイルの知識を深めよう。さまざまなビールスタイルの特徴、歴史、味わいを知ることができる図鑑です。',
 };
 
-// SSR設定を維持
-export const dynamic = 'force-dynamic'; // SSRを強制
-// ISRを希望する場合は以下の設定も可能
-// export const revalidate = 3600; // 1時間ごとにデータを再検証
+// 静的データ生成を有効化
+export const dynamic = 'force-static';
+export const revalidate = 3600; // 1時間ごとにデータを再検証
 
 // 本番環境ではエッジランタイム、開発環境ではNodeJSランタイムを使用
 export const runtime = 'edge';
@@ -31,9 +30,9 @@ function getSpecialStyleColors() {
   };
 }
 
-// メインコンポーネント（SSR対応、APIからデータ取得）
+// メインコンポーネント（SSG対応）
 export default async function BeerStylesPage() {
-  // APIからスタイルデータを取得
+  // サーバーサイドで直接DBからスタイルデータを取得
   const styles = await getAllBeerStylesFromAPI();
   const specialStyleColors = getSpecialStyleColors();
 

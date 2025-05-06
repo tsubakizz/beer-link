@@ -2,8 +2,18 @@ import React from 'react';
 import type { Metadata, ResolvingMetadata } from 'next';
 import BeerStyleDetail from '@/src/app/components/styles/BeerStyleDetail';
 import {
+  getAllBeerStylesFromAPI,
   getBeerStyleBySlugFromAPI,
 } from '@/src/app/lib/beer-styles-data';
+
+// 静的パスの生成
+export async function generateStaticParams() {
+  const styles = await getAllBeerStylesFromAPI();
+
+  return styles.map((style) => ({
+    slug: style.slug,
+  }));
+}
 
 // メタデータの生成
 export async function generateMetadata(
@@ -30,12 +40,9 @@ export async function generateMetadata(
   };
 }
 
-// ISR設定を使用
-export const dynamic = 'force-dynamic'; // SSRを強制
-// ISRを希望する場合は以下をコメント解除
-// export const dynamic = 'auto'; // 動的レンダリングを許可
-export const revalidate = 3600; // 1時間ごとに再検証（ISRモード）
-export const runtime = 'edge';
+// 静的データ生成を有効化
+export const dynamic = 'force-static';
+export const revalidate = 86400; // 1日ごとに再検証
 
 // ページコンポーネント
 export default async function StyleDetailPage({

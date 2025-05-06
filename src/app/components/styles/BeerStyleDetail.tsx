@@ -26,14 +26,14 @@ interface BeerStyleDetailProps {
 
 // ビールスタイル詳細ページコンポーネント
 export default async function BeerStyleDetail({ slug }: BeerStyleDetailProps) {
-  // APIからデータ取得
+  // サーバーサイドでのデータ取得
   const styleData = await getBeerStyleBySlugFromAPI(slug);
 
   if (!styleData) {
     notFound();
   }
 
-  // 関連スタイルの取得（APIから全スタイル情報を取得）
+  // 関連スタイルの取得
   const allStyles = await getAllBeerStylesFromAPI();
 
   const parents = styleData.parents

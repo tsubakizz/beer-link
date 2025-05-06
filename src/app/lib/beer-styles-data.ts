@@ -1,33 +1,10 @@
 // クライアントでも使用できる型定義を別ファイルからインポート
 import { BeerStyle, ApiStyle } from '@/src/app/types/beer-style';
-import { createShortDescription } from '@/src/app/lib/beer-styles-decorator';
-import { eq } from 'drizzle-orm';
-import { beerStyles as beerStylesTable } from '../../../db/schema/beer-styles';
-import { RelationType } from '../../../db/schema/beer-style-relations';
 import { getApiBaseUrl } from './api-utils';
-// fs/pathモジュールを削除し、必要な場合はビルド時のみ使用するように修正
-import { getDb } from './db-utils';
+import { createShortDescription } from '@/src/app/lib/beer-styles-decorator';
 
-/**
- * スタイルの関連情報（親子関係など）を抽出する共通関数
- * @param styleRelations スタイル関係のデータ配列
- * @returns 親・子・兄弟スタイルのスラッグの配列を含むオブジェクト
- */
-function extractStyleRelations(styleRelations: any[]) {
-  const siblings = styleRelations
-    .filter((relation) => relation.relationType === RelationType.SIBLING)
-    .map((relation) => relation.relatedStyle.slug);
-
-  const parents = styleRelations
-    .filter((relation) => relation.relationType === RelationType.PARENT)
-    .map((relation) => relation.relatedStyle.slug);
-
-  const children = styleRelations
-    .filter((relation) => relation.relationType === RelationType.CHILD)
-    .map((relation) => relation.relatedStyle.slug);
-
-  return { siblings, parents, children };
-}
+// ビールスタイルのデータを保持する配列（メモリキャッシュ用）
+export const beerStyles: BeerStyle[] = [];
 
 /**
  * データベースまたはAPIから取得したデータをBeerStyle型に変換する共通関数
@@ -46,7 +23,8 @@ function formatBeerStyleData(
     slug: style.slug,
     name: style.name,
     description: style.description,
-    shortDescription: createShortDescription(style.description),
+    shortDescription:
+      style.shortDescription || createShortDescription(style.description),
     otherNames: otherNames || style.otherNames || [],
     characteristics: {
       bitterness: style.bitterness || 0,
@@ -83,12 +61,9 @@ function formatBeerStyleData(
   };
 }
 
-// ビールスタイルのデータを保持する配列（メモリキャッシュ用）
-export const beerStyles: BeerStyle[] = [];
-
 /**
  * 環境に応じたデータソースからすべてのビールスタイルを取得
- * - 開発/本番共通: D1データベースを使用
+ * - 開発/本番共通: Cloudflare Functions を使用
  * @returns ビールスタイルの配列
  */
 export async function getAllBeerStyles(): Promise<BeerStyle[]> {
@@ -98,13 +73,8 @@ export async function getAllBeerStyles(): Promise<BeerStyle[]> {
       return beerStyles;
     }
 
-    // サーバーサイドの場合、DBから直接取得
-    if (typeof window === 'undefined') {
-      return getAllBeerStylesFromDb();
-    }
-
-    // クライアントサイドの場合、APIから取得
-    return getAllBeerStylesFromAPI();
+    // Cloudflare Functions からデータを取得
+    return getAllBeerStylesFromFunction();
   } catch (error) {
     console.error('Failed to load beer styles:', error);
     return [];
@@ -126,13 +96,8 @@ export async function getBeerStyleBySlug(
       return cachedStyle;
     }
 
-    // サーバーサイドの場合、DBから直接取得
-    if (typeof window === 'undefined') {
-      return getBeerStyleBySlugFromDb(slug);
-    }
-
-    // クライアントサイドの場合、APIから取得
-    return getBeerStyleBySlugFromAPI(slug);
+    // Cloudflare Functions からデータを取得
+    return getBeerStyleBySlugFromFunction(slug);
   } catch (error) {
     console.error(`Error in getBeerStyleBySlug for ${slug}:`, error);
     return null;
@@ -140,10 +105,10 @@ export async function getBeerStyleBySlug(
 }
 
 /**
- * APIからすべてのビールスタイルを取得する関数
+ * Cloudflare Functions からすべてのビールスタイルを取得する関数
  * @returns ビールスタイルの配列
  */
-export async function getAllBeerStylesFromAPI(): Promise<BeerStyle[]> {
+export async function getAllBeerStylesFromFunction(): Promise<BeerStyle[]> {
   try {
     // すでにメモリにデータが読み込まれている場合は再取得しない
     if (beerStyles.length > 0) {
@@ -151,49 +116,54 @@ export async function getAllBeerStylesFromAPI(): Promise<BeerStyle[]> {
       return beerStyles;
     }
 
-    // API経由でデータを取得
-    const apiUrl = `${getApiBaseUrl()}/api/beer-styles`;
-    console.log('Fetching beer styles from:', apiUrl);
+    // Cloudflare Functions 経由でデータを取得
+    const baseUrl = getApiBaseUrl();
+    // URL を /api/beer-styles から /beer-styles に変更（Cloudflare Functions のパス）
+    const functionUrl = `${baseUrl}/api/beer-styles`;
 
-    const response = await fetch(apiUrl);
+    console.log('Fetching beer styles from Cloudflare Function:', functionUrl);
+
+    const response = await fetch(functionUrl);
 
     if (!response.ok) {
       console.error(
-        `API returned status: ${response.status} - ${response.statusText}`
+        `Function returned status: ${response.status} - ${response.statusText}`
       );
       throw new Error(`データの取得に失敗しました (${response.status})`);
     }
 
     const styles = (await response.json()) as ApiStyle[];
 
-    // D1から取得したデータをBeerStyle形式に変換
+    if (!styles || styles.length === 0) {
+      throw new Error('ビールスタイルデータが見つかりませんでした');
+    }
+
+    // 型の整合性を確保するためにデータを整形
     const formattedStyles = styles.map((style: ApiStyle) =>
       formatBeerStyleData(style)
     );
-
-    if (formattedStyles.length === 0) {
-      throw new Error('ビールスタイルデータが見つかりませんでした');
-    }
 
     // メモリキャッシュをクリアして新しいデータを追加
     beerStyles.length = 0;
     beerStyles.push(...formattedStyles);
 
-    console.log(`Loaded ${beerStyles.length} beer styles from database`);
+    console.log(
+      `Loaded ${beerStyles.length} beer styles from Cloudflare Function`
+    );
     return beerStyles;
   } catch (error) {
-    console.error('Error in getAllBeerStylesFromAPI:', error);
+    console.error('Error in getAllBeerStylesFromFunction:', error);
     // エラーを上位に伝播させる
     throw error;
   }
 }
 
 /**
- * APIからスラッグでビールスタイルを取得する関数
+ * Cloudflare Functions からスラッグでビールスタイルを取得する関数
  * @param slug スタイルのスラッグ
  * @returns ビールスタイル情報、存在しない場合はnull
  */
-export async function getBeerStyleBySlugFromAPI(
+export async function getBeerStyleBySlugFromFunction(
   slug: string
 ): Promise<BeerStyle | null> {
   try {
@@ -205,7 +175,7 @@ export async function getBeerStyleBySlugFromAPI(
 
     // スタイルリストをロードしてから再検索
     try {
-      await getAllBeerStylesFromAPI();
+      await getAllBeerStylesFromFunction();
       const style = beerStyles.find((style) => style.slug === slug);
       if (style) {
         return style;
@@ -216,8 +186,16 @@ export async function getBeerStyleBySlugFromAPI(
     }
 
     // それでも見つからない場合は個別に取得
-    const apiUrl = `${getApiBaseUrl()}/api/beer-styles/${slug}`;
-    const response = await fetch(apiUrl);
+    const baseUrl = getApiBaseUrl();
+    // URL を /api/beer-styles/${slug} から /beer-styles/${slug} に変更（Cloudflare Functions のパス）
+    const functionUrl = `${baseUrl}/api/beer-styles/${slug}`;
+
+    console.log(
+      `Fetching beer style ${slug} from Cloudflare Function:`,
+      functionUrl
+    );
+
+    const response = await fetch(functionUrl);
 
     if (!response.ok) {
       if (response.status === 404) {
@@ -228,7 +206,7 @@ export async function getBeerStyleBySlugFromAPI(
 
     const styleData = (await response.json()) as ApiStyle;
 
-    // データ形式を変換
+    // 型の整合性を確保するためにデータを整形
     const formattedStyle = formatBeerStyleData(styleData);
 
     // キャッシュに追加
@@ -236,137 +214,8 @@ export async function getBeerStyleBySlugFromAPI(
 
     return formattedStyle;
   } catch (error) {
-    console.error(`Error in getBeerStyleBySlugFromAPI for ${slug}:`, error);
-    return null;
-  }
-}
-
-/**
- * すべてのビールスタイルをデータベースから直接取得する
- * @returns ビールスタイルの配列
- */
-export async function getAllBeerStylesFromDb(): Promise<BeerStyle[]> {
-  try {
-    // サーバーサイドでない場合は空の配列を返す
-    if (typeof window !== 'undefined') {
-      console.warn('getAllBeerStylesFromDb はサーバーサイドでのみ使用可能です');
-      return [];
-    }
-
-    // すでにメモリにデータが読み込まれている場合は再取得しない
-    if (beerStyles.length > 0) {
-      console.log('Using in-memory cached beer styles');
-      return beerStyles;
-    }
-
-    try {
-      // 非同期でデータベース接続を取得
-      const { db, sqlite } = await getDb();
-
-      // スタイルとリレーションを取得
-      const stylesData = await db.query.beerStyles.findMany({
-        with: {
-          otherNames: true,
-          styleRelations: {
-            with: {
-              relatedStyle: true,
-            },
-          },
-        },
-      });
-
-      // DBを閉じる（互換性のための空の実装）
-      sqlite.close();
-
-      // データを整形
-      const formattedStyles = stylesData.map((style) => {
-        const relations = extractStyleRelations(style.styleRelations);
-        const otherNames = style.otherNames.map((o) => o.name);
-
-        return formatBeerStyleData(style, relations, otherNames);
-      });
-
-      // メモリキャッシュに保存
-      beerStyles.length = 0;
-      beerStyles.push(...formattedStyles);
-
-      return formattedStyles;
-    } catch (error) {
-      console.error('Error loading database:', error);
-      throw error; // エラーを上位に伝播
-    }
-  } catch (error) {
-    console.error('Error fetching beer styles from DB:', error);
-    return [];
-  }
-}
-
-/**
- * スラッグでビールスタイルをデータベースから直接取得する
- * @param slug スタイルのスラッグ
- * @returns ビールスタイル情報、存在しない場合はnull
- */
-export async function getBeerStyleBySlugFromDb(
-  slug: string
-): Promise<BeerStyle | null> {
-  try {
-    // サーバーサイドでない場合はnullを返す
-    if (typeof window !== 'undefined') {
-      console.warn(
-        'getBeerStyleBySlugFromDb はサーバーサイドでのみ使用可能です'
-      );
-      return null;
-    }
-
-    // まずメモリキャッシュから検索
-    const cachedStyle = beerStyles.find((style) => style.slug === slug);
-    if (cachedStyle) {
-      return cachedStyle;
-    }
-
-    try {
-      // 非同期でデータベース接続を取得
-      const { db, sqlite } = await getDb();
-
-      console.log('Fetching beer style from DB:', slug);
-      // スタイルとリレーションを取得
-      const style = await db.query.beerStyles.findFirst({
-        where: eq(beerStylesTable.slug, slug),
-        with: {
-          otherNames: true,
-          styleRelations: {
-            with: {
-              relatedStyle: true,
-            },
-          },
-        },
-      });
-
-      // DBを閉じる（互換性のための空の実装）
-      sqlite.close();
-
-      if (!style) {
-        return null;
-      }
-
-      // styleRelationsからrelationTypeに基づいて分類
-      const relations = extractStyleRelations(style.styleRelations);
-      const otherNames = style.otherNames.map((o) => o.name);
-
-      // データを整形して返す
-      const formattedStyle = formatBeerStyleData(style, relations, otherNames);
-
-      // キャッシュに追加
-      beerStyles.push(formattedStyle);
-
-      return formattedStyle;
-    } catch (error) {
-      console.error('Error accessing database:', error);
-      return null;
-    }
-  } catch (error) {
     console.error(
-      `Error fetching beer style with slug ${slug} from DB:`,
+      `Error in getBeerStyleBySlugFromFunction for ${slug}:`,
       error
     );
     return null;

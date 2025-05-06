@@ -11,7 +11,8 @@ export async function generateMetadata(
   { params }: { params: { slug: string } },
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const style = await getBeerStyleBySlug(params.slug);
+  const { slug } = await params; // paramsオブジェクト全体をawait
+  const style = await getBeerStyleBySlug(slug);
 
   if (!style) {
     return {
@@ -50,5 +51,6 @@ export default async function StyleDetailPage({
 }: {
   params: { slug: string };
 }) {
-  return <BeerStyleDetail slug={params.slug} />;
+  const { slug } = await params; // paramsをawaitしてからプロパティにアクセス
+  return <BeerStyleDetail slug={slug} />;
 }

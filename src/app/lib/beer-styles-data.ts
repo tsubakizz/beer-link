@@ -204,7 +204,7 @@ export async function getBeerStyleBySlugFromFunction(
       if (response.status === 404) {
         return null;
       }
-      throw new Error(`スタイル情報の取得に失敗しました (${response.status})`);
+      // throw new Error(`スタイル情報の取得に失敗しました (${response.status})`);
     }
 
     const styleData = (await response.json()) as ApiStyle;

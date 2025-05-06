@@ -10,10 +10,7 @@ interface HeroSectionProps {
 
 export default function HeroSection({ title, description }: HeroSectionProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+    <div
       className="relative rounded-2xl overflow-hidden mb-12 bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-300"
     >
       <div className="absolute inset-0 opacity-20">
@@ -47,6 +44,6 @@ export default function HeroSection({ title, description }: HeroSectionProps) {
       <div className="absolute top-0 left-0 w-full h-full z-0">
         <BubbleDecoration count={6} />
       </div>
-    </motion.div>
+    </div>
   );
 }

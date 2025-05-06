@@ -46,10 +46,7 @@ export default function BeerFilter({
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.2 }}
+    <div
       className="mb-4"
     >
       <div className="flex flex-wrap items-center justify-between gap-4 mb-2">
@@ -151,6 +148,6 @@ export default function BeerFilter({
           </button>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

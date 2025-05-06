@@ -32,18 +32,18 @@ export async function generateMetadata(
 }
 
 // 静的データ生成を有効化
-export const dynamic = 'force-static'; // SSGを強制
-export const dynamicParams = false;
+export const dynamic = 'force-dynamic'; // SSGを強制
 export const revalidate = 86400; // 1日ごとに再検証
+export const runtime = 'edge'; // エッジで実行
 
 // 静的生成するパスを定義
-export async function generateStaticParams() {
-  const styles = await getAllBeerStyles();
+// export async function generateStaticParams() {
+//   const styles = await getAllBeerStyles();
 
-  return styles.map((style) => ({
-    slug: style.slug,
-  }));
-}
+//   return styles.map((style) => ({
+//     slug: style.slug,
+//   }));
+// }
 
 // ページコンポーネント
 export default async function StyleDetailPage({

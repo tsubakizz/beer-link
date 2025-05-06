@@ -13,7 +13,7 @@ export interface Env {
 /**
  * すべてのビールスタイルを取得する関数
  */
-export const onRequest: PagesFunction<Env> = async (context) => {
+export async function onRequest(context: { env: Env }) {
   try {
     const { BEER_LINK_DB, BEER_STYLES_CACHE } = context.env;
     let cachedData;

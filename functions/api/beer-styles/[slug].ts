@@ -15,22 +15,13 @@ export interface Env {
 /**
  * スラッグで特定のビールスタイルを取得する関数
  */
-export const onRequest: PagesFunction<Env, 'slug'> = async (context) => {
+export async function onRequest(context: {
+  env: Env;
+  params: { slug: string };
+}) {
   try {
     const { BEER_LINK_DB, BEER_STYLES_CACHE } = context.env;
-    const slugFromParams = context.params.slug;
-    // slugFromParamsが配列でないことを確認し、string型であることを明確にする
-    if (Array.isArray(slugFromParams)) {
-      // 通常、[slug].ts のようなファイル構成ならここは通らないはず
-      // もしキャッチオールルート [[slug]].ts などであれば、配列の最初の要素を使うかエラーにする
-      console.error('Slug parameter is an array, expected a string:', slugFromParams);
-      return new Response(JSON.stringify({ error: 'Invalid slug format (array unexpected)' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-    // この時点で slug は string 型であることがTypeScriptに伝わる
-    const slug: string = slugFromParams;
+    const { slug } = context.params;
 
     if (!slug) {
       return new Response(JSON.stringify({ error: 'Slug is required' }), {
@@ -125,4 +116,4 @@ export const onRequest: PagesFunction<Env, 'slug'> = async (context) => {
       }
     );
   }
-};
+}

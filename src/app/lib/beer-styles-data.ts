@@ -328,6 +328,7 @@ export async function getBeerStyleBySlugFromDb(
       // 非同期でデータベース接続を取得
       const { db, sqlite } = await getDb();
 
+      console.log('Fetching beer style from DB:', slug);
       // スタイルとリレーションを取得
       const style = await db.query.beerStyles.findFirst({
         where: eq(beerStylesTable.slug, slug),
@@ -345,6 +346,7 @@ export async function getBeerStyleBySlugFromDb(
       sqlite.close();
 
       if (!style) {
+        console.log(`Style with slug ${slug} not found in DB`);
         return null;
       }
 

@@ -6,7 +6,7 @@
  */
 
 import { drizzle } from 'drizzle-orm/d1';
-import * as schema from '../../../db/schema';
+import * as schema from '@/db/schema';
 
 // 環境変数からD1インスタンスを取得
 declare const BEER_LINK_DB: D1Database;

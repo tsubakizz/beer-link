@@ -2,8 +2,8 @@ import React from 'react';
 import { notFound } from 'next/navigation';
 import { beers } from '@/src/app/lib/beers-data';
 import {
-  getBeerStyleBySlugFromAPI,
-  getAllBeerStylesFromAPI,
+  getBeerStyleBySlugFromDb,
+  getAllBeerStylesFromDb,
 } from '@/src/app/lib/beer-styles-data';
 import { BeerStyle } from '@/src/app/types/beer-style';
 
@@ -27,14 +27,14 @@ interface BeerStyleDetailProps {
 // ビールスタイル詳細ページコンポーネント
 export default async function BeerStyleDetail({ slug }: BeerStyleDetailProps) {
   // サーバーサイドでのデータ取得
-  const styleData = await getBeerStyleBySlugFromAPI(slug);
+  const styleData = await getBeerStyleBySlugFromDb(slug);
 
   if (!styleData) {
     notFound();
   }
 
   // 関連スタイルの取得
-  const allStyles = await getAllBeerStylesFromAPI();
+  const allStyles = await getAllBeerStylesFromDb();
 
   const parents = styleData.parents
     ?.map((parentSlug) => allStyles.find((s) => s.slug === parentSlug))

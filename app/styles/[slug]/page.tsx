@@ -2,13 +2,13 @@ import React from 'react';
 import type { Metadata, ResolvingMetadata } from 'next';
 import BeerStyleDetail from '@/src/app/components/styles/BeerStyleDetail';
 import {
-  getAllBeerStylesFromAPI,
-  getBeerStyleBySlugFromAPI,
+  getAllBeerStylesFromDb,
+  getBeerStyleBySlugFromDb,
 } from '@/src/app/lib/beer-styles-data';
 
 // 静的パスの生成
 export async function generateStaticParams() {
-  const styles = await getAllBeerStylesFromAPI();
+  const styles = await getAllBeerStylesFromDb();
 
   return styles.map((style) => ({
     slug: style.slug,
@@ -20,7 +20,7 @@ export async function generateMetadata(
   { params }: { params: { slug: string } },
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const style = await getBeerStyleBySlugFromAPI(params.slug);
+  const style = await getBeerStyleBySlugFromDb(params.slug);
 
   if (!style) {
     return {

@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { BeerStyle } from '@/src/app/lib/beer-styles-data';
+import { BeerStyle } from '@/src/app/types/beer-style';
 
 interface RelatedStylesProps {
   parentStyles?: BeerStyle[];

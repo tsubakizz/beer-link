@@ -1,0 +1,24 @@
+# デプロイコマンド
+# npx wrangler deploy --config worker-wrangler.tom
+
+name = "csv-to-d1-importer"
+# 相対パスではなく、srcディレクトリをベースにしたパスに変更
+main = "./src/app/workers/csv-to-d1-importer.ts"
+compatibility_date = "2023-05-18"
+compatibility_flags = ["nodejs_compat"]
+
+# 環境変数とシークレット
+# 実際の値を設定する
+# [vars]
+# AUTH_KEY = ""
+
+# D1データベースバインディング
+[[d1_databases]]
+binding = "DB"
+database_name = "beer_link_db"
+database_id = "08f1d478-118d-4d83-b577-0a5017b73e07"
+
+# R2ストレージバインディング
+[[r2_buckets]]
+binding = "DATA_BUCKET"
+bucket_name = "beer-link-data"

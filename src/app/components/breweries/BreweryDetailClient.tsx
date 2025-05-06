@@ -9,7 +9,6 @@ import {
   regionNames,
 } from '@/src/app/lib/breweries-data';
 import { beers } from '@/src/app/lib/beers-data';
-import { beerStyles } from '@/src/app/lib/beer-styles-data';
 import {
   collection,
   query,
@@ -30,6 +29,7 @@ interface BreweryDetailClientProps {
 }
 
 export default function BreweryDetailClient({ id }: BreweryDetailClientProps) {
+
   // IDに一致するブルワリーを検索
   const brewery = breweries.find((b) => b.id === id);
 
@@ -111,36 +111,6 @@ export default function BreweryDetailClient({ id }: BreweryDetailClientProps) {
     return 0;
   });
 
-  // ブルワリーが得意とするスタイルの名前を取得
-  const getSpecialtyNames = (specialties?: string[]) => {
-    if (!specialties || specialties.length === 0) return [];
-
-    return specialties.map((styleId) => {
-      const style = beerStyles.find((s) => s.id === styleId);
-      return { id: styleId, name: style ? style.name : styleId };
-    });
-  };
-
-  // スタイル別ビール数を集計
-  const styleCountMap: Record<string, number> = {};
-  breweryBeers.forEach((beer) => {
-    const styleId = beer.style;
-    if (styleCountMap[styleId]) {
-      styleCountMap[styleId]++;
-    } else {
-      styleCountMap[styleId] = 1;
-    }
-  });
-
-  // 上位3つのスタイルを取得
-  const topStyles = Object.entries(styleCountMap)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 3)
-    .map(([styleId, count]) => {
-      const style = beerStyles.find((s) => s.id === styleId);
-      return { id: styleId, name: style ? style.name : styleId, count };
-    });
-
   return (
     <div className="container mx-auto py-8">
       {/* ブルワリー基本情報 */}
@@ -156,14 +126,6 @@ export default function BreweryDetailClient({ id }: BreweryDetailClientProps) {
                 <div className="badge badge-outline">
                   {breweryTypeNames[brewery.type]}
                 </div>
-                {brewery.featured && (
-                  <div className="badge badge-secondary">注目のブルワリー</div>
-                )}
-                {topStyles.length > 0 && (
-                  <div className="badge badge-primary">
-                    {topStyles[0].name}専門
-                  </div>
-                )}
               </div>
             </div>
 
@@ -189,37 +151,12 @@ export default function BreweryDetailClient({ id }: BreweryDetailClientProps) {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* ブルワリー説明 */}
             <div className="lg:col-span-2">
-              <h2 className="text-xl font-bold mb-4">紹介</h2>
-              <div className="prose max-w-none">
-                <p>{brewery.description}</p>
-              </div>
-
-              <div className="divider"></div>
-
               {/* 特徴情報 */}
               <h2 className="text-xl font-bold mb-4">特徴</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <h3 className="font-medium mb-2">基本情報</h3>
                   <ul className="space-y-1 text-sm">
-                    <li className="flex justify-between">
-                      <span>タイプ:</span>
-                      <span className="font-medium">
-                        {breweryTypeNames[brewery.type]}
-                      </span>
-                    </li>
-                    <li className="flex justify-between">
-                      <span>タップルーム:</span>
-                      <span className="font-medium">
-                        {brewery.taproom ? 'あり' : 'なし'}
-                      </span>
-                    </li>
-                    <li className="flex justify-between">
-                      <span>工場見学:</span>
-                      <span className="font-medium">
-                        {brewery.tours ? '可能' : '不可'}
-                      </span>
-                    </li>
                     <li className="flex justify-between">
                       <span>ウェブサイト:</span>
                       {brewery.website ? (
@@ -239,39 +176,12 @@ export default function BreweryDetailClient({ id }: BreweryDetailClientProps) {
                 </div>
 
                 <div>
-                  <h3 className="font-medium mb-2">得意とするスタイル</h3>
-                  {brewery.specialties && brewery.specialties.length > 0 ? (
-                    <div className="flex flex-wrap gap-2">
-                      {getSpecialtyNames(brewery.specialties).map(
-                        (specialty) => (
-                          <Link
-                            key={specialty.id}
-                            href={`/beers?style=${specialty.id}`}
-                            className="badge badge-outline hover:bg-amber-50"
-                          >
-                            {specialty.name}
-                          </Link>
-                        )
-                      )}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-gray-500">
-                      特定のスタイルの記載はありません
-                    </p>
-                  )}
-
                   <h3 className="font-medium mt-4 mb-2">製造ビール数</h3>
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <p>
                       <span className="font-medium">{breweryBeers.length}</span>{' '}
                       種類のビール
                     </p>
-                    {topStyles.map((style) => (
-                      <p key={style.id}>
-                        <span className="font-medium">{style.name}</span>:{' '}
-                        {style.count}種
-                      </p>
-                    ))}
                   </div>
                 </div>
               </div>
@@ -295,9 +205,6 @@ export default function BreweryDetailClient({ id }: BreweryDetailClientProps) {
                       className="block p-3 bg-white rounded-md mb-3 hover:shadow-md transition-shadow"
                     >
                       <div className="font-medium">{beer.name}</div>
-                      <div className="text-xs text-gray-500 mb-1">
-                        {beerStyles.find((s) => s.id === beer.style)?.name}
-                      </div>
                       <div className="flex items-center">
                         <div className="rating rating-xs">
                           {[1, 2, 3, 4, 5].map((star) => {
@@ -385,12 +292,6 @@ export default function BreweryDetailClient({ id }: BreweryDetailClientProps) {
                 </div>
                 <div className="card-body p-4">
                   <h3 className="card-title text-lg">{beer.name}</h3>
-
-                  <div className="mt-1">
-                    <div className="badge badge-sm badge-outline">
-                      {beerStyles.find((s) => s.id === beer.style)?.name}
-                    </div>
-                  </div>
 
                   <p className="text-sm line-clamp-2 mt-2">
                     {beer.description}

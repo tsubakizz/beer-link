@@ -36,9 +36,9 @@ export default function BeerCard({
       className="card glass backdrop-blur-sm bg-white/70 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
     >
       <figure className="relative h-52">
-        <div
+        {/* <div
           className={`absolute inset-0 ${getStyleColor(beer.style)} opacity-30`}
-        ></div>
+        ></div> */}
         {beer.imageUrl ? (
           <Image
             src={beer.imageUrl}
@@ -58,9 +58,9 @@ export default function BeerCard({
           </div>
         )}
         <div className="absolute top-3 left-3">
-          <div className="badge badge-lg bg-amber-50 border-amber-200 text-amber-900 font-medium shadow-sm">
+          {/* <div className="badge badge-lg bg-amber-50 border-amber-200 text-amber-900 font-medium shadow-sm">
             {getBeerStyleName(beer.style)}
-          </div>
+          </div> */}
         </div>
         <div className="absolute top-3 right-3">
           <div className="flex items-center gap-1 bg-amber-50/90 backdrop-blur-sm text-amber-900 rounded-full px-2 py-1 shadow-sm">

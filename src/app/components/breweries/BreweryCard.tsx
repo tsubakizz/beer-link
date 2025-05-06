@@ -2,7 +2,6 @@ import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { BreweryType, Region } from '@/src/app/lib/breweries-data';
-import { beerStyles } from '@/src/app/lib/beer-styles-data';
 
 interface BreweryCardProps {
   brewery: {
@@ -174,72 +173,6 @@ export default function BreweryCard({
           <p className="text-sm text-gray-600 line-clamp-2 mb-4">
             {brewery.description}
           </p>
-
-          <div className="grid grid-cols-2 gap-2 mb-4 text-xs">
-            <div className="flex items-center gap-2">
-              <svg
-                className="w-4 h-4 text-amber-600"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 13H11V9.413l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13H5.5z" />
-                <path d="M9 13h2v5a1 1 0 11-2 0v-5z" />
-              </svg>
-              <span>タップルーム: {brewery.taproom ? 'あり' : 'なし'}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <svg
-                className="w-4 h-4 text-amber-600"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                <path
-                  fillRule="evenodd"
-                  d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <span>工場見学: {brewery.tours ? '可能' : '不可'}</span>
-            </div>
-          </div>
-
-          {brewery.specialties && brewery.specialties.length > 0 && (
-            <div className="mb-4">
-              <div className="text-xs text-amber-800 mb-1 flex items-center gap-1">
-                <svg
-                  className="w-3 h-3"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span>得意スタイル:</span>
-              </div>
-              <div className="flex flex-wrap gap-1">
-                {brewery.specialties.slice(0, 3).map((styleId, idx) => {
-                  const style = beerStyles.find((s) => s.id === styleId);
-                  return style ? (
-                    <span
-                      key={idx}
-                      className="badge badge-sm bg-white border-amber-200 text-amber-800"
-                    >
-                      {style.name}
-                    </span>
-                  ) : null;
-                })}
-                {brewery.specialties.length > 3 && (
-                  <span className="badge badge-sm bg-white border-amber-200 text-amber-800">
-                    +{brewery.specialties.length - 3}
-                  </span>
-                )}
-              </div>
-            </div>
-          )}
 
           <div className="flex justify-between items-center mt-auto pt-2 border-t border-amber-100">
             <div className="flex items-center gap-1 text-sm text-amber-800">

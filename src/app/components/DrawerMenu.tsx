@@ -1,11 +1,31 @@
 'use client';
 
 import Link from 'next/link';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ClientSideNav from './ClientSideNav';
 
 // ドロワーメニューコンポーネント
 export default function DrawerMenu() {
+  // クライアントサイドでのみ使用する泡の状態
+  const [bubbles, setBubbles] = useState<React.CSSProperties[]>([]);
+
+  // クライアントサイドでのみ実行する副作用
+  useEffect(() => {
+    // 泡のスタイルをクライアントサイドでのみ生成
+    const generatedBubbles = [...Array(8)].map(
+      () =>
+        ({
+          '--size': `${Math.random() * 1.5 + 0.5}rem`,
+          '--distance': `${Math.random() * 3 + 1}rem`,
+          '--position': `${Math.random() * 100}%`,
+          '--time': `${Math.random() * 2 + 4}s`,
+          '--delay': `${Math.random() * 3}s`,
+        } as React.CSSProperties)
+    );
+
+    setBubbles(generatedBubbles);
+  }, []);
+
   // ドロワーメニューを閉じる関数
   const closeDrawer = () => {
     const drawerCheckbox = document.getElementById(
@@ -175,22 +195,10 @@ export default function DrawerMenu() {
             </li>
           </ul>
 
-          {/* 泡のアニメーション */}
+          {/* 泡のアニメーション - クライアントサイドでのみレンダリング */}
           <div className="absolute inset-x-0 top-24 h-full overflow-hidden pointer-events-none">
-            {[...Array(8)].map((_, i) => (
-              <div
-                key={i}
-                className="bubble"
-                style={
-                  {
-                    '--size': `${Math.random() * 1.5 + 0.5}rem`,
-                    '--distance': `${Math.random() * 3 + 1}rem`,
-                    '--position': `${Math.random() * 100}%`,
-                    '--time': `${Math.random() * 2 + 4}s`,
-                    '--delay': `${Math.random() * 3}s`,
-                  } as React.CSSProperties
-                }
-              ></div>
+            {bubbles.map((style, i) => (
+              <div key={i} className="bubble" style={style}></div>
             ))}
           </div>
         </div>

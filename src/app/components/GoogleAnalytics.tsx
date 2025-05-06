@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, Suspense } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { analytics } from '@/src/app/lib/firebase';
 import { logEvent } from 'firebase/analytics';
@@ -29,6 +29,16 @@ function AnalyticsContent() {
 }
 
 export const GoogleAnalytics = () => {
+  // クライアントサイドのみで実行されるようにチェック
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // サーバーサイドレンダリング時は何もレンダリングしない
+  if (!isMounted) return null;
+
   // useSearchParamsを使用するコンポーネントをSuspenseでラップ
   return (
     <Suspense fallback={null}>

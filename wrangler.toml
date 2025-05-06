@@ -2,6 +2,7 @@
 name = "beer-link"
 compatibility_date = "2023-05-18"
 compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".next/server/app"
 
 # KV 名前空間を定義
 kv_namespaces = [
@@ -13,3 +14,4 @@ kv_namespaces = [
 binding = "BEER_LINK_DB"
 database_name = "beer_link_db"
 database_id = "08f1d478-118d-4d83-b577-0a5017b73e07"
+migrations_dir="db/migrations"

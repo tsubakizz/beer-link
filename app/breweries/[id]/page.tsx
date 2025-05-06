@@ -1,15 +1,9 @@
 import { Suspense } from 'react';
-import { breweries } from '@/src/app/lib/breweries-data';
 import BreweryDetailClient from '@/src/app/components/breweries/BreweryDetailClient';
 import LoadingSpinner from '@/src/app/components/LoadingSpinner';
 
-// 静的ページ生成のためのパラメータを指定
-export async function generateStaticParams() {
-  // すべてのブルワリーIDのパスを生成
-  return breweries.map((brewery) => ({
-    id: brewery.id,
-  }));
-}
+// Cloudflare Pagesのエッジランタイム設定
+export const runtime = 'edge';
 
 // サーバーコンポーネント
 export default function BreweryDetailPage({

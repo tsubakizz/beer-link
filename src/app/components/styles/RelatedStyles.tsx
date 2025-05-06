@@ -50,7 +50,7 @@ export default function RelatedStyles({
             <ul className="space-y-2">
               {parentStyles.map((style, index) => (
                 <motion.li
-                  key={style.id}
+                  key={style.slug}
                   custom={index}
                   initial="hidden"
                   animate="visible"
@@ -58,7 +58,7 @@ export default function RelatedStyles({
                   className="bg-amber-50 p-3 rounded-lg shadow-sm hover:shadow-md transition-shadow"
                 >
                   <Link
-                    href={`/styles/${style.id}`}
+                    href={`/styles/${style.slug}`}
                     className="flex items-center text-amber-900 hover:text-amber-600"
                   >
                     <svg
@@ -92,7 +92,7 @@ export default function RelatedStyles({
             <ul className="space-y-2">
               {childStyles.map((style, index) => (
                 <motion.li
-                  key={style.id}
+                  key={style.slug}
                   custom={index}
                   initial="hidden"
                   animate="visible"
@@ -100,7 +100,7 @@ export default function RelatedStyles({
                   className="bg-amber-50 p-3 rounded-lg shadow-sm hover:shadow-md transition-shadow"
                 >
                   <Link
-                    href={`/styles/${style.id}`}
+                    href={`/styles/${style.slug}`}
                     className="flex items-center text-amber-900 hover:text-amber-600"
                   >
                     <svg
@@ -134,7 +134,7 @@ export default function RelatedStyles({
             <ul className="space-y-2">
               {siblingStyles.map((style, index) => (
                 <motion.li
-                  key={style.id}
+                  key={style.slug}
                   custom={index}
                   initial="hidden"
                   animate="visible"
@@ -142,7 +142,7 @@ export default function RelatedStyles({
                   className="bg-amber-50 p-3 rounded-lg shadow-sm hover:shadow-md transition-shadow"
                 >
                   <Link
-                    href={`/styles/${style.id}`}
+                    href={`/styles/${style.slug}`}
                     className="flex items-center text-amber-900 hover:text-amber-600"
                   >
                     <svg

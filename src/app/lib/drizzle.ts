@@ -1,10 +1,21 @@
-import { drizzle } from 'drizzle-orm/d1';
+import { drizzle as drizzleD1 } from 'drizzle-orm/d1';
+import { drizzle as drizzleSQLite } from 'drizzle-orm/better-sqlite3';
+import Database from 'better-sqlite3';
 import type { D1Database } from '@cloudflare/workers-types';
 import * as schema from '../../../db/schema';
 
-// D1データベースからDrizzleインスタンスを作成する関数
-export function createDb(d1: D1Database) {
-  return drizzle(d1, { schema });
+// データベースからDrizzleインスタンスを作成する関数
+export function createDb(d1?: D1Database) {
+  // 環境によって適切なデータベース接続を選択
+  // D1が提供されていない場合は、ローカルSQLiteを使用
+  if (!d1 || process.env.NODE_ENV === 'development') {
+    // ローカル環境ではSQLiteを使用
+    const sqlite = new Database('beer_link_db.db');
+    return drizzleSQLite(sqlite, { schema });
+  }
+
+  // Cloudflare D1を使用
+  return drizzleD1(d1, { schema });
 }
 
 // 型変換ユーティリティ

@@ -260,12 +260,12 @@ export class D1Client {
     }
   }
 
-  // スタイルIDでビールを検索
-  async getBeersByStyleId(styleId: string): Promise<Beer[]> {
+  // スタイルのスラッグでビールを検索
+  async getBeersByStyleSlug(styleSlug: string): Promise<Beer[]> {
     try {
       const result = await this.db
         .prepare('SELECT * FROM beers WHERE style_id = ?')
-        .bind(styleId)
+        .bind(styleSlug)
         .all<Beer>();
 
       // JSON文字列フィールドをパース
@@ -273,7 +273,10 @@ export class D1Client {
         this.parseJsonFields<Beer>(beer, ['flavors'])
       );
     } catch (error) {
-      console.error(`Failed to fetch beers for style ID ${styleId}:`, error);
+      console.error(
+        `Failed to fetch beers for style slug ${styleSlug}:`,
+        error
+      );
       return [];
     }
   }

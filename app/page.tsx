@@ -32,17 +32,6 @@ function HomePageContent() {
     };
   }, []);
 
-  // データから値を取得
-  const beerStylesCount = beerStyles.length;
-  const breweriesCount = breweries.length;
-  // 一意なビアスタイルカテゴリーを取得
-  const beerCategories = new Set(
-    beerStyles.map((style) => style.id.split('-')[0])
-  );
-  const beerCategoriesCount = beerCategories.size;
-  // レビューの総数（ダミーデータ、実際は別のデータから取得するか計算する）
-  const reviewsCount = 5000;
-
   return (
     <div className="container mx-auto py-8 px-4 sm:px-6 flex flex-col gap-12">
       {/* シンプル化したヒーローセクション */}
@@ -74,120 +63,6 @@ function HomePageContent() {
               <br />
               ビールの楽しさ
             </h2>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* 特徴カウンター - データ取得版 */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-        className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
-      >
-        <div className="card bg-gradient-to-br from-amber-50 to-amber-100 shadow-md hover:shadow-lg transition-all duration-300">
-          <div className="card-body p-4 flex flex-row items-center">
-            <div className="bg-amber-200 rounded-full p-2 mr-3">
-              <svg
-                className="w-6 h-6 text-amber-800"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </div>
-            <div>
-              <h3 className="text-sm font-medium text-amber-700">ビール情報</h3>
-              <p className="text-xl font-bold text-amber-900">
-                {beerStylesCount}+
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="card bg-gradient-to-br from-amber-50 to-amber-100 shadow-md hover:shadow-lg transition-all duration-300">
-          <div className="card-body p-4 flex flex-row items-center">
-            <div className="bg-amber-200 rounded-full p-2 mr-3">
-              <svg
-                className="w-6 h-6 text-amber-800"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                />
-              </svg>
-            </div>
-            <div>
-              <h3 className="text-sm font-medium text-amber-700">ブルワリー</h3>
-              <p className="text-xl font-bold text-amber-900">
-                {breweriesCount}+
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="card bg-gradient-to-br from-amber-50 to-amber-100 shadow-md hover:shadow-lg transition-all duration-300">
-          <div className="card-body p-4 flex flex-row items-center">
-            <div className="bg-amber-200 rounded-full p-2 mr-3">
-              <svg
-                className="w-6 h-6 text-amber-800"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                />
-              </svg>
-            </div>
-            <div>
-              <h3 className="text-sm font-medium text-amber-700">
-                ビアスタイル
-              </h3>
-              <p className="text-xl font-bold text-amber-900">
-                {beerCategoriesCount}+
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="card bg-gradient-to-br from-amber-50 to-amber-100 shadow-md hover:shadow-lg transition-all duration-300">
-          <div className="card-body p-4 flex flex-row items-center">
-            <div className="bg-amber-200 rounded-full p-2 mr-3">
-              <svg
-                className="w-6 h-6 text-amber-800"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976-2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
-                />
-              </svg>
-            </div>
-            <div>
-              <h3 className="text-sm font-medium text-amber-700">レビュー</h3>
-              <p className="text-xl font-bold text-amber-900">
-                {reviewsCount}+
-              </p>
-            </div>
           </div>
         </div>
       </motion.div>

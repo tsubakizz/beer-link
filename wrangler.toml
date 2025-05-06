@@ -1,0 +1,15 @@
+# Cloudflare Pages 設定ファイル
+name = "beer-link"
+compatibility_date = "2023-05-18"
+compatibility_flags = ["nodejs_compat"]
+
+# KV 名前空間を定義
+kv_namespaces = [
+  { binding = "BEER_STYLES_CACHE", id = "85c7f04db70348c3b5604be79c7619cb", preview_id = "85c7f04db70348c3b5604be79c7619cb" }
+]
+
+# D1データベースの設定
+[[d1_databases]]
+binding = "BEER_LINK_DB"
+database_name = "beer_link_db"
+database_id = "08f1d478-118d-4d83-b577-0a5017b73e07"

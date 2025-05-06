@@ -79,7 +79,7 @@ if (typeof window !== 'undefined') {
       if (isAnalyticsSupported) {
         analytics = getAnalytics(app);
 
-        // ボットチェック
+        // ボットチェック - クライアントサイドでのみ実行
         const userAgent = window.navigator.userAgent;
         const botDetected = isBot(userAgent);
 

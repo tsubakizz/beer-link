@@ -21,13 +21,13 @@ export default function StyleNavigation({
       <div className="flex gap-2 min-w-max px-1">
         {beerStyles.map((style) => (
           <button
-            key={style.id}
+            key={style.slug}
             onClick={() =>
-              setSelectedStyle(selectedStyle === style.id ? '' : style.id)
+              setSelectedStyle(selectedStyle === style.slug ? '' : style.slug)
             }
             className={`btn btn-sm rounded-full transition-all duration-300 ${
-              selectedStyle === style.id
-                ? `${getStyleColor(style.id)} text-amber-900 border-amber-400`
+              selectedStyle === style.slug
+                ? `${getStyleColor(style.slug)} text-amber-900 border-amber-400`
                 : 'bg-white border-amber-200 text-amber-800 hover:bg-amber-50'
             }`}
           >

@@ -1,111 +1,95 @@
-// APIから返されるビールスタイルの型
-interface ApiStyle {
-  id: number;
-  slug: string;
-  name: string;
-  description: string;
-  bitterness: number;
-  sweetness: number;
-  body: number;
-  aroma: number;
-  sourness: number;
-  history: string;
-  origin: string;
-  abvMin: number;
-  abvMax: number;
-  ibuMin: number;
-  ibuMax: number;
-  srmMin: number;
-  srmMax: number;
-  servingTempMin: number;
-  servingTempMax: number;
-  otherNames: string[];
-  siblings: string[];
-  parents: string[];
-  children: string[];
+// クライアントでも使用できる型定義を別ファイルからインポート
+import { BeerStyle, ApiStyle } from '@/src/app/types/beer-style';
+import { createShortDescription } from '@/src/app/lib/beer-styles-decorator';
+import { getDb } from './db-utils';
+import { eq } from 'drizzle-orm';
+import { beerStyles as beerStylesTable } from '../../../db/schema/beer-styles';
+import { RelationType } from '../../../db/schema/beer-style-relations';
+import { getApiBaseUrl } from './api-utils';
+
+/**
+ * スタイルの関連情報（親子関係など）を抽出する共通関数
+ * @param styleRelations スタイル関係のデータ配列
+ * @returns 親・子・兄弟スタイルのスラッグの配列を含むオブジェクト
+ */
+function extractStyleRelations(styleRelations: any[]) {
+  const siblings = styleRelations
+    .filter((relation) => relation.relationType === RelationType.SIBLING)
+    .map((relation) => relation.relatedStyle.slug);
+
+  const parents = styleRelations
+    .filter((relation) => relation.relationType === RelationType.PARENT)
+    .map((relation) => relation.relatedStyle.slug);
+
+  const children = styleRelations
+    .filter((relation) => relation.relationType === RelationType.CHILD)
+    .map((relation) => relation.relatedStyle.slug);
+
+  return { siblings, parents, children };
 }
 
-// ビールスタイルの定義
-export type BeerStyle = {
-  id: number; // 数値のID
-  slug: string; // スラッグ（URLフレンドリーな識別子）
-  name: string;
-  description: string;
-  otherNames: string[]; // 検索性向上のための別名
-  characteristics: {
-    bitterness: number; // 1-5のスケール
-    sweetness: number; // 1-5のスケール
-    body: number; // 1-5のスケール（軽い-重い）
-    aroma: number; // 1-5のスケール（香りの強さ）
-    sourness: number; // 1-5のスケール（酸味）
-  };
-  history: string; // スタイルの歴史
-  origin: string; // スタイルの発祥地と時代
-  abv: number[]; // アルコール度数の範囲 [最小値, 最大値]
-  ibu: number[]; // 国際苦味単位の範囲 [最小値, 最大値]
-  srm: number[]; // 色度の範囲 [最小値, 最大値]
-  siblings: string[]; // 同系統のスタイル（兄弟スタイル）
-  parents: string[]; // 親スタイル（系統的に上位のスタイル）
-  children: string[]; // 子スタイル（系統的に下位のスタイル）
-  servingTemperature: number[]; // 推奨飲用温度 [最小値, 最大値]（摂氏）
-};
-
-// カード表示用の簡易ビールスタイル定義
-export type BeerStyleCard = {
-  id: number;
-  slug: string;
-  name: string;
-  shortDescription: string; // 短い説明
-  characteristics: {
-    bitterness: number;
-    sweetness: number;
-    body: number;
-  };
-  abv: string; // 「5.0-6.5%」のような文字列形式
-  ibu: string; // 「20-40」のような文字列形式
-};
-
-// 完全なビールスタイルデータからカード表示用データに変換する関数
-export function getBeerStyleCard(style: BeerStyle): BeerStyleCard {
-  // 説明文を短くする（最初のピリオドまで、または最大100文字）
-  const endOfFirstSentence = style.description.indexOf('。');
-  const shortDescription =
-    endOfFirstSentence > 0 && endOfFirstSentence < 100
-      ? style.description.substring(0, endOfFirstSentence + 1)
-      : style.description.substring(0, 100) + '...';
-
+/**
+ * データベースまたはAPIから取得したデータをBeerStyle型に変換する共通関数
+ * @param style 変換元のデータ
+ * @param relations 関連スタイルのデータ（オプション）
+ * @param otherNames 別名のデータ（オプション）
+ * @returns 整形されたBeerStyle型のオブジェクト
+ */
+function formatBeerStyleData(
+  style: any,
+  relations?: { siblings: string[]; parents: string[]; children: string[] },
+  otherNames?: string[]
+): BeerStyle {
   return {
     id: style.id,
     slug: style.slug,
     name: style.name,
-    shortDescription,
+    description: style.description,
+    shortDescription: createShortDescription(style.description),
+    otherNames: otherNames || style.otherNames || [],
     characteristics: {
-      bitterness: style.characteristics.bitterness,
-      sweetness: style.characteristics.sweetness,
-      body: style.characteristics.body,
+      bitterness: style.bitterness || 0,
+      sweetness: style.sweetness || 0,
+      body: style.body || 0,
+      aroma: style.aroma || 0,
+      sourness: style.sourness || 0,
     },
-    abv: `${style.abv[0].toFixed(1)}-${style.abv[1].toFixed(1)}%`,
-    ibu: `${style.ibu[0]}-${style.ibu[1]}`,
+    history: style.history || '',
+    origin: style.origin || '',
+    abv: [
+      style.abvMin !== null ? parseFloat(String(style.abvMin)) : 0,
+      style.abvMax !== null ? parseFloat(String(style.abvMax)) : 0,
+    ],
+    ibu: [
+      style.ibuMin !== null ? parseInt(String(style.ibuMin)) : 0,
+      style.ibuMax !== null ? parseInt(String(style.ibuMax)) : 0,
+    ],
+    srm: [
+      style.srmMin !== null ? parseInt(String(style.srmMin)) : 0,
+      style.srmMax !== null ? parseInt(String(style.srmMax)) : 0,
+    ],
+    siblings: relations ? relations.siblings : style.siblings || [],
+    parents: relations ? relations.parents : style.parents || [],
+    children: relations ? relations.children : style.children || [],
+    servingTemperature: [
+      style.servingTempMin !== null
+        ? parseInt(String(style.servingTempMin))
+        : 4,
+      style.servingTempMax !== null
+        ? parseInt(String(style.servingTempMax))
+        : 12,
+    ],
   };
-}
-
-// 自ホストのAPIのベースURL取得
-function getApiBaseUrl() {
-  // ブラウザ環境では相対パスを使用
-  if (typeof window !== 'undefined') {
-    return '';
-  }
-
-  // サーバー環境での実行時は絶対URLが必要
-  // 環境変数から取得（デフォルトはlocalhost）
-  return process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
 }
 
 // ビールスタイルのデータを保持する配列（メモリキャッシュ用）
 export const beerStyles: BeerStyle[] = [];
 
-// APIからビールスタイルを取得する関数
-export async function fetchBeerStyles(): Promise<BeerStyle[]> {
+/**
+ * APIからすべてのビールスタイルを取得する関数
+ * @returns ビールスタイルの配列
+ */
+export async function getAllBeerStylesFromAPI(): Promise<BeerStyle[]> {
   try {
     // すでにメモリにデータが読み込まれている場合は再取得しない
     if (beerStyles.length > 0) {
@@ -113,77 +97,49 @@ export async function fetchBeerStyles(): Promise<BeerStyle[]> {
       return beerStyles;
     }
 
-    // API経由でデータを取得（D1データベースから取得）
+    // API経由でデータを取得
     const apiUrl = `${getApiBaseUrl()}/api/beer-styles`;
     console.log('Fetching beer styles from:', apiUrl);
+
     const response = await fetch(apiUrl);
 
     if (!response.ok) {
-      throw new Error('Failed to fetch beer styles from D1 database');
+      console.error(
+        `API returned status: ${response.status} - ${response.statusText}`
+      );
+      throw new Error(`データの取得に失敗しました (${response.status})`);
     }
 
     const styles = (await response.json()) as ApiStyle[];
 
     // D1から取得したデータをBeerStyle形式に変換
-    const formattedStyles = styles.map((style: ApiStyle) => ({
-      id: style.id,
-      slug: style.slug,
-      name: style.name,
-      description: style.description,
-      otherNames: style.otherNames || [],
-      characteristics: {
-        bitterness: style.bitterness || 0,
-        sweetness: style.sweetness || 0,
-        body: style.body || 0,
-        aroma: style.aroma || 0,
-        sourness: style.sourness || 0,
-      },
-      history: style.history || '',
-      origin: style.origin || '',
-      abv:
-        style.abvMin !== null && style.abvMax !== null
-          ? [parseFloat(String(style.abvMin)), parseFloat(String(style.abvMax))]
-          : [0, 0],
-      ibu:
-        style.ibuMin !== null && style.ibuMax !== null
-          ? [parseInt(String(style.ibuMin)), parseInt(String(style.ibuMax))]
-          : [0, 0],
-      srm:
-        style.srmMin !== null && style.srmMax !== null
-          ? [parseInt(String(style.srmMin)), parseInt(String(style.srmMax))]
-          : [0, 0],
-      siblings: style.siblings || [],
-      parents: style.parents || [],
-      children: style.children || [],
-      servingTemperature:
-        style.servingTempMin !== null && style.servingTempMax !== null
-          ? [
-              parseInt(String(style.servingTempMin)),
-              parseInt(String(style.servingTempMax)),
-            ]
-          : [4, 12], // デフォルト値
-    }));
+    const formattedStyles = styles.map((style: ApiStyle) =>
+      formatBeerStyleData(style)
+    );
+
+    if (formattedStyles.length === 0) {
+      throw new Error('ビールスタイルデータが見つかりませんでした');
+    }
 
     // メモリキャッシュをクリアして新しいデータを追加
     beerStyles.length = 0;
     beerStyles.push(...formattedStyles);
 
-    console.log(`Loaded ${beerStyles.length} beer styles from D1 database`);
+    console.log(`Loaded ${beerStyles.length} beer styles from database`);
     return beerStyles;
   } catch (error) {
-    console.error('Error fetching beer styles:', error);
-    return [];
+    console.error('Error in getAllBeerStylesFromAPI:', error);
+    // エラーを上位に伝播させる
+    throw error;
   }
 }
 
-// 全てのビールスタイルのカード表示用データを取得する非同期関数
-export async function getAllBeerStyleCards(): Promise<BeerStyleCard[]> {
-  const styles = await fetchBeerStyles();
-  return styles.map((style) => getBeerStyleCard(style));
-}
-
-// スラッグによってビールスタイルを取得する関数
-export async function getBeerStyleBySlug(
+/**
+ * APIからスラッグでビールスタイルを取得する関数
+ * @param slug スタイルのスラッグ
+ * @returns ビールスタイル情報、存在しない場合はnull
+ */
+export async function getBeerStyleBySlugFromAPI(
   slug: string
 ): Promise<BeerStyle | null> {
   try {
@@ -194,10 +150,15 @@ export async function getBeerStyleBySlug(
     }
 
     // スタイルリストをロードしてから再検索
-    await fetchBeerStyles();
-    const style = beerStyles.find((style) => style.slug === slug);
-    if (style) {
-      return style;
+    try {
+      await getAllBeerStylesFromAPI();
+      const style = beerStyles.find((style) => style.slug === slug);
+      if (style) {
+        return style;
+      }
+    } catch (listError) {
+      console.error('Error fetching style list:', listError);
+      // リストの取得に失敗した場合は個別取得を試みる
     }
 
     // それでも見つからない場合は個別に取得
@@ -208,66 +169,116 @@ export async function getBeerStyleBySlug(
       if (response.status === 404) {
         return null;
       }
-      throw new Error(`Failed to fetch beer style with slug ${slug}`);
+      throw new Error(`スタイル情報の取得に失敗しました (${response.status})`);
     }
 
     const styleData = (await response.json()) as ApiStyle;
 
     // データ形式を変換
-    const formattedStyle: BeerStyle = {
-      id: styleData.id,
-      slug: styleData.slug,
-      name: styleData.name,
-      description: styleData.description,
-      otherNames: styleData.otherNames || [],
-      characteristics: {
-        bitterness: styleData.bitterness || 0,
-        sweetness: styleData.sweetness || 0,
-        body: styleData.body || 0,
-        aroma: styleData.aroma || 0,
-        sourness: styleData.sourness || 0,
-      },
-      history: styleData.history || '',
-      origin: styleData.origin || '',
-      abv:
-        styleData.abvMin !== null && styleData.abvMax !== null
-          ? [
-              parseFloat(String(styleData.abvMin)),
-              parseFloat(String(styleData.abvMax)),
-            ]
-          : [0, 0],
-      ibu:
-        styleData.ibuMin !== null && styleData.ibuMax !== null
-          ? [
-              parseInt(String(styleData.ibuMin)),
-              parseInt(String(styleData.ibuMax)),
-            ]
-          : [0, 0],
-      srm:
-        styleData.srmMin !== null && styleData.srmMax !== null
-          ? [
-              parseInt(String(styleData.srmMin)),
-              parseInt(String(styleData.srmMax)),
-            ]
-          : [0, 0],
-      siblings: styleData.siblings || [],
-      parents: styleData.parents || [],
-      children: styleData.children || [],
-      servingTemperature:
-        styleData.servingTempMin !== null && styleData.servingTempMax !== null
-          ? [
-              parseInt(String(styleData.servingTempMin)),
-              parseInt(String(styleData.servingTempMax)),
-            ]
-          : [4, 12], // デフォルト値
-    };
+    const formattedStyle = formatBeerStyleData(styleData);
 
     // キャッシュに追加
     beerStyles.push(formattedStyle);
 
     return formattedStyle;
   } catch (error) {
-    console.error(`Error fetching beer style with slug ${slug}:`, error);
+    console.error(`Error in getBeerStyleBySlugFromAPI for ${slug}:`, error);
+    return null;
+  }
+}
+
+/**
+ * すべてのビールスタイルをデータベースから直接取得する
+ * @returns ビールスタイルの配列
+ */
+export async function getAllBeerStylesFromDb(): Promise<BeerStyle[]> {
+  try {
+    // すでにメモリにデータが読み込まれている場合は再取得しない
+    if (beerStyles.length > 0) {
+      console.log('Using in-memory cached beer styles');
+      return beerStyles;
+    }
+    // データベース接続
+    const { db, sqlite } = getDb();
+
+    // スタイルとリレーションを取得
+    const stylesData = await db.query.beerStyles.findMany({
+      with: {
+        otherNames: true,
+        styleRelations: {
+          with: {
+            relatedStyle: true,
+          },
+        },
+      },
+    });
+
+    // DBを閉じる
+    sqlite.close();
+
+    // データを整形
+    const formattedStyles = stylesData.map((style) => {
+      const relations = extractStyleRelations(style.styleRelations);
+      const otherNames = style.otherNames.map((o) => o.name);
+
+      return formatBeerStyleData(style, relations, otherNames);
+    });
+
+    return formattedStyles;
+  } catch (error) {
+    console.error('Error fetching beer styles from DB:', error);
+    return [];
+  }
+}
+
+/**
+ * スラッグでビールスタイルをデータベースから直接取得する
+ * @param slug スタイルのスラッグ
+ * @returns ビールスタイル情報、存在しない場合はnull
+ */
+export async function getBeerStyleBySlugFromDb(
+  slug: string
+): Promise<BeerStyle | null> {
+  try {
+    // まずメモリキャッシュから検索
+    const cachedStyle = beerStyles.find((style) => style.slug === slug);
+    if (cachedStyle) {
+      return cachedStyle;
+    }
+    // データベース接続
+    const { db, sqlite } = getDb();
+
+    // スタイルとリレーションを取得
+    const style = await db.query.beerStyles.findFirst({
+      where: eq(beerStylesTable.slug, slug),
+      with: {
+        otherNames: true,
+        styleRelations: {
+          with: {
+            relatedStyle: true,
+          },
+        },
+      },
+    });
+
+    // DBを閉じる
+    sqlite.close();
+
+    if (!style) {
+      return null;
+    }
+
+    // styleRelationsからrelationTypeに基づいて分類
+    const relations = extractStyleRelations(style.styleRelations);
+    const otherNames = style.otherNames.map((o) => o.name);
+
+    // データを整形して返す
+    return formatBeerStyleData(style, relations, otherNames);
+  } catch (error) {
+    console.error(
+      `Error fetching beer style with slug ${slug} from DB:`,
+      error
+    );
     return null;
   }
 }

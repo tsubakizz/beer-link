@@ -2,7 +2,7 @@ import { beerStyles } from '@/src/app/lib/beer-styles-data';
 
 // ビールスタイル名を取得する関数
 export const getBeerStyleName = (styleId: string): string => {
-  const style = beerStyles.find((style) => style.id === styleId);
+  const style = beerStyles.find((style) => style.slug === styleId);
   return style ? style.name : styleId;
 };
 

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { beerStyles } from '@/src/app/lib/beer-styles-data';
 
 // 新しい型定義
 interface BeerFilterProps {
@@ -18,7 +17,6 @@ interface BeerFilterProps {
 export default function BeerFilter({
   filters,
   onFilterChange,
-  onFilteredBeersChange,
 }: BeerFilterProps) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
@@ -37,19 +35,6 @@ export default function BeerFilter({
     onFilterChange({
       ...filters,
       search: e.target.value,
-    });
-  };
-
-  // ビアスタイルの選択ハンドラー
-  const handleStyleChange = (style: string) => {
-    // スタイルが既に選択されている場合は解除、そうでなければ追加
-    const updatedTypes = filters.beerTypes.includes(style)
-      ? filters.beerTypes.filter((t) => t !== style)
-      : [...filters.beerTypes, style];
-
-    onFilterChange({
-      ...filters,
-      beerTypes: updatedTypes,
     });
   };
 
@@ -135,30 +120,6 @@ export default function BeerFilter({
               />
             </div>
           </div>
-
-          {/* スタイルフィルター */}
-          <div>
-            <label
-              htmlFor="style"
-              className="block mb-2 text-sm font-medium text-amber-900"
-            >
-              ビアスタイル
-            </label>
-            <select
-              id="style"
-              className="select select-bordered w-full bg-white border-amber-200 focus:border-amber-400 text-amber-900"
-              value=""
-              onChange={(e) => handleStyleChange(e.target.value)}
-            >
-              <option value="">すべてのスタイル</option>
-              {beerStyles.map((style) => (
-                <option key={style.id} value={style.id}>
-                  {style.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
           {/* 並び替え */}
           <div>
             <label

@@ -22,7 +22,7 @@ interface LoadingSpinnerProps {
 
   /**
    * スピナーを表示する最低時間（ミリ秒）
-   * @default 700 (0.7秒)
+   * @default 400 (0.7秒)
    */
   minDisplayTime?: number;
 
@@ -47,7 +47,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   size = 'medium',
   message = 'ロード中...',
   className = '',
-  minDisplayTime = 700,
+  minDisplayTime = 400,
   initialLoading = true,
   onLoadingComplete,
 }) => {

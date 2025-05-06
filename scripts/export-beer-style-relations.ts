@@ -34,15 +34,15 @@ const db = getFirestore(app);
 // ビールスタイルの別名の型定義
 interface BeerStyleOtherName {
   id: number; // レコードのID
-  styleId: number; // 参照元のスタイルID
+  styleId: string; // 参照元のスタイルスラッグ
   name: string; // 別名
 }
 
 // ビールスタイルの関連性の型定義
 interface BeerStyleRelation {
   id: number; // レコードのID
-  styleId: number; // 参照元のスタイルID
-  relatedStyleId: number; // 関連先のスタイルID
+  styleId: string; // 参照元のスタイルスラッグ
+  relatedStyleId: string; // 関連先のスタイルスラッグ
   relationType: number; // 関係タイプ（1=兄弟関係、2=親関係、3=子関係）
 }
 
@@ -146,7 +146,7 @@ async function getBeerStyleOtherNames(
         names.forEach((name) => {
           otherNames.push({
             id: otherId++, // 連番IDを割り当て
-            styleId: style.id,
+            styleId: style.slug,
             name: name,
           });
         });
@@ -168,12 +168,6 @@ async function getBeerStyleRelations(
 
   const relations: BeerStyleRelation[] = [];
 
-  // スラッグからIDを検索する関数
-  const getIdFromSlug = (slug: string): number | undefined => {
-    const found = styleMappings.find((style) => style.slug === slug);
-    return found?.id;
-  };
-
   // Firestoreからビールスタイルごとの関連データを取得
   for (const style of styleMappings) {
     const styleDoc = doc(db, 'beer-styles', style.slug);
@@ -185,45 +179,36 @@ async function getBeerStyleRelations(
       // 兄弟関係の処理
       if (data.siblings && Array.isArray(data.siblings)) {
         data.siblings.forEach((siblingSlug) => {
-          const relatedId = getIdFromSlug(siblingSlug);
-          if (relatedId) {
-            relations.push({
-              id: relations.length + 1, // IDを生成
-              styleId: style.id,
-              relatedStyleId: relatedId,
-              relationType: 1, // 1=兄弟関係
-            });
-          }
+          relations.push({
+            id: relations.length + 1, // IDを生成
+            styleId: style.slug,
+            relatedStyleId: siblingSlug,
+            relationType: 1, // 1=兄弟関係
+          });
         });
       }
 
       // 親関係の処理
       if (data.parents && Array.isArray(data.parents)) {
         data.parents.forEach((parentSlug) => {
-          const relatedId = getIdFromSlug(parentSlug);
-          if (relatedId) {
-            relations.push({
-              id: relations.length + 1, // IDを生成
-              styleId: style.id,
-              relatedStyleId: relatedId,
-              relationType: 2, // 2=親関係
-            });
-          }
+          relations.push({
+            id: relations.length + 1, // IDを生成
+            styleId: style.slug,
+            relatedStyleId: parentSlug,
+            relationType: 2, // 2=親関係
+          });
         });
       }
 
       // 子関係の処理
       if (data.children && Array.isArray(data.children)) {
         data.children.forEach((childSlug) => {
-          const relatedId = getIdFromSlug(childSlug);
-          if (relatedId) {
-            relations.push({
-              id: relations.length + 1, // IDを生成
-              styleId: style.id,
-              relatedStyleId: relatedId,
-              relationType: 3, // 3=子関係
-            });
-          }
+          relations.push({
+            id: relations.length + 1, // IDを生成
+            styleId: style.slug,
+            relatedStyleId: childSlug,
+            relationType: 3, // 3=子関係
+          });
         });
       }
     }

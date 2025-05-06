@@ -1,9 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { BeerStyle } from '@/src/app/lib/beer-styles-data';
+import { BeerStyle } from '@/src/app/types/beer-style';
 import StyleCard from './StyleCard';
-import EmptyStyleResults from './EmptyStyleResults';
 import Pagination from '@/src/app/components/beers/Pagination';
 
 interface StyleResultsProps {
@@ -66,7 +65,7 @@ export default function StyleResults({
       >
         {currentItems.map((style, index) => (
           <StyleCard
-            key={style.id}
+            key={style.slug}
             style={style}
             index={index}
             styleImagePlaceholders={getStyleColor(style)}
@@ -76,7 +75,17 @@ export default function StyleResults({
 
       {/* 結果が0件の場合 */}
       {filteredStyles.length === 0 && (
-        <EmptyStyleResults resetFilters={resetFilters} />
+        <div className="mt-8 text-center">
+          <p className="text-lg text-amber-800 mb-4">
+            条件に一致するビールスタイルがありません
+          </p>
+          <button
+            onClick={resetFilters}
+            className="btn bg-amber-100 text-amber-900 border-amber-300 hover:bg-amber-200"
+          >
+            フィルターをリセット
+          </button>
+        </div>
       )}
 
       {/* 下部ページネーション */}

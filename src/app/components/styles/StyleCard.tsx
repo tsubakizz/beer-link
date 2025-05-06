@@ -2,28 +2,26 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { BeerStyle, getBeerStyleCard } from '@/src/app/lib/beer-styles-data';
+import { BeerStyle } from '@/src/app/types/beer-style';
+import { formatAbv, formatIbu } from '@/src/app/lib/beer-styles-decorator';
 import { FaThermometerHalf } from 'react-icons/fa';
 import { GiHops } from 'react-icons/gi';
 
-interface StyleCardProps {
+interface styleProps {
   style: BeerStyle;
   index: number;
   styleImagePlaceholders: string;
 }
 
-export default function StyleCard({
+export default function style({
   style,
   index,
   styleImagePlaceholders,
-}: StyleCardProps) {
-  // ビールスタイルデータをカード表示用に変換
-  const styleCard = getBeerStyleCard(style);
-
+}: styleProps) {
   return (
-    <Link href={`/styles/${style.id}`} className="block">
+    <Link href={`/styles/${style.slug}`} className="block">
       <motion.div
-        key={style.id}
+        key={style.slug}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{
@@ -45,36 +43,38 @@ export default function StyleCard({
 
         <div className="card-beer-body p-4">
           <h2 className="card-beer-title text-amber-900 text-xl font-bold mb-2">
-            {styleCard.name}
+            {style.name}
           </h2>
 
           <p className="text-amber-800 mb-1 line-clamp-2 text-sm">
-            {styleCard.shortDescription}
+            {style.shortDescription}
           </p>
 
           {/* 重要な特性だけをシンプルに表示 */}
           <div className="flex flex-wrap gap-2 mb-3">
             <div className="beer-stat flex items-center gap-1 text-xs bg-amber-50 px-2 py-1 rounded-full">
               <FaThermometerHalf className="text-amber-600" />
-              <span className="whitespace-nowrap">ABV {styleCard.abv}</span>
+              <span className="whitespace-nowrap">
+                ABV {formatAbv(style.abv)}
+              </span>
             </div>
 
             <div className="beer-stat flex items-center gap-1 text-xs bg-amber-50 px-2 py-1 rounded-full">
               <GiHops className="text-amber-600" />
-              <span>IBU {styleCard.ibu}</span>
+              <span>IBU {formatIbu(style.ibu)}</span>
             </div>
 
-            {styleCard.characteristics.bitterness > 3 && (
+            {style.characteristics.bitterness > 3 && (
               <div className="beer-stat text-xs bg-amber-50 px-2 py-1 rounded-full">
                 苦め
               </div>
             )}
-            {styleCard.characteristics.sweetness > 3 && (
+            {style.characteristics.sweetness > 3 && (
               <div className="beer-stat text-xs bg-amber-50 px-2 py-1 rounded-full">
                 甘め
               </div>
             )}
-            {styleCard.characteristics.body > 3 && (
+            {style.characteristics.body > 3 && (
               <div className="beer-stat text-xs bg-amber-50 px-2 py-1 rounded-full">
                 重め
               </div>

@@ -1,11 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import { beers } from '@/src/app/lib/beers-data';
-import { beerStyles } from '@/src/app/lib/beer-styles-data';
-import { breweries } from '@/src/app/lib/breweries-data';
+import { Beer } from '@/src/app/lib/beers-data';
+import { BeerStyle } from '@/src/app/types/beer-style';
 import BeerDetailCard from '@/src/app/components/beers/BeerDetailCard';
 import FlavorProfileCard from '@/src/app/components/beers/FlavorProfileCard';
 import ReviewsSection from '@/src/app/components/beers/ReviewsSection';
@@ -13,27 +10,17 @@ import SimilarBeersCard from '@/src/app/components/beers/SimilarBeersCard';
 
 interface BeerDetailClientProps {
   id: string;
+  beer: Beer;
+  style?: BeerStyle | null;
+  similarBeers: Beer[];
 }
 
-export default function BeerDetailClient({ id }: BeerDetailClientProps) {
-  const beer = beers.find((b) => b.id === id);
-
-  // ビールが見つからない場合は404ページを表示
-  if (!beer) {
-    notFound();
-  }
-
-  // ビールのスタイル情報を取得
-  const style = beerStyles.find((s) => s.id === beer.style);
-
-  // ブルワリー情報を取得
-  const brewery = breweries.find((b) => b.name === beer.brewery);
-
-  // 類似のビールを取得（同じスタイルのビール）
-  const similarBeers = beers
-    .filter((b) => b.style === beer.style && b.id !== beer.id)
-    .slice(0, 3);
-
+export default function BeerDetailClient({
+  id,
+  beer,
+  style,
+  similarBeers,
+}: BeerDetailClientProps) {
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="mb-6">

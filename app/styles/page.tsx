@@ -1,8 +1,4 @@
-import { Suspense } from 'react';
-import { BeerStyle, fetchBeerStyles } from '@/src/app/lib/beer-styles-data';
-import LoadingSpinner from '@/src/app/components/LoadingSpinner';
-
-// インポートするコンポーネント
+import { getAllBeerStylesFromDb } from '@/src/app/lib/beer-styles-data';
 import HeroSection from '@/src/app/components/HeroSection';
 import { Metadata } from 'next';
 import BeerStyleClient from '@/src/app/components/styles/BeerStyleClient';
@@ -18,19 +14,13 @@ export const metadata: Metadata = {
 export const dynamic = 'force-static';
 export const revalidate = 3600; // 1時間ごとにデータを再検証
 
-// サーバーサイドでデータを事前取得
-export async function generateStaticParams() {
-  await fetchBeerStyles();
-  return [];
-}
+// 本番環境ではエッジランタイム、開発環境ではNodeJSランタイムを使用
+export const runtime =
+  process.env.NODE_ENV === 'development' ? 'nodejs' : 'edge';
 
-// メインコンポーネント（SSG対応）
-export default async function BeerStylesPage() {
-  // サーバーサイドでデータを取得
-  const styles = await fetchBeerStyles();
-
-  // スタイルごとの特別な色の定義をオブジェクトとして渡す
-  const specialStyleColors = {
+// サーバーサイドでビアスタイルの色を決定する関数
+function getSpecialStyleColors() {
+  return {
     'fruit-beer': 'bg-pink-200',
     'sour-ale': 'bg-rose-300',
     'berliner-weisse': 'bg-rose-200',
@@ -39,6 +29,13 @@ export default async function BeerStylesPage() {
     kriek: 'bg-red-400',
     framboise: 'bg-pink-300',
   };
+}
+
+// メインコンポーネント（SSG対応）
+export default async function BeerStylesPage() {
+  // サーバーサイドで直接DBからスタイルデータを取得
+  const styles = await getAllBeerStylesFromDb();
+  const specialStyleColors = getSpecialStyleColors();
 
   return (
     <div className="container mx-auto py-8 px-4 sm:px-6 relative overflow-hidden">
@@ -48,7 +45,7 @@ export default async function BeerStylesPage() {
         description="これってどんなビール？ 知りたいスタイルが見つかる検索ガイド"
       />
 
-      {/* クライアントサイドのフィルタリングとページネーションを持つコンポーネント */}
+      {/* クライアントサイドのインタラクティブコンポーネントにデータを渡す */}
       <BeerStyleClient
         initialStyles={styles}
         specialStyleColors={specialStyleColors}

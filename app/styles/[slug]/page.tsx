@@ -2,7 +2,7 @@ import React from 'react';
 import type { Metadata, ResolvingMetadata } from 'next';
 import BeerStyleDetail from '@/src/app/components/styles/BeerStyleDetail';
 import {
-  getBeerStyleBySlugFromDb,
+  getBeerStyleBySlugFromAPI,
 } from '@/src/app/lib/beer-styles-data';
 
 // メタデータの生成
@@ -10,7 +10,7 @@ export async function generateMetadata(
   { params }: { params: { slug: string } },
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const style = await getBeerStyleBySlugFromDb(params.slug);
+  const style = await getBeerStyleBySlugFromAPI(params.slug);
 
   if (!style) {
     return {

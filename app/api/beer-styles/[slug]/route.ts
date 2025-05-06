@@ -31,6 +31,7 @@ export async function GET(
     try {
       // Cloudflare KV が利用可能かどうかをチェック
       if (kvCache) {
+        console.log('Checking KV cache for beer style data...');
         cachedData = await kvCache.get(STYLE_CACHE_KEY, { type: 'json' });
         if (cachedData) {
           console.log(`Returning beer style ${slug} from Cloudflare KV cache`);

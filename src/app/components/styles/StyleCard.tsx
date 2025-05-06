@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { BeerStyle, getBeerStyleCard } from '@/src/app/lib/beer-styles-data';
-import { FaBeer, FaThermometerHalf } from 'react-icons/fa';
+import { FaThermometerHalf } from 'react-icons/fa';
 import { GiHops } from 'react-icons/gi';
 
 interface StyleCardProps {
@@ -30,7 +30,7 @@ export default function StyleCard({
           duration: 0.5,
           delay: 0.1 + index * 0.05,
         }}
-        className="card-beer bg-white hover:shadow-xl transition-all duration-300 cursor-pointer h-full"
+        className="card-beer bg-white hover:shadow-xl hover:translate-y-[-4px] transition-all duration-300 cursor-pointer h-full relative group"
       >
         {/* スタイル画像（プレースホルダー） */}
         <div className="card-beer-header">
@@ -53,7 +53,7 @@ export default function StyleCard({
           </p>
 
           {/* 重要な特性だけをシンプルに表示 */}
-          <div className="flex flex-wrap gap-2 mb-1">
+          <div className="flex flex-wrap gap-2 mb-3">
             <div className="beer-stat flex items-center gap-1 text-xs bg-amber-50 px-2 py-1 rounded-full">
               <FaThermometerHalf className="text-amber-600" />
               <span className="whitespace-nowrap">ABV {styleCard.abv}</span>
@@ -81,19 +81,14 @@ export default function StyleCard({
             )}
           </div>
 
-          <div className="card-actions justify-end">
-            <button
-              className="btn btn-sm btn-beer-outline"
-              onClick={(e) => {
-                e.stopPropagation();
-                window.location.href = `/beers?style=${style.id}`;
-              }}
-            >
-              <FaBeer className="mr-1" />
-              詳しく見る
-            </button>
+          {/* クリック可能であることを示すインジケーター */}
+          <div className="flex items-center justify-end text-amber-600 group-hover:text-amber-800 text-sm mt-2 transition-colors">
+            <span>詳細を見る</span>
           </div>
         </div>
+
+        {/* ホバー時に表示される装飾エフェクト */}
+        <div className="absolute inset-0 border-2 border-transparent group-hover:border-amber-200 rounded-lg pointer-events-none transition-colors duration-300"></div>
       </motion.div>
     </Link>
   );

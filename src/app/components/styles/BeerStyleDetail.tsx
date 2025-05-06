@@ -5,22 +5,18 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { beers, Beer } from '@/src/app/lib/beers-data';
-import { beerStyles, BeerStyle } from '@/src/app/lib/beer-styles-data';
-import { db } from '@/src/app/lib/firebase';
 import {
-  collection,
-  getDocs,
-  query,
-  where,
-  DocumentData,
-} from 'firebase/firestore';
+  BeerStyle,
+  getBeerStyleBySlug,
+  fetchBeerStyles,
+} from '@/src/app/lib/beer-styles-data';
+import LoadingSpinner from '@/src/app/components/LoadingSpinner';
 
 // コンポーネントのインポート
 import StyleRadarChart from './StyleRadarChart';
 import StyleCharacteristics from './StyleCharacteristics';
 import RelatedStyles from './RelatedStyles';
 import ExampleBeers from './ExampleBeers';
-import LoadingSpinner from '@/src/app/components/LoadingSpinner';
 
 interface BeerStyleDetailProps {
   id: string;
@@ -28,38 +24,35 @@ interface BeerStyleDetailProps {
 
 // スタイルイメージのプレースホルダー
 const getStyleColorBySRM = (style: BeerStyle): string => {
-  // SRMの範囲の中央値を計算（最小値と最大値の平均）
   const avgSRM = style.srm ? (style.srm[0] + style.srm[1]) / 2 : 0;
 
-  // SRMの値に基づいて色を返す（実際のビールの色に近い色）
   if (avgSRM < 2) {
-    return 'bg-yellow-50'; // 非常に淡い色（ピルスナーライト、ライトラガー等）
+    return 'bg-yellow-50';
   } else if (avgSRM < 4) {
-    return 'bg-yellow-100'; // 淡い黄金色（ピルスナー、ヘレス、ヴィットビア等）
+    return 'bg-yellow-100';
   } else if (avgSRM < 6) {
-    return 'bg-yellow-200'; // 黄金色（ブロンドエール、ケルシュ等）
+    return 'bg-yellow-200';
   } else if (avgSRM < 8) {
-    return 'bg-amber-100'; // 淡い琥珀色（ペールエール等）
+    return 'bg-amber-100';
   } else if (avgSRM < 10) {
-    return 'bg-amber-200'; // やや濃い琥珀色（アンバーエール、ウィンナラガー等）
+    return 'bg-amber-200';
   } else if (avgSRM < 14) {
-    return 'bg-amber-300'; // 琥珀色（ESB、ボック等）
+    return 'bg-amber-300';
   } else if (avgSRM < 17) {
-    return 'bg-amber-400'; // 濃い琥珀色（デュッベル、アンバーエール等）
+    return 'bg-amber-400';
   } else if (avgSRM < 20) {
-    return 'bg-amber-500'; // 明るい茶色（ブラウンエール等）
+    return 'bg-amber-500';
   } else if (avgSRM < 25) {
-    return 'bg-amber-600'; // 茶色（ブラウンエール、デュンケル等）
+    return 'bg-amber-600';
   } else if (avgSRM < 30) {
-    return 'bg-amber-700'; // 濃い茶色（ポーター等）
+    return 'bg-amber-700';
   } else if (avgSRM < 35) {
-    return 'bg-amber-800'; // 暗褐色（スタウト等）
+    return 'bg-amber-800';
   } else {
-    return 'bg-amber-900'; // ほぼ黒色（インペリアルスタウト、シュヴァルツビア等）
+    return 'bg-amber-900';
   }
 };
 
-// 特定のスタイルには特別な色を設定（SRM以外の特徴を強調したい場合）
 const specialStyleColors: { [key: string]: string } = {
   'fruit-beer': 'bg-pink-200',
   'sour-ale': 'bg-rose-300',
@@ -70,57 +63,8 @@ const specialStyleColors: { [key: string]: string } = {
   framboise: 'bg-pink-300',
 };
 
-// スタイルに対して色を決定する関数
 const getStyleColor = (style: BeerStyle): string => {
-  // 特別なスタイルがあればそれを返す、なければSRMベースの色を返す
-  return specialStyleColors[style.id] || getStyleColorBySRM(style);
-};
-
-// FirestoreのデータをBeerStyle型に変換する関数
-const convertToFirestoreBeerStyle = (doc: DocumentData): BeerStyle => {
-  const data = doc.data();
-  return {
-    id: doc.id,
-    name: data.name,
-    description: data.description,
-    abv: data.abv || null,
-    ibu: data.ibu || null,
-    srm: data.srm || null,
-    other_name: data.other_name || [],
-    origin: data.origin || null,
-    history: data.history || null,
-    servingTemperature: data.servingTemperature || null,
-    characteristics: data.characteristics || {
-      bitterness: 0,
-      sweetness: 0,
-      sourness: 0,
-      hoppiness: 0,
-      maltiness: 0,
-      fruitiness: 0,
-    },
-    parents: data.parents || [],
-    children: data.children || [],
-    siblings: data.siblings || [],
-  };
-};
-
-// FirestoreのデータをBeer型に変換する関数
-const convertToFirestoreBeer = (doc: DocumentData): Beer => {
-  const data = doc.data();
-  return {
-    id: doc.id,
-    name: data.name,
-    brewery: data.brewery,
-    style: data.style,
-    abv: data.abv,
-    ibu: data.ibu,
-    description: data.description,
-    imageUrl: data.imageUrl || null,
-    rating: data.rating || 0,
-    reviewCount: data.reviewCount || 0,
-    flavors: data.flavors || [],
-    country: data.country || null,
-  };
+  return specialStyleColors[style.slug] || getStyleColorBySRM(style);
 };
 
 // スタイル詳細のメインコンテンツコンポーネント - Suspenseのターゲットにするため分離
@@ -143,147 +87,43 @@ function BeerStyleDetailContent({ id }: BeerStyleDetailProps) {
       setIsLoading(true);
 
       try {
-        // Firestoreからスタイル情報を取得
-        const styleRef = collection(db, 'beerStyles');
-        const styleQuery = query(styleRef, where('id', '==', id));
-        const styleSnapshot = await getDocs(styleQuery);
+        const styleData = await getBeerStyleBySlug(id);
 
-        // スタイルが見つからない場合
-        if (styleSnapshot.empty) {
-          // バックアップとしてローカルデータを確認
-          const localStyle = beerStyles.find((s) => s.id === id);
-          if (!localStyle) {
-            notFound();
-            return;
-          }
-          setStyle(localStyle);
-
-          // このスタイルの代表的なビールを最大3つ取得（ローカルデータから）
-          const styleBeers = beers
-            .filter((beer) => beer.style === id)
-            .slice(0, 3);
-
-          setExampleBeers(styleBeers);
-
-          // 関連スタイルを取得（ローカルデータから）
-          const parents = localStyle.parents
-            ?.map((parentId) => beerStyles.find((s) => s.id === parentId))
-            .filter(Boolean) as BeerStyle[];
-
-          const children = localStyle.children
-            ?.map((childId) => beerStyles.find((s) => s.id === childId))
-            .filter(Boolean) as BeerStyle[];
-
-          const siblings = localStyle.siblings
-            ?.map((siblingId) => beerStyles.find((s) => s.id === siblingId))
-            .filter(Boolean) as BeerStyle[];
-
-          setRelatedStyles({
-            parentStyles: parents || [],
-            childStyles: children || [],
-            siblingStyles: siblings || [],
-          });
-        } else {
-          // Firestoreから取得したデータを使用
-          const styleDoc = styleSnapshot.docs[0];
-          const styleData = convertToFirestoreBeerStyle(styleDoc);
-          setStyle(styleData);
-
-          // このスタイルの代表的なビールをFirestoreから取得
-          const beerRef = collection(db, 'beers');
-          const beerQuery = query(beerRef, where('style', '==', id));
-          const beerSnapshot = await getDocs(beerQuery);
-
-          const firestoreBeers = beerSnapshot.docs
-            .map(convertToFirestoreBeer)
-            .slice(0, 3);
-
-          setExampleBeers(firestoreBeers);
-
-          // 関連スタイルを取得
-          if (
-            styleData.parents?.length ||
-            styleData.children?.length ||
-            styleData.siblings?.length
-          ) {
-            const parentIds = styleData.parents || [];
-            const childIds = styleData.children || [];
-            const siblingIds = styleData.siblings || [];
-
-            // 親スタイル取得
-            const parentStyles: BeerStyle[] = [];
-            if (parentIds.length > 0) {
-              const parentQuery = query(styleRef, where('id', 'in', parentIds));
-              const parentSnapshot = await getDocs(parentQuery);
-              parentStyles.push(
-                ...parentSnapshot.docs.map(convertToFirestoreBeerStyle)
-              );
-            }
-
-            // 子スタイル取得
-            const childStyles: BeerStyle[] = [];
-            if (childIds.length > 0) {
-              const childQuery = query(styleRef, where('id', 'in', childIds));
-              const childSnapshot = await getDocs(childQuery);
-              childStyles.push(
-                ...childSnapshot.docs.map(convertToFirestoreBeerStyle)
-              );
-            }
-
-            // 兄弟スタイル取得
-            const siblingStyles: BeerStyle[] = [];
-            if (siblingIds.length > 0) {
-              const siblingQuery = query(
-                styleRef,
-                where('id', 'in', siblingIds)
-              );
-              const siblingSnapshot = await getDocs(siblingQuery);
-              siblingStyles.push(
-                ...siblingSnapshot.docs.map(convertToFirestoreBeerStyle)
-              );
-            }
-
-            setRelatedStyles({
-              parentStyles,
-              childStyles,
-              siblingStyles,
-            });
-          }
+        if (!styleData) {
+          notFound();
+          return;
         }
+
+        setStyle(styleData);
+
+        const allStyles = await fetchBeerStyles();
+
+        const parents = styleData.parents
+          ?.map((parentSlug) => allStyles.find((s) => s.slug === parentSlug))
+          .filter(Boolean) as BeerStyle[];
+
+        const children = styleData.children
+          ?.map((childSlug) => allStyles.find((s) => s.slug === childSlug))
+          .filter(Boolean) as BeerStyle[];
+
+        const siblings = styleData.siblings
+          ?.map((siblingSlug) => allStyles.find((s) => s.slug === siblingSlug))
+          .filter(Boolean) as BeerStyle[];
+
+        setRelatedStyles({
+          parentStyles: parents || [],
+          childStyles: children || [],
+          siblingStyles: siblings || [],
+        });
+
+        const styleBeers = beers
+          .filter((beer) => beer.style === id)
+          .slice(0, 3);
+
+        setExampleBeers(styleBeers);
       } catch (error) {
         console.error('スタイルデータの取得中にエラーが発生しました:', error);
-
-        // エラー時にはローカルデータでフォールバック
-        const localStyle = beerStyles.find((s) => s.id === id);
-        if (localStyle) {
-          setStyle(localStyle);
-
-          const styleBeers = beers
-            .filter((beer) => beer.style === id)
-            .slice(0, 3);
-
-          setExampleBeers(styleBeers);
-
-          const parents = localStyle.parents
-            ?.map((parentId) => beerStyles.find((s) => s.id === parentId))
-            .filter(Boolean) as BeerStyle[];
-
-          const children = localStyle.children
-            ?.map((childId) => beerStyles.find((s) => s.id === childId))
-            .filter(Boolean) as BeerStyle[];
-
-          const siblings = localStyle.siblings
-            ?.map((siblingId) => beerStyles.find((s) => s.id === siblingId))
-            .filter(Boolean) as BeerStyle[];
-
-          setRelatedStyles({
-            parentStyles: parents || [],
-            childStyles: children || [],
-            siblingStyles: siblings || [],
-          });
-        } else {
-          notFound();
-        }
+        notFound();
       } finally {
         setIsLoading(false);
       }
@@ -307,7 +147,6 @@ function BeerStyleDetailContent({ id }: BeerStyleDetailProps) {
     return notFound();
   }
 
-  // スタイルの歴史情報（ない場合はデフォルトのテキスト）
   const styleHistory = {
     history:
       style.history || 'このビールスタイルの詳細な歴史情報は現在準備中です。',
@@ -316,7 +155,6 @@ function BeerStyleDetailContent({ id }: BeerStyleDetailProps) {
 
   return (
     <div className="container mx-auto py-8 px-4 sm:px-6 relative overflow-hidden">
-      {/* ヒーローセクション */}
       <div className="mb-6">
         <Link
           href="/styles"
@@ -338,9 +176,7 @@ function BeerStyleDetailContent({ id }: BeerStyleDetailProps) {
         </Link>
       </div>
 
-      {/* スタイル情報のメイン部分 */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
-        {/* 左カラム: スタイル基本情報と特性 */}
         <div className="lg:col-span-1">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -348,7 +184,6 @@ function BeerStyleDetailContent({ id }: BeerStyleDetailProps) {
             transition={{ duration: 0.5 }}
             className="bg-white rounded-xl shadow-lg overflow-hidden mb-6"
           >
-            {/* スタイル画像（プレースホルダー） */}
             <div
               className={`relative h-24 ${getStyleColor(
                 style
@@ -364,9 +199,9 @@ function BeerStyleDetailContent({ id }: BeerStyleDetailProps) {
                 {style.name}
               </h2>
 
-              {style.other_name && (
+              {style.otherNames && style.otherNames.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-3">
-                  {style.other_name.map((name, i) => (
+                  {style.otherNames.map((name, i) => (
                     <span key={i} className="beer-badge">
                       {name}
                     </span>
@@ -428,7 +263,6 @@ function BeerStyleDetailContent({ id }: BeerStyleDetailProps) {
             </div>
           </motion.div>
 
-          {/* スタイルの特性レーダーチャート */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -441,7 +275,6 @@ function BeerStyleDetailContent({ id }: BeerStyleDetailProps) {
             <StyleRadarChart characteristics={style.characteristics} />
           </motion.div>
 
-          {/* バーでも表示 */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -455,9 +288,7 @@ function BeerStyleDetailContent({ id }: BeerStyleDetailProps) {
           </motion.div>
         </div>
 
-        {/* 右カラム: 詳細な説明、歴史、関連スタイル */}
         <div className="lg:col-span-2">
-          {/* 詳細な説明 */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -472,7 +303,6 @@ function BeerStyleDetailContent({ id }: BeerStyleDetailProps) {
             </div>
           </motion.div>
 
-          {/* 歴史 */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -489,7 +319,6 @@ function BeerStyleDetailContent({ id }: BeerStyleDetailProps) {
             </div>
           </motion.div>
 
-          {/* 関連スタイル - 関連スタイルがない場合は表示しない */}
           {(relatedStyles.parentStyles.length > 0 ||
             relatedStyles.childStyles.length > 0 ||
             relatedStyles.siblingStyles.length > 0) && (
@@ -507,7 +336,6 @@ function BeerStyleDetailContent({ id }: BeerStyleDetailProps) {
             </motion.div>
           )}
 
-          {/* 代表的なビール - リストが空の場合は表示しない */}
           {exampleBeers.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -521,7 +349,6 @@ function BeerStyleDetailContent({ id }: BeerStyleDetailProps) {
         </div>
       </div>
 
-      {/* 他のスタイルを見るセクション */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -541,7 +368,6 @@ function BeerStyleDetailContent({ id }: BeerStyleDetailProps) {
 
 // ビールスタイル詳細ページコンポーネント
 export default function BeerStyleDetail({ id }: BeerStyleDetailProps) {
-  // メインのコンテンツコンポーネントをSuspenseで囲む
   return (
     <Suspense
       fallback={

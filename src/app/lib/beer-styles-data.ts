@@ -1,12 +1,37 @@
-import { db } from './firebase';
-import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
+// APIから返されるビールスタイルの型
+interface ApiStyle {
+  id: number;
+  slug: string;
+  name: string;
+  description: string;
+  bitterness: number;
+  sweetness: number;
+  body: number;
+  aroma: number;
+  sourness: number;
+  history: string;
+  origin: string;
+  abvMin: number;
+  abvMax: number;
+  ibuMin: number;
+  ibuMax: number;
+  srmMin: number;
+  srmMax: number;
+  servingTempMin: number;
+  servingTempMax: number;
+  otherNames: string[];
+  siblings: string[];
+  parents: string[];
+  children: string[];
+}
 
 // ビールスタイルの定義
 export type BeerStyle = {
-  id: string;
+  id: number; // 数値のID
+  slug: string; // スラッグ（URLフレンドリーな識別子）
   name: string;
   description: string;
-  other_name?: string[]; // 検索性向上のための別名（任意）
+  otherNames: string[]; // 検索性向上のための別名
   characteristics: {
     bitterness: number; // 1-5のスケール
     sweetness: number; // 1-5のスケール
@@ -27,7 +52,8 @@ export type BeerStyle = {
 
 // カード表示用の簡易ビールスタイル定義
 export type BeerStyleCard = {
-  id: string;
+  id: number;
+  slug: string;
   name: string;
   shortDescription: string; // 短い説明
   characteristics: {
@@ -50,6 +76,7 @@ export function getBeerStyleCard(style: BeerStyle): BeerStyleCard {
 
   return {
     id: style.id,
+    slug: style.slug,
     name: style.name,
     shortDescription,
     characteristics: {
@@ -62,31 +89,89 @@ export function getBeerStyleCard(style: BeerStyle): BeerStyleCard {
   };
 }
 
-// ビールスタイルのデータを保持する配列
+// 自ホストのAPIのベースURL取得
+function getApiBaseUrl() {
+  // ブラウザ環境では相対パスを使用
+  if (typeof window !== 'undefined') {
+    return '';
+  }
+
+  // サーバー環境での実行時は絶対URLが必要
+  // 環境変数から取得（デフォルトはlocalhost）
+  return process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
+}
+
+// ビールスタイルのデータを保持する配列（メモリキャッシュ用）
 export const beerStyles: BeerStyle[] = [];
 
-// Firestoreからビールスタイルを取得する関数
+// APIからビールスタイルを取得する関数
 export async function fetchBeerStyles(): Promise<BeerStyle[]> {
   try {
-    // すでにデータが読み込まれている場合は再取得しない
+    // すでにメモリにデータが読み込まれている場合は再取得しない
     if (beerStyles.length > 0) {
+      console.log('Using in-memory cached beer styles');
       return beerStyles;
     }
 
-    const stylesCollection = collection(db, 'beerStyles');
-    const stylesSnapshot = await getDocs(stylesCollection);
+    // API経由でデータを取得（D1データベースから取得）
+    const apiUrl = `${getApiBaseUrl()}/api/beer-styles`;
+    console.log('Fetching beer styles from:', apiUrl);
+    const response = await fetch(apiUrl);
 
-    // スナップショットからドキュメントを配列に変換
-    stylesSnapshot.forEach((doc) => {
-      const styleData = doc.data() as BeerStyle;
-      styleData.id = doc.id; // ドキュメントIDをスタイルIDとして設定
-      beerStyles.push(styleData);
-    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch beer styles from D1 database');
+    }
 
-    console.log(`Loaded ${beerStyles.length} beer styles from Firestore`);
+    const styles = (await response.json()) as ApiStyle[];
+
+    // D1から取得したデータをBeerStyle形式に変換
+    const formattedStyles = styles.map((style: ApiStyle) => ({
+      id: style.id,
+      slug: style.slug,
+      name: style.name,
+      description: style.description,
+      otherNames: style.otherNames || [],
+      characteristics: {
+        bitterness: style.bitterness || 0,
+        sweetness: style.sweetness || 0,
+        body: style.body || 0,
+        aroma: style.aroma || 0,
+        sourness: style.sourness || 0,
+      },
+      history: style.history || '',
+      origin: style.origin || '',
+      abv:
+        style.abvMin !== null && style.abvMax !== null
+          ? [parseFloat(String(style.abvMin)), parseFloat(String(style.abvMax))]
+          : [0, 0],
+      ibu:
+        style.ibuMin !== null && style.ibuMax !== null
+          ? [parseInt(String(style.ibuMin)), parseInt(String(style.ibuMax))]
+          : [0, 0],
+      srm:
+        style.srmMin !== null && style.srmMax !== null
+          ? [parseInt(String(style.srmMin)), parseInt(String(style.srmMax))]
+          : [0, 0],
+      siblings: style.siblings || [],
+      parents: style.parents || [],
+      children: style.children || [],
+      servingTemperature:
+        style.servingTempMin !== null && style.servingTempMax !== null
+          ? [
+              parseInt(String(style.servingTempMin)),
+              parseInt(String(style.servingTempMax)),
+            ]
+          : [4, 12], // デフォルト値
+    }));
+
+    // メモリキャッシュをクリアして新しいデータを追加
+    beerStyles.length = 0;
+    beerStyles.push(...formattedStyles);
+
+    console.log(`Loaded ${beerStyles.length} beer styles from D1 database`);
     return beerStyles;
   } catch (error) {
-    console.error('Error fetching beer styles from Firestore:', error);
+    console.error('Error fetching beer styles:', error);
     return [];
   }
 }
@@ -97,29 +182,92 @@ export async function getAllBeerStyleCards(): Promise<BeerStyleCard[]> {
   return styles.map((style) => getBeerStyleCard(style));
 }
 
-// IDによってビールスタイルを取得する関数
-export async function getBeerStyleById(id: string): Promise<BeerStyle | null> {
+// スラッグによってビールスタイルを取得する関数
+export async function getBeerStyleBySlug(
+  slug: string
+): Promise<BeerStyle | null> {
   try {
     // まずメモリキャッシュから検索
-    const cachedStyle = beerStyles.find((style) => style.id === id);
+    const cachedStyle = beerStyles.find((style) => style.slug === slug);
     if (cachedStyle) {
       return cachedStyle;
     }
 
-    // キャッシュにない場合は直接Firestoreから取得
-    const styleDoc = await getDoc(doc(db, 'beerStyles', id));
-    if (styleDoc.exists()) {
-      const styleData = styleDoc.data() as BeerStyle;
-      styleData.id = styleDoc.id;
-
-      // キャッシュに追加
-      beerStyles.push(styleData);
-
-      return styleData;
+    // スタイルリストをロードしてから再検索
+    await fetchBeerStyles();
+    const style = beerStyles.find((style) => style.slug === slug);
+    if (style) {
+      return style;
     }
-    return null;
+
+    // それでも見つからない場合は個別に取得
+    const apiUrl = `${getApiBaseUrl()}/api/beer-styles/${slug}`;
+    const response = await fetch(apiUrl);
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null;
+      }
+      throw new Error(`Failed to fetch beer style with slug ${slug}`);
+    }
+
+    const styleData = (await response.json()) as ApiStyle;
+
+    // データ形式を変換
+    const formattedStyle: BeerStyle = {
+      id: styleData.id,
+      slug: styleData.slug,
+      name: styleData.name,
+      description: styleData.description,
+      otherNames: styleData.otherNames || [],
+      characteristics: {
+        bitterness: styleData.bitterness || 0,
+        sweetness: styleData.sweetness || 0,
+        body: styleData.body || 0,
+        aroma: styleData.aroma || 0,
+        sourness: styleData.sourness || 0,
+      },
+      history: styleData.history || '',
+      origin: styleData.origin || '',
+      abv:
+        styleData.abvMin !== null && styleData.abvMax !== null
+          ? [
+              parseFloat(String(styleData.abvMin)),
+              parseFloat(String(styleData.abvMax)),
+            ]
+          : [0, 0],
+      ibu:
+        styleData.ibuMin !== null && styleData.ibuMax !== null
+          ? [
+              parseInt(String(styleData.ibuMin)),
+              parseInt(String(styleData.ibuMax)),
+            ]
+          : [0, 0],
+      srm:
+        styleData.srmMin !== null && styleData.srmMax !== null
+          ? [
+              parseInt(String(styleData.srmMin)),
+              parseInt(String(styleData.srmMax)),
+            ]
+          : [0, 0],
+      siblings: styleData.siblings || [],
+      parents: styleData.parents || [],
+      children: styleData.children || [],
+      servingTemperature:
+        styleData.servingTempMin !== null && styleData.servingTempMax !== null
+          ? [
+              parseInt(String(styleData.servingTempMin)),
+              parseInt(String(styleData.servingTempMax)),
+            ]
+          : [4, 12], // デフォルト値
+    };
+
+    // キャッシュに追加
+    beerStyles.push(formattedStyle);
+
+    return formattedStyle;
   } catch (error) {
-    console.error(`Error fetching beer style with ID ${id}:`, error);
+    console.error(`Error fetching beer style with slug ${slug}:`, error);
     return null;
   }
 }

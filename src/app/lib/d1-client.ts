@@ -282,12 +282,12 @@ export class D1Client {
 // D1クライアントのシングルトンインスタンスを取得する関数
 // contextはCloudflare WorkersやPagesから渡されるランタイムコンテキスト
 export function getD1Client(context: {
-  env?: { BEER_DB?: D1Database };
+  env?: { BEER_LINK_DB?: D1Database };
 }): D1Client | null {
-  if (!context.env?.BEER_DB) {
+  if (!context.env?.BEER_LINK_DB) {
     console.error('D1 database binding not found in environment');
     return null;
   }
 
-  return new D1Client(context.env.BEER_DB);
+  return new D1Client(context.env.BEER_LINK_DB);
 }

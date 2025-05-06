@@ -15,8 +15,7 @@ export const dynamic = 'force-static';
 export const revalidate = 3600; // 1時間ごとにデータを再検証
 
 // 本番環境ではエッジランタイム、開発環境ではNodeJSランタイムを使用
-export const runtime =
-  process.env.NODE_ENV === 'development' ? 'nodejs' : 'edge';
+export const runtime = 'edge';
 
 // サーバーサイドでビアスタイルの色を決定する関数
 function getSpecialStyleColors() {

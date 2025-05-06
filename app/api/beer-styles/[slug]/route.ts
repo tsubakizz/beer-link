@@ -2,8 +2,7 @@ import { NextResponse } from 'next/server';
 import { getBeerStyleBySlugFromDb } from '@/src/app/lib/beer-styles-data';
 
 // 本番環境ではエッジランタイム、開発環境ではNodeJSランタイムを使用
-export const runtime =
-  process.env.NODE_ENV === 'development' ? 'nodejs' : 'edge';
+export const runtime = 'edge';
 
 // キャッシュの有効期間（1週間 = 604800秒）
 const CACHE_TTL = 604800;

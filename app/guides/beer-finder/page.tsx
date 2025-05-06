@@ -1,4 +1,4 @@
-import { getAllBeerStylesFromDb } from '@/src/app/lib/beer-styles-data';
+import { getAllBeerStylesFromAPI, getAllBeerStylesFromDb } from '@/src/app/lib/beer-styles-data';
 import BeerFinderQuiz, {
   BeerStyle,
 } from '@/src/app/components/guides/BeerFinderQuiz';
@@ -25,7 +25,7 @@ function transformBeerStyleData(styles: any[]): BeerStyle[] {
 
 export default async function BeerFinderPage() {
   // サーバーサイドでデータベースから直接ビールスタイルを取得
-  const styles = await getAllBeerStylesFromDb();
+  const styles = await getAllBeerStylesFromAPI();
   const simplifiedStyles = transformBeerStyleData(styles);
 
   return (

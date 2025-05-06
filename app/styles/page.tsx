@@ -1,4 +1,4 @@
-import { getAllBeerStylesFromDb } from '@/src/app/lib/beer-styles-data';
+import { getAllBeerStylesFromAPI, getAllBeerStylesFromDb } from '@/src/app/lib/beer-styles-data';
 import HeroSection from '@/src/app/components/HeroSection';
 import { Metadata } from 'next';
 import BeerStyleClient from '@/src/app/components/styles/BeerStyleClient';
@@ -33,7 +33,7 @@ function getSpecialStyleColors() {
 // メインコンポーネント（SSG対応）
 export default async function BeerStylesPage() {
   // サーバーサイドで直接DBからスタイルデータを取得
-  const styles = await getAllBeerStylesFromDb();
+  const styles = await getAllBeerStylesFromAPI();
   const specialStyleColors = getSpecialStyleColors();
 
   return (

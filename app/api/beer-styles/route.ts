@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getAllBeerStylesFromDb } from '@/src/app/lib/beer-styles-data';
+import { getRequestContext } from '@cloudflare/next-on-pages';
 
 // 本番環境ではエッジランタイム、開発環境ではNodeJSランタイムを使用
 export const runtime = 'edge';
@@ -43,7 +44,9 @@ export async function GET(
 
     try {
       // beer-styles-data の関数を使用してスタイル情報を取得
-      const formattedStyles = await getAllBeerStylesFromDb();
+      const { env } = getRequestContext();
+      const d1 = env?.BEER_LINK_DB as D1Database;
+      const formattedStyles = await getAllBeerStylesFromDb(d1);
 
       // スタイルが見つからない場合はエラーを返す
       if (!formattedStyles || formattedStyles.length === 0) {

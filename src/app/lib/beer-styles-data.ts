@@ -18,6 +18,27 @@ function formatBeerStyleData(
   relations?: { siblings: string[]; parents: string[]; children: string[] },
   otherNames?: string[]
 ): BeerStyle {
+  // otherNames が配列の場合、それぞれのオブジェクトから name プロパティを抽出
+  let formattedOtherNames: string[] = [];
+
+  if (style.otherNames) {
+    if (Array.isArray(style.otherNames)) {
+      formattedOtherNames = style.otherNames
+        .map((nameObj: any) =>
+          typeof nameObj === 'string'
+            ? nameObj
+            : nameObj && nameObj.name
+            ? nameObj.name
+            : ''
+        )
+        .filter(Boolean);
+    } else if (typeof style.otherNames === 'string') {
+      formattedOtherNames = [style.otherNames];
+    }
+  } else if (otherNames) {
+    formattedOtherNames = otherNames;
+  }
+
   return {
     id: style.id,
     slug: style.slug,
@@ -25,7 +46,7 @@ function formatBeerStyleData(
     description: style.description,
     shortDescription:
       style.shortDescription || createShortDescription(style.description),
-    otherNames: otherNames || style.otherNames || [],
+    otherNames: formattedOtherNames,
     characteristics: {
       bitterness: style.bitterness || 0,
       sweetness: style.sweetness || 0,
